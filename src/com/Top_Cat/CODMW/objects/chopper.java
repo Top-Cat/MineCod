@@ -12,11 +12,13 @@ import com.Top_Cat.CODMW.team;
 
 public class chopper {
 	
+	Location p;
 	Location l;
 	main plugin;
 	Player owner;
 	team t;
-	int mx = 0, mz = 0, tick = 0;
+	double mx = 0, mz = 0, tx = 0, tz = 0;
+	int tick = 0;
 	Timer k = new Timer();
 	boolean started = false;
 	
@@ -59,9 +61,14 @@ public class chopper {
 						l.getBlock().setType(Material.AIR);
 					}
 					started = true;
-					l = l.add(mx, 0, mz);
+					tx += mx;
+					tz += mz;
+					l = p.add(tx, 0, tz);
 					l.setY(l.getWorld().getHighestBlockYAt(l) + 7);
-					l.getBlock().setType(Material.OBSIDIAN);
+					switch (t) {
+						case DIAMOND: l.getBlock().setType(Material.DIAMOND_BLOCK); break;
+						case GOLD: l.getBlock().setType(Material.GOLD_BLOCK); break;
+					}
 				} catch (Exception e) {
 					System.out.println("Error moving chopper");
 				}
@@ -109,8 +116,9 @@ public class chopper {
 	
 	public void moveto() {
 		Location l2 = avgEnemies();
-		mx = (int) (l2.getX() - l.getX()) / 10;
-		mz = (int) (l2.getZ() - l.getZ()) / 10;
+		mx = (l2.getX() - l.getX()) / 10;
+		mz = (l2.getZ() - l.getZ()) / 10;
+		p = l;
 	}
 	
 }
