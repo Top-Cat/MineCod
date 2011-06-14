@@ -1,0 +1,11 @@
+name: CODMW
+main: com.Top_Cat.CODMW.main
+version: 0.1
+author: Top_Cat
+commands:
+    r:
+        description: Reload bow
+    s:
+        description: Display score
+    team:
+        description: Team operations
