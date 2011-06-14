@@ -160,6 +160,14 @@ public class game {
                     if (ploc.containsKey(i)) {
                         if (l.distance(ploc.get(i)) < 0.1) {
                             i.remove();
+                            
+                            for (chopper j : plugin.choppers) {
+                            	System.out.println(j.l.distance(l));
+                                if (j.l.distance(l) < 1.5) {
+                                    j.arrowhit();
+                                }
+                            }
+                            
                         }
                     }
                     ploc.put((Arrow) i, l);
