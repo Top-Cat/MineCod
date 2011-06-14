@@ -223,6 +223,15 @@ public class CODPlayerListener extends PlayerListener {
                 event.getPlayer().getInventory().removeItem(new ItemStack(Material.DIAMOND, 1));
                 new chopper(plugin, event.getPlayer());
             }
+        } else if (event.getAction() == Action.LEFT_CLICK_BLOCK && event.getPlayer().getItemInHand().getType() == Material.IRON_SWORD) {
+        	ArrayList<sentry> r = new ArrayList<sentry>();
+        	for (sentry i : plugin.sentries) {
+        		if (event.getClickedBlock() == i.bt && plugin.players.get(event.getPlayer()).getTeam() != i.t) {
+        			i.destroy();
+        			r.add(i);
+        		}
+        	}
+        	plugin.sentries.removeAll(r);
         }
     }
     

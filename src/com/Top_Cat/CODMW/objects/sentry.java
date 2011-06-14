@@ -13,7 +13,7 @@ import com.Top_Cat.CODMW.team;
 
 public class sentry {
     
-    team t;
+    public team t;
     public Block b, bt;
     main plugin;
     Player owner;
