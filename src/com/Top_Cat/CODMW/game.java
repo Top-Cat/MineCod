@@ -67,7 +67,6 @@ public class game {
     	plugin.scheduleGame();
     	
     	for (player i : plugin.players.values()) {
-    		i.resetScore();
     		p.dead = false;
     		i.clearinv();
     		switch(i.getTeam()) {
@@ -106,6 +105,7 @@ public class game {
 		@Override
 		public void run() {
 			for (player p : plugin.players.values()) {
+	    		p.resetScore();
 				if (p.vtime < new Date().getTime()) {
 					p.p.getInventory().clear(38);
 					p.p.getInventory().clear(37);
