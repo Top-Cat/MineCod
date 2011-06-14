@@ -84,6 +84,7 @@ public class player {
 		arrow = 0;
 		knife = 0;
 		death = 0;
+		streak = 0;
 	}
 	
 	public void addStreak() {
