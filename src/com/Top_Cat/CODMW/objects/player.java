@@ -41,7 +41,7 @@ public class player {
         p = _p;
         t = _t;
         
-        ResultSet r = plugin.sql.query("SELECT * FROM cod_players WHERE username = '" + plugin.p(p).nick + "'");
+        ResultSet r = plugin.sql.query("SELECT * FROM cod_players WHERE username = '" + _p.getDisplayName() + "'");
         try {
 			r.next();
 	        nick = r.getString("nick");

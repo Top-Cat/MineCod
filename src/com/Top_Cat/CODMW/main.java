@@ -212,23 +212,24 @@ public class main extends JavaPlugin {
                     }
                     p.sendMessage(d + c + td + " / 50");
                     return true;
-                } else if (command.getName().equalsIgnoreCase("team") && args[0].equalsIgnoreCase("switch")) {
-                    if (players.get(p).getTeam() == team.GOLD && gold < diam) {
-                        players.get(p).setTeam(team.DIAMOND);
-                        gold--;
-                        diam++;
-                    } else if (players.get(p).getTeam() == team.DIAMOND && gold > diam) {
-                        players.get(p).setTeam(team.GOLD);
-                        gold++;
-                        diam--;
-                    } else {
-                        return true;
-                    }
-                    players.get(p).resetScore();
-                    p.teleport(prespawn);
-                    players.get(p).dead = true;
+                }
+            } else if (command.getName().equalsIgnoreCase("team") && args[0].equalsIgnoreCase("switch")) {
+                if (p(p).getTeam() == team.GOLD && gold > diam) {
+                    p(p).setTeam(team.DIAMOND);
+                    gold--;
+                    diam++;
+                } else if (p(p).getTeam() == team.DIAMOND && gold < diam) {
+                    p(p).setTeam(team.GOLD);
+                    gold++;
+                    diam--;
+                } else {
+                	p.sendMessage("Teams cannot be stacked!");
                     return true;
                 }
+                p(p).resetScore();
+                p.teleport(prespawn);
+                p(p).dead = true;
+                return true;
             }
         }
         return false;
