@@ -206,7 +206,7 @@ public class player {
                 
                 plugin.game.death(this, p.getLocation());
             }
-            if (_h < 0) {
+            if (_h > 0) {
             	assist = attacker;
             }
         } else {
