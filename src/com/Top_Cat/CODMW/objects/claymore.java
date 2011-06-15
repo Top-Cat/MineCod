@@ -4,6 +4,7 @@ import java.util.Date;
 
 import net.minecraft.server.EntityPlayer;
 
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -50,9 +51,7 @@ public class claymore {
     public void detect(Player p) {
         if (plugin.players.get(p).getTeam() != t && (p.getLocation().getBlock() == b || p.getLocation().getBlock() == d1 || p.getLocation().getBlock() == d2)) {
             if (!exploded) {
-                EntityPlayer e = ((CraftPlayer) owner).getHandle();
-                Location l = p.getLocation();
-                e.world.e(1000, (int) l.getX(), (int) l.getY(), (int) l.getZ(), 0);
+                plugin.currentWorld.playEffect(p.getLocation(), Effect.CLICK2, 0);
             }
             exploded = true;
             explode = new Date().getTime() + 400;
