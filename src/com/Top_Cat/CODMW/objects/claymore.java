@@ -25,7 +25,7 @@ public class claymore {
 
     public claymore(main instance, Block _c, int r, Player _o) {
         plugin = instance;
-        t = plugin.players.get(_o).getTeam();
+        t = plugin.p(_o).getTeam();
         b = _c;
         owner = _o;
         switch (r) {
@@ -39,8 +39,8 @@ public class claymore {
     public void kill() {
         int kill = 0;
         for (Player p : plugin.players.keySet()) {
-            if (plugin.players.get(p).getTeam() != t && (p.getLocation().getBlock() == b || p.getLocation().getBlock() == d1 || p.getLocation().getBlock() == d2)) {
-                plugin.players.get(p).incHealth(2, owner, 3);
+            if (plugin.p(p).getTeam() != t && (p.getLocation().getBlock() == b || p.getLocation().getBlock() == d1 || p.getLocation().getBlock() == d2)) {
+                plugin.p(p).incHealth(2, owner, 3);
                 kill++;
             }
         }
@@ -49,7 +49,7 @@ public class claymore {
     }
 
     public void detect(Player p) {
-        if (plugin.players.get(p).getTeam() != t && (p.getLocation().getBlock() == b || p.getLocation().getBlock() == d1 || p.getLocation().getBlock() == d2)) {
+        if (plugin.p(p).getTeam() != t && (p.getLocation().getBlock() == b || p.getLocation().getBlock() == d1 || p.getLocation().getBlock() == d2)) {
             if (!exploded) {
                 plugin.currentWorld.playEffect(p.getLocation(), Effect.CLICK2, 0);
             }

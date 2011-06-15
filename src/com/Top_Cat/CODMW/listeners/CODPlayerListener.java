@@ -109,7 +109,7 @@ public class CODPlayerListener extends PlayerListener {
     @Override
     public void onPlayerQuit(PlayerQuitEvent event) {
         if (plugin.players.containsKey(event.getPlayer())) {
-            plugin.players.get(event.getPlayer()).destroy();
+            plugin.p(event.getPlayer()).destroy();
             plugin.players.remove(event.getPlayer());
         }
     }
@@ -143,7 +143,7 @@ public class CODPlayerListener extends PlayerListener {
         if (event.getTo().getBlock().getRelative(0, -1, 0).getType() == Material.DISPENSER) {
             for (sentry i : plugin.sentries) {
                 if (i.b == event.getTo().getBlock().getRelative(0, -2, 0)) {
-                    event.setTo(plugin.game.spawntele(plugin.players.get(event.getPlayer()), event.getPlayer(), false));
+                    event.setTo(plugin.game.spawntele(plugin.p(event.getPlayer()), event.getPlayer(), false));
                     event.getPlayer().sendMessage(plugin.d + "bOnly Gigs stand on dispensers, you have been respawned!");
                 }
             }
@@ -188,7 +188,7 @@ public class CODPlayerListener extends PlayerListener {
     public void onPlayerChat(PlayerChatEvent event) {
         if (plugin.players.containsKey(event.getPlayer())) {
             String p = "b";
-            if (plugin.players.get(event.getPlayer()).getTeam() == team.GOLD) {
+            if (plugin.p(event.getPlayer()).getTeam() == team.GOLD) {
                 p = "6";
             }
             event.setMessage(plugin.d + p + event.getMessage());
@@ -202,11 +202,11 @@ public class CODPlayerListener extends PlayerListener {
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             Material um = event.getPlayer().getItemInHand().getType();
             if (um == Material.BOW) {
-                plugin.players.get(event.getPlayer()).stime = new Date().getTime() + 5000;
+                plugin.p(event.getPlayer()).stime = new Date().getTime() + 5000;
             } else if (um == Material.APPLE) {
-                plugin.players.get(event.getPlayer()).vtime = new Date().getTime() + 10000;
+                plugin.p(event.getPlayer()).vtime = new Date().getTime() + 10000;
                 Player i = event.getPlayer();
-                if (plugin.players.get(event.getPlayer()).getTeam() == team.GOLD) {
+                if (plugin.p(event.getPlayer()).getTeam() == team.GOLD) {
                     i.getInventory().setChestplate(new ItemStack(Material.GOLD_CHESTPLATE, 1));
                     i.getInventory().setLeggings(new ItemStack(Material.GOLD_LEGGINGS, 1));
                     i.getInventory().setBoots(new ItemStack(Material.GOLD_BOOTS, 1));
@@ -216,16 +216,16 @@ public class CODPlayerListener extends PlayerListener {
                     i.getInventory().setBoots(new ItemStack(Material.DIAMOND_BOOTS, 1));
                 }
                 i.updateInventory();
-                plugin.players.get(event.getPlayer()).inv = true;
+                plugin.p(event.getPlayer()).inv = true;
             } else if (um == Material.BONE) {
                 event.getPlayer().getInventory().removeItem(new ItemStack(Material.BONE, 1));
                 System.out.println("BONE");
                 team t = team.DIAMOND;
-                if (plugin.players.get(event.getPlayer()).getTeam() == team.DIAMOND) {
+                if (plugin.p(event.getPlayer()).getTeam() == team.DIAMOND) {
                     t = team.GOLD;
                 }
                 for (Player i : plugin.players.keySet()) {
-                    player _p = plugin.players.get(i);
+                    player _p = plugin.p(i);
                     if (_p.getTeam() == t) {
                         Wolf w = (Wolf) plugin.currentWorld.spawnCreature(plugin.game.spawns3.get(plugin.game.generator.nextInt(plugin.game.spawns3.size())), CreatureType.WOLF);
                         w.setTarget(i);
@@ -240,7 +240,7 @@ public class CODPlayerListener extends PlayerListener {
         } else if (event.getAction() == Action.LEFT_CLICK_BLOCK && event.getPlayer().getItemInHand().getType() == Material.IRON_SWORD) {
         	ArrayList<sentry> r = new ArrayList<sentry>();
         	for (sentry i : plugin.sentries) {
-        		if (event.getClickedBlock() == i.bt && plugin.players.get(event.getPlayer()).getTeam() != i.t) {
+        		if (event.getClickedBlock() == i.bt && plugin.p(event.getPlayer()).getTeam() != i.t) {
         			i.destroy();
         			r.add(i);
         		}

@@ -223,7 +223,7 @@ public class game {
     }
     
     public void spawn(Player p, boolean gamestart) {
-        player _p = plugin.players.get(p);
+        player _p = plugin.p(p);
         _p.clearinv();
         _p.setinv();
         spawntele(_p, p, gamestart);
@@ -257,7 +257,7 @@ public class game {
     
     public void sendMessage(team t, String s) {
         for (Player p : plugin.players.keySet()) {
-            if (t == team.BOTH || t == plugin.players.get(p).getTeam()) {
+            if (t == team.BOTH || t == plugin.p(p).getTeam()) {
                 p.sendMessage(s);
             }
         }

@@ -30,7 +30,7 @@ public class chopper {
     public chopper(main instance, Player _o) {
         plugin = instance;
         owner = _o;
-        t = plugin.players.get(owner).getTeam();
+        t = plugin.p(owner).getTeam();
         
         plugin.choppers.add(this);
         
@@ -113,7 +113,7 @@ public class chopper {
         int az = 0;
         int a = 0;
         for (Player i : plugin.players.keySet()) {
-            if (plugin.players.get(i).getTeam() != t) {
+            if (plugin.p(i).getTeam() != t) {
                 ax = (int) (((ax * a) + i.getLocation().getX()) / (a + 1));
                 az = (int) (((az * a) + i.getLocation().getZ()) / (a + 1));
                 a++;

@@ -50,7 +50,7 @@ public class CODBlockListener extends BlockListener {
         if (event.getBlockPlaced().getType() == Material.WALL_SIGN) {
             int r = rotateblock(event.getPlayer(), event.getBlockPlaced());
             Sign s = (Sign) event.getBlockPlaced().getState();
-            if (plugin.players.get(event.getPlayer()).getTeam() == team.DIAMOND) {
+            if (plugin.p(event.getPlayer()).getTeam() == team.DIAMOND) {
                 s.setLine(0, plugin.d + "b** DIAMOND **");
                 s.setLine(3, plugin.d + "b** DIAMOND **");
             } else {
