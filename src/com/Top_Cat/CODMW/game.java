@@ -32,6 +32,7 @@ public class game {
     Timer t = new Timer();
     HashMap<Arrow, Location> ploc = new HashMap<Arrow, Location>();
     Location d1, d2;
+    public int diam, gold;
     boolean dl = false;
     ArrayList<String> lossmesssages = new ArrayList<String>();
     ArrayList<String> winmesssages = new ArrayList<String>();
@@ -45,21 +46,18 @@ public class game {
         }
         dl = !dl;
         
-        int td = 0, tg = 0;
-        for (player i : plugin.players.values()) {
-            if (i.getTeam() == team.DIAMOND) {
-                td += i.kill;
-            } else {
-                tg += i.kill;
-            }
+        if (p.getTeam() == team.DIAMOND) {
+        	gold++;
+        } else {
+        	diam++;
         }
         
         team winners;
-        if (td >= 50) {
+        if (diam >= 50) {
         	winners = team.DIAMOND;
             sendMessage(team.DIAMOND, winmesssages.get(generator.nextInt(winmesssages.size())));
             sendMessage(team.GOLD, lossmesssages.get(generator.nextInt(lossmesssages.size())));
-        } else if (tg >= 50) {
+        } else if (gold >= 50) {
         	winners = team.GOLD;
             sendMessage(team.GOLD, winmesssages.get(generator.nextInt(winmesssages.size())));
             sendMessage(team.DIAMOND, lossmesssages.get(generator.nextInt(lossmesssages.size())));
@@ -216,6 +214,8 @@ public class game {
     
     public void startGame() {
         sendMessage(team.BOTH, plugin.d + "9Game starting now!");
+        diam = 0;
+        gold = 0;
         for (Player p : plugin.players.keySet()) {
             spawn(p, true);
         }

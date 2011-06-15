@@ -193,15 +193,7 @@ public class main extends JavaPlugin {
                 return true;
             } else if (command.getName().equalsIgnoreCase("s")) {
                 if (args.length == 0) {
-                    int td = 0, tg = 0;
-                    for (player i : players.values()) {
-                        if (i.getTeam() == team.DIAMOND) {
-                            td += i.kill;
-                        } else {
-                            tg += i.kill;
-                        }
-                    }
-                    p.sendMessage(d + "6Gold: " + tg + d + "f  " + d + "bDiamond: " + td + d + "f      / 50");
+                    p.sendMessage(d + "6Gold: " + game.gold + d + "f  " + d + "bDiamond: " + game.diam + d + "f      / 50");
                     return true;
                 } else if (args[0].equalsIgnoreCase("d") || args[0].equalsIgnoreCase("g")) {
                     String c = "6";
