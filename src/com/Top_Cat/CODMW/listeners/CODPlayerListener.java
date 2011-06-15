@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -35,7 +36,6 @@ import com.Top_Cat.CODMW.objects.chopper;
 import com.Top_Cat.CODMW.objects.claymore;
 import com.Top_Cat.CODMW.objects.player;
 import com.Top_Cat.CODMW.objects.sentry;
-import com.Top_Cat.CODMW.objects.streaks;
 import com.Top_Cat.CODMW.sql.Stat;
 
 public class CODPlayerListener extends PlayerListener {
@@ -43,6 +43,7 @@ public class CODPlayerListener extends PlayerListener {
     main plugin;
     Timer t = new Timer();
     ArrayList<Material> allowed_pickup = new ArrayList<Material>();
+    Random generator = new Random();
     
     public CODPlayerListener(main instance) {
         plugin = instance;
@@ -98,21 +99,47 @@ public class CODPlayerListener extends PlayerListener {
     }
     
     @Override
-    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-        String com = event.getMessage();
-        String coms[] = com.split(" ");
-        
-        if (coms[0].equalsIgnoreCase("/example")) {
-            
-        }
-    }
-    
-    @Override
     public void onPlayerQuit(PlayerQuitEvent event) {
         if (plugin.players.containsKey(event.getPlayer())) {
             plugin.p(event.getPlayer()).destroy();
             plugin.players.remove(event.getPlayer());
+            
+            int d = (int) Math.floor(Math.abs(plugin.diam - plugin.gold) / 2);
+            if (d > 0) {
+            	nextbalance = new Date().getTime() + 10000;
+            	
+            }
         }
+    }
+    
+    long nextbalance = 0;
+    
+    public class balanceteams extends TimerTask {
+
+		@Override
+		public void run() {
+			if (nextbalance < new Date().getTime()) {
+				int d = (int) Math.floor(Math.abs(plugin.diam - plugin.gold) / 2);
+	            team b = team.DIAMOND;
+	            if (plugin.gold > plugin.diam) {
+	            	b = team.GOLD;
+	            }
+	            
+	            if (d > 0) {
+	    			plugin.game.sendMessage(team.BOTH, "Balancing teams...");
+	            	ArrayList<player> bigteam = new ArrayList<player>();
+	            	for (player i : plugin.players.values()) {
+	            		if (i.getTeam() == b) {
+	            			bigteam.add(i);
+	            		}
+	            	}
+	            	for (int i = 0; i < d; i++) {
+	            		plugin.switchplayer(bigteam.remove(generator.nextInt(bigteam.size())).p);
+	            	}
+	            }
+			}
+		}
+    	
     }
 
     @Override

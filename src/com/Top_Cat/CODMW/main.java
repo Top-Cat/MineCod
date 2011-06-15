@@ -214,25 +214,29 @@ public class main extends JavaPlugin {
                     return true;
                 }
             } else if (command.getName().equalsIgnoreCase("team") && args[0].equalsIgnoreCase("switch")) {
-                if (p(p).getTeam() == team.GOLD && gold > diam) {
-                    p(p).setTeam(team.DIAMOND);
-                    gold--;
-                    diam++;
-                } else if (p(p).getTeam() == team.DIAMOND && gold < diam) {
-                    p(p).setTeam(team.GOLD);
-                    gold++;
-                    diam--;
-                } else {
-                	p.sendMessage("Teams cannot be stacked!");
-                    return true;
-                }
-                p(p).resetScore();
-                p.teleport(prespawn);
-                p(p).dead = true;
+                switchplayer(p);
                 return true;
             }
         }
         return false;
+    }
+    
+    public void switchplayer(Player p) {
+        if (p(p).getTeam() == team.GOLD && gold > diam) {
+            p(p).setTeam(team.DIAMOND);
+            gold--;
+            diam++;
+        } else if (p(p).getTeam() == team.DIAMOND && gold < diam) {
+            p(p).setTeam(team.GOLD);
+            gold++;
+            diam--;
+        } else {
+        	p.sendMessage("Teams cannot be stacked!");
+            return;
+        }
+        p(p).resetScore();
+        p.teleport(prespawn);
+        p(p).dead = true;
     }
     
     @Override
@@ -245,7 +249,6 @@ public class main extends JavaPlugin {
         pm.registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_BED_ENTER, playerListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.INVENTORY_OPEN, playerListener, Priority.Normal, this);
-        pm.registerEvent(Event.Type.PLAYER_COMMAND_PREPROCESS, playerListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_PICKUP_ITEM, playerListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Normal, this);
         
