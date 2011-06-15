@@ -8,7 +8,8 @@ public enum Stat {
 	DEATHS(2),
 	WINS(3),
 	LOSSES(4),
-	LOGIN(5);
+	LOGIN(5),
+	ARROWS_FIRED(6);
 	
 	private final int id;
 

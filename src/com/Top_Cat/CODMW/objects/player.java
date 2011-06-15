@@ -47,7 +47,6 @@ public class player {
 	        nick = r.getString("nick");
 	        dbid = r.getInt("Id");
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -89,6 +88,7 @@ public class player {
         }
         plugin.tot--;
         plugin.setDoors();
+        s.destroy();
     }
     
     public team getTeam() {

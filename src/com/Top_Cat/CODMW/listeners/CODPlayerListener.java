@@ -36,6 +36,7 @@ import com.Top_Cat.CODMW.objects.claymore;
 import com.Top_Cat.CODMW.objects.player;
 import com.Top_Cat.CODMW.objects.sentry;
 import com.Top_Cat.CODMW.objects.streaks;
+import com.Top_Cat.CODMW.sql.Stat;
 
 public class CODPlayerListener extends PlayerListener {
     
@@ -203,6 +204,9 @@ public class CODPlayerListener extends PlayerListener {
             Material um = event.getPlayer().getItemInHand().getType();
             if (um == Material.BOW) {
                 plugin.p(event.getPlayer()).stime = new Date().getTime() + 5000;
+                if (event.getPlayer().getInventory().contains(Material.ARROW)) {
+                	plugin.p(event.getPlayer()).s.incStat(Stat.ARROWS_FIRED);
+                }
             } else if (um == Material.APPLE) {
                 plugin.p(event.getPlayer()).vtime = new Date().getTime() + 10000;
                 Player i = event.getPlayer();
