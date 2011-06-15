@@ -68,6 +68,10 @@ public class main extends JavaPlugin {
         i.clear(36);
     }
     
+    public player p(Player p) {
+    	return players.get(p);
+    }
+    
     @Override
     public void onDisable() {
         if (game != null) {
@@ -211,7 +215,7 @@ public class main extends JavaPlugin {
                     for (player i : players.values()) {
                         if (i.getTeam() == t) {
                             td += i.kill;
-                            p.sendMessage(d + c + i.p.getDisplayName() + " | " + i.arrow + " | " + i.knife + " | " + i.kill + " | " + i.death + " |");
+                            p.sendMessage(d + c + i.nick + " | " + i.arrow + " | " + i.knife + " | " + i.kill + " | " + i.death + " |");
                         }
                     }
                     p.sendMessage(d + c + td + " / 50");

@@ -36,4 +36,14 @@ public class conn {
         return null;
     }
     
+    public void update(String q) {
+        PreparedStatement pr;
+        try {
+            pr = conn.prepareStatement(q);
+            pr.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
 }

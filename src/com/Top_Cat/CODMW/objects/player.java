@@ -1,5 +1,7 @@
 package com.Top_Cat.CODMW.objects;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 
 import org.bukkit.Location;
@@ -11,6 +13,8 @@ import org.bukkit.inventory.PlayerInventory;
 import com.Top_Cat.CODMW.game;
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
+import com.Top_Cat.CODMW.sql.Stat;
+import com.Top_Cat.CODMW.sql.stats;
 
 public class player {
     
@@ -18,7 +22,10 @@ public class player {
     public streaks last = new streaks();
     private final main plugin;
     public Player p;
+    public String nick;
+    public int dbid;
     team t;
+    public stats s;
     public int h = 2;
     public long htime = 0;
     public long stime = 0;
@@ -33,6 +40,19 @@ public class player {
         plugin = instance;
         p = _p;
         t = _t;
+        
+        ResultSet r = plugin.sql.query("SELECT * FROM cod_players WHERE username = '" + plugin.p(p).nick + "'");
+        try {
+			r.next();
+	        nick = r.getString("nick");
+	        dbid = r.getInt("Id");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+        s = new stats(plugin, this);
+        s.incStat(Stat.LOGIN);
         
         switch(t) {
             case GOLD:
@@ -89,7 +109,7 @@ public class player {
     
     public void addStreak() {
         streak++;
-        System.out.println(p.getDisplayName() + " got a " + streak + " kill streak!");
+        //System.out.println(plugin.p(p).nick + " got a " + streak + " kill streak!");
         switch (streak) {
             case 3: giveItem(2, new ItemStack(Material.WALL_SIGN, 2)); break;
             case 5: giveItem(3, new ItemStack(Material.APPLE, 1)); break;
@@ -120,19 +140,21 @@ public class player {
                 stime = new Date().getTime() + 5000;
             }
             if (h <= 0) {
-                if (plugin.players.get(attacker) != this) {
-                    plugin.players.get(attacker).kill++;
+                if (plugin.p(attacker) != this) {
+                	plugin.p(attacker).s.incStat(Stat.KILLS);
+                    plugin.p(attacker).kill++;
                     if (reason <= 3) {
-                        plugin.players.get(attacker).addStreak();
+                        plugin.p(attacker).addStreak();
                     }
                     
                     switch (reason) {
-                        case 1: plugin.players.get(attacker).knife++; break;
-                        case 2: plugin.players.get(attacker).arrow++; break;
+                        case 1: plugin.p(attacker).knife++; break;
+                        case 2: plugin.p(attacker).arrow++; break;
                     }
                 } else {
                     kill--;
                 }
+                plugin.p(attacker).s.incStat(Stat.DEATHS);
                 death++;
                 streak = 0;
                 
@@ -160,13 +182,13 @@ public class player {
                 ammo = (int) (ammo / 15);
                 
                 switch (reason) {
-                    case 0: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + p.getDisplayName() + " fell to his death. LOL!"); break;
-                    case 1: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + attacker.getDisplayName() + " knifed " + p.getDisplayName()); break;
-                    case 2: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + attacker.getDisplayName() + " shot " + p.getDisplayName()); break;
-                    case 3: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + attacker.getDisplayName() + " claymored " + p.getDisplayName()); break;
-                    case 4: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + attacker.getDisplayName() + "'s dogs mauled " + p.getDisplayName()); break;
-                    case 5: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + attacker.getDisplayName() + "'s sentry shot " + p.getDisplayName()); break;
-                    case 6: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + attacker.getDisplayName() + "'s chopper battered " + p.getDisplayName()); break;
+                    case 0: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(p).nick + " fell to his death. LOL!"); break;
+                    case 1: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + " knifed " + plugin.p(p).nick); break;
+                    case 2: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + " shot " + plugin.p(p).nick); break;
+                    case 3: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + " claymored " + plugin.p(p).nick); break;
+                    case 4: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + "'s dogs mauled " + plugin.p(p).nick); break;
+                    case 5: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + "'s sentry shot " + plugin.p(p).nick); break;
+                    case 6: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + "'s chopper battered " + plugin.p(p).nick); break;
                 }
                 clearinv();
                 todrop += ammo;

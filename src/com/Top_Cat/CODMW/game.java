@@ -20,6 +20,7 @@ import com.Top_Cat.CODMW.objects.chopper;
 import com.Top_Cat.CODMW.objects.claymore;
 import com.Top_Cat.CODMW.objects.player;
 import com.Top_Cat.CODMW.objects.sentry;
+import com.Top_Cat.CODMW.sql.Stat;
 
 public class game {
 
@@ -53,10 +54,13 @@ public class game {
             }
         }
         
+        team winners;
         if (td >= 50) {
+        	winners = team.DIAMOND;
             sendMessage(team.DIAMOND, winmesssages.get(generator.nextInt(winmesssages.size())));
             sendMessage(team.GOLD, lossmesssages.get(generator.nextInt(lossmesssages.size())));
         } else if (tg >= 50) {
+        	winners = team.GOLD;
             sendMessage(team.GOLD, winmesssages.get(generator.nextInt(winmesssages.size())));
             sendMessage(team.DIAMOND, lossmesssages.get(generator.nextInt(lossmesssages.size())));
         } else {
@@ -72,6 +76,11 @@ public class game {
             switch(i.getTeam()) {
                 case GOLD: i.p.getInventory().setHelmet(new ItemStack(Material.GOLD_HELMET, 1)); break;
                 case DIAMOND: i.p.getInventory().setHelmet(new ItemStack(Material.DIAMOND_HELMET, 1)); break;
+            }
+            if (i.getTeam() == winners) {
+            	i.s.incStat(Stat.WINS);
+            } else {
+            	i.s.incStat(Stat.LOSSES);
             }
         }
         

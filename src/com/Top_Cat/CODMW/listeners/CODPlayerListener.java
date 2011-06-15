@@ -1,5 +1,7 @@
 package com.Top_Cat.CODMW.listeners;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
@@ -57,7 +59,20 @@ public class CODPlayerListener extends PlayerListener {
         plugin.totele.add(event.getPlayer());
         t.schedule(new tele(plugin), 200);
         plugin.clearinv(event.getPlayer());
-        event.setJoinMessage(plugin.d + "9" + event.getPlayer().getDisplayName() + " has joined the fray");
+        
+        String nick = event.getPlayer().getDisplayName();
+        ResultSet r = plugin.sql.query("SELECT * FROM cod_players WHERE username = '" + event.getPlayer().getDisplayName() + "'");
+        try {
+			if (r.next()) {
+				nick = r.getString("nick");
+			} else {
+				plugin.sql.update("INSERT INTO cod_players VALUES (NULL, '" + event.getPlayer().getDisplayName() + "', '" + event.getPlayer().getDisplayName() + "')");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+        
+        event.setJoinMessage(plugin.d + "9" + nick + " has joined the fray");
         event.getPlayer().sendMessage(plugin.d + "9Welcome to The Gigcast's MineCod Server!");
         event.getPlayer().sendMessage(plugin.d + "9Please choose your team!");
         event.getPlayer().setHealth(20);
@@ -212,7 +227,6 @@ public class CODPlayerListener extends PlayerListener {
                 for (Player i : plugin.players.keySet()) {
                     player _p = plugin.players.get(i);
                     if (_p.getTeam() == t) {
-                        System.out.println(i.getDisplayName());
                         Wolf w = (Wolf) plugin.currentWorld.spawnCreature(plugin.game.spawns3.get(plugin.game.generator.nextInt(plugin.game.spawns3.size())), CreatureType.WOLF);
                         w.setTarget(i);
                         w.setOwner(event.getPlayer());
