@@ -2,13 +2,9 @@ package com.Top_Cat.CODMW.objects;
 
 import java.util.Date;
 
-import net.minecraft.server.EntityPlayer;
-
 import org.bukkit.Effect;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import com.Top_Cat.CODMW.main;

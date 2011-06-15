@@ -28,7 +28,9 @@ public enum Stat {
 	APPLES_USED(22),
 	DOGS_USED(23),
 	SENTRIES_PLACED(24),
-	CHOPPERS_USED(25);
+	CHOPPERS_USED(25),
+	AMMO_PICKED_UP(26),
+	ASSISTS(27);
 	
 	private final int id;
 
