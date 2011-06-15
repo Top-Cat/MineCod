@@ -109,6 +109,7 @@ public class player {
     
     public void addStreak() {
         streak++;
+        s.maxStat(Stat.MAX_KILLS, streak);
         //System.out.println(plugin.p(p).nick + " got a " + streak + " kill streak!");
         switch (streak) {
             case 3: giveItem(2, new ItemStack(Material.WALL_SIGN, 2)); break;
@@ -182,13 +183,13 @@ public class player {
                 ammo = (int) (ammo / 15);
                 
                 switch (reason) {
-                    case 0: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(p).nick + " fell to his death. LOL!"); break;
-                    case 1: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + " knifed " + plugin.p(p).nick); break;
-                    case 2: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + " shot " + plugin.p(p).nick); break;
-                    case 3: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + " claymored " + plugin.p(p).nick); break;
-                    case 4: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + "'s dogs mauled " + plugin.p(p).nick); break;
-                    case 5: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + "'s sentry shot " + plugin.p(p).nick); break;
-                    case 6: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + "'s chopper battered " + plugin.p(p).nick); break;
+                    case 0: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(p).nick + " fell to his death. LOL!"); plugin.p(p).s.incStat(Stat.FALL_DEATHS); break;
+                    case 1: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + " knifed " + plugin.p(p).nick); plugin.p(p).s.incStat(Stat.KNIFE_DEATHS); plugin.p(attacker).s.incStat(Stat.KNIFE_KILLS); break;
+                    case 2: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + " shot " + plugin.p(p).nick); plugin.p(p).s.incStat(Stat.BOW_DEATHS); plugin.p(attacker).s.incStat(Stat.BOW_KILLS); break;
+                    case 3: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + " claymored " + plugin.p(p).nick); plugin.p(p).s.incStat(Stat.CLAYMORE_DEATHS); plugin.p(attacker).s.incStat(Stat.CLAYMORE_KILLS); break;
+                    case 4: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + "'s dogs mauled " + plugin.p(p).nick); plugin.p(p).s.incStat(Stat.DOG_DEATHS); plugin.p(attacker).s.incStat(Stat.DOG_KILLS); break;
+                    case 5: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + "'s sentry shot " + plugin.p(p).nick); plugin.p(p).s.incStat(Stat.SENTRY_DEATHS); plugin.p(attacker).s.incStat(Stat.SENTRY_KILLS); break;
+                    case 6: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + "'s chopper battered " + plugin.p(p).nick); plugin.p(p).s.incStat(Stat.CHOPPER_DEATHS); plugin.p(attacker).s.incStat(Stat.CHOPPER_KILLS); break;
                 }
                 clearinv();
                 todrop += ammo;

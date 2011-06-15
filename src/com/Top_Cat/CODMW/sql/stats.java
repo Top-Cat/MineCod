@@ -47,6 +47,17 @@ public class stats {
     	stats.put(s, getStat(s) + c);
     }
     
+    public void maxStat(Stat s, int c) {
+    	if (stats.containsKey(s) && stats.get(c) < c) {
+    		updated.add(s);
+    	} else if (!stats.containsKey(s)) {
+    		newv.add(s);
+    	} else {
+    		return;
+    	}
+    	stats.put(s, c);
+    }
+    
     public int getStat(Stat s) {
     	if (stats.containsKey(s)) {
     		return stats.get(s);
