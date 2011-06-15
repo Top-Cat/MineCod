@@ -38,7 +38,7 @@ public class game {
     ArrayList<String> winmesssages = new ArrayList<String>();
     public boolean initspawn = false;
     
-    public void death(player p, Location l) {
+    public void death(player p, player k, Location l) {
         if (dl) {
             d1 = l;
         } else {
@@ -83,6 +83,8 @@ public class game {
         }
         
         p.p.getInventory().setHelmet(new ItemStack(Material.WOOD, 1));
+        p.s.incStat(Stat.LAST_DEATH);
+        k.s.incStat(Stat.LAST_KILL);
         
         sendMessage(team.BOTH, plugin.d + "9Game ended, game will resume on '" + plugin.currentMap.name + "' in 60 seconds");
     }

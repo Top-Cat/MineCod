@@ -204,7 +204,7 @@ public class player {
                 p.teleport(plugin.prespawn);
                 dead = true;
                 
-                plugin.game.death(this, p.getLocation());
+                plugin.game.death(this, plugin.p(attacker), p.getLocation());
             }
             if (_h > 0) {
             	assist = attacker;

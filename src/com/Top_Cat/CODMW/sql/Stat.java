@@ -30,7 +30,10 @@ public enum Stat {
 	SENTRIES_PLACED(24),
 	CHOPPERS_USED(25),
 	AMMO_PICKED_UP(26),
-	ASSISTS(27);
+	ASSISTS(27),
+	LAST_DEATH(28),
+	LAST_KILL(29),
+	TOP_SCORE(30);
 	
 	private final int id;
 
