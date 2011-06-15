@@ -15,6 +15,7 @@ import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
 import com.Top_Cat.CODMW.objects.claymore;
 import com.Top_Cat.CODMW.objects.sentry;
+import com.Top_Cat.CODMW.sql.Stat;
 
 public class CODBlockListener extends BlockListener {
     
@@ -62,7 +63,9 @@ public class CODBlockListener extends BlockListener {
             s.setLine(2, "towards enemy");
             s.update();
             plugin.clays.add(new claymore(plugin, event.getBlockPlaced(), r, event.getPlayer()));
+            plugin.p(event.getPlayer()).s.incStat(Stat.CLAYMORES_USED);
         } else if (event.getBlockPlaced().getType() == Material.DISPENSER && event.getBlockPlaced().getRelative(0, 1, 0).getType() == Material.AIR) {
+        	plugin.p(event.getPlayer()).s.incStat(Stat.SENTRIES_PLACED);
             event.getBlockPlaced().setType(Material.FENCE);
             event.getBlockPlaced().getRelative(0, 1, 0).setType(Material.DISPENSER);
             int r = rotateblock(event.getPlayer(), event.getBlockPlaced().getRelative(0, 1, 0));

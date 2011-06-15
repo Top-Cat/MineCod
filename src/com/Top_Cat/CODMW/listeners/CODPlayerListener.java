@@ -236,6 +236,7 @@ public class CODPlayerListener extends PlayerListener {
                 }
             } else if (um == Material.APPLE) {
                 plugin.p(event.getPlayer()).vtime = new Date().getTime() + 10000;
+                plugin.p(event.getPlayer()).s.incStat(Stat.APPLES_USED);
                 Player i = event.getPlayer();
                 if (plugin.p(event.getPlayer()).getTeam() == team.GOLD) {
                     i.getInventory().setChestplate(new ItemStack(Material.GOLD_CHESTPLATE, 1));
@@ -250,6 +251,7 @@ public class CODPlayerListener extends PlayerListener {
                 plugin.p(event.getPlayer()).inv = true;
             } else if (um == Material.BONE) {
                 event.getPlayer().getInventory().removeItem(new ItemStack(Material.BONE, 1));
+                plugin.p(event.getPlayer()).s.incStat(Stat.DOGS_USED);
                 System.out.println("BONE");
                 team t = team.DIAMOND;
                 if (plugin.p(event.getPlayer()).getTeam() == team.DIAMOND) {
@@ -266,6 +268,7 @@ public class CODPlayerListener extends PlayerListener {
                 }
             } else if (um == Material.DIAMOND) {
                 event.getPlayer().getInventory().removeItem(new ItemStack(Material.DIAMOND, 1));
+                plugin.p(event.getPlayer()).s.incStat(Stat.CHOPPERS_USED);
                 new chopper(plugin, event.getPlayer());
             }
         } else if (event.getAction() == Action.LEFT_CLICK_BLOCK && event.getPlayer().getItemInHand().getType() == Material.IRON_SWORD) {
