@@ -2,7 +2,7 @@ package com.Top_Cat.CODMW.sql;
 
 import java.util.ArrayList;
 
-public enum Achieve {
+public enum Achievement {
     KILL_50(0, Stat.KILLS, 50, "Criminal"),
     KILL_100(1, Stat.KILLS, 100, "Assassin"),
     KILL_250(2, Stat.KILLS, 250, "Murderer"),
@@ -75,7 +75,7 @@ public enum Achieve {
     private final int points;
     private final String name;
     
-    Achieve(int id, Stat s, int c, String name, int points) {
+    Achievement(int id, Stat s, int c, String name, int points) {
         this.id = id;
         this.s = s;
         this.c = c;
@@ -83,7 +83,7 @@ public enum Achieve {
         this.name = name;
     }
     
-    Achieve(int id, Stat s, int c, String name) {
+    Achievement(int id, Stat s, int c, String name) {
         this(id, s, c, name, 20);
     }
 
@@ -107,14 +107,14 @@ public enum Achieve {
         return this.name;
     }
     
-    public static ArrayList<Achieve> table = new ArrayList<Achieve>(); 
+    public static ArrayList<Achievement> table = new ArrayList<Achievement>(); 
     static {
-        for (Achieve i : Achieve.values()) {
+        for (Achievement i : Achievement.values()) {
             table.add(i.getId(), i);
         }
     }
 
-    public static Achieve valueOf(int id) {
+    public static Achievement valueOf(int id) {
         return table.get(id);
     }
 }

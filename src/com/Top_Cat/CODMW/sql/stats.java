@@ -18,11 +18,11 @@ public class stats {
     Timer t = new Timer();
     player p;
     HashMap<Stat, Integer> stats = new HashMap<Stat, Integer>();
-    List<Achieve> achs = new ArrayList<Achieve>();
-    List<Achieve> toach = new java.util.ArrayList(Arrays.asList(Achieve.values()));
+    List<Achievement> achs = new ArrayList<Achievement>();
+    List<Achievement> toach = new java.util.ArrayList(Arrays.asList(Achievement.values()));
     List<Stat> updated = new ArrayList<Stat>();
     List<Stat> newv = new ArrayList<Stat>();
-    List<Achieve> newa = new ArrayList<Achieve>();
+    List<Achievement> newa = new ArrayList<Achievement>();
     main plugin;
     
     public stats(main instance, player _p) {
@@ -35,7 +35,7 @@ public class stats {
                 stats.put(Stat.valueOf(r.getInt("type")), r.getInt("count"));
             }
             while (r2.next()) {
-                achs.add(Achieve.valueOf(r2.getInt("aid")));
+                achs.add(Achievement.valueOf(r2.getInt("aid")));
             }
             toach.removeAll(achs);
         } catch (SQLException e) {
@@ -56,14 +56,14 @@ public class stats {
         }
         int out = getStat(s) + c;
         if (out < 0) { out = 0; }
-        ArrayList<Achieve> tmp = new ArrayList<Achieve>();
-        for (Achieve a : toach) {
+        ArrayList<Achievement> tmp = new ArrayList<Achievement>();
+        for (Achievement a : toach) {
             if (a.getStat() == s && a.getCount() <= out) {
                 tmp.add(a);
             }
         }
-        for (Achieve a : tmp) {
-        	awardAchieve(a);
+        for (Achievement a : tmp) {
+        	awardAchievement(a);
         }
         stats.put(s, out);
     }
@@ -76,9 +76,9 @@ public class stats {
         } else {
             return;
         }
-        for (Achieve a : toach) {
+        for (Achievement a : toach) {
             if (a.getStat() == s && a.getCount() <= c) {
-                awardAchieve(a);
+                awardAchievement(a);
             }
         }
         stats.put(s, c);
@@ -91,7 +91,7 @@ public class stats {
         return 0;
     }
     
-    public void awardAchieve(Achieve a) {
+    public void awardAchievement(Achievement a) {
         if (!achs.contains(a)) {
             plugin.game.sendMessage(team.BOTH, plugin.d + p.getTeam().getColour() + p.nick + " earned achievement: '" + a.getName() + "'", p.p);
             p.p.sendMessage(plugin.d + p.getTeam().getColour() + "You earned achievement: '" + a.getName() + "'");
@@ -130,7 +130,7 @@ public class stats {
         }
         updated.removeAll(r);
         r.clear();
-        for (Achieve a : newa) {
+        for (Achievement a : newa) {
             plugin.sql.update("INSERT INTO cod_achievement VALUES(NULL, '" + p.dbid + "', '" + a.getId() + "')");
         }
         newa.clear();

@@ -13,6 +13,7 @@ import org.bukkit.inventory.PlayerInventory;
 import com.Top_Cat.CODMW.game;
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
+import com.Top_Cat.CODMW.sql.Achievement;
 import com.Top_Cat.CODMW.sql.Stat;
 import com.Top_Cat.CODMW.sql.stats;
 
@@ -150,18 +151,25 @@ public class player {
                 stime = new Date().getTime() + 5000;
             }
             if (h <= 0) {
-                if (plugin.p(attacker) != this) {
-                    plugin.p(attacker).s.incStat(Stat.KILLS);
-                    plugin.p(attacker).addPoints(5);
-                    plugin.p(attacker).kill++;
-                    plugin.p(attacker).s.maxStat(Stat.MAX_KILLS, plugin.p(attacker).kill);
+            	player a = plugin.p(attacker);
+                if (a != this) {
+                    a.s.incStat(Stat.KILLS);
+                    a.addPoints(5);
+                    a.kill++;
+                    a.s.maxStat(Stat.MAX_KILLS, plugin.p(attacker).kill);
+                    if (a.inv) {
+                    	a.s.incStat(Stat.INVULNERABLE_KILLS);
+                    }
+                    if (p.getDisplayName().equalsIgnoreCase("Gigthank")) {
+                    	a.s.awardAchievement(Achievement.KILL_GIG);
+                    }
                     if (reason <= 3) {
-                        plugin.p(attacker).addStreak();
+                        a.addStreak();
                     }
                     
                     switch (reason) {
-                        case 1: plugin.p(attacker).knife++; break;
-                        case 2: plugin.p(attacker).arrow++; break;
+                        case 1: a.knife++; break;
+                        case 2: a.arrow++; break;
                     }
                 } else {
                     kill--;
