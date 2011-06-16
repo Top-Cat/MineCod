@@ -3,21 +3,26 @@ package com.Top_Cat.CODMW.sql;
 import java.util.ArrayList;
 
 public enum Achievement {
-    GET_50_KILLS(0, 1, 50, "Kill 50 enemies"),
-    GET_100_KILLS(1, 1, 100, "Kill 100 enemies"),
-    GET_250_KILLS(2, 1, 250, "Kill 250 enemies"),
-    GET_500_KILLS(3, 1, 500, "Kill 500 enemies"),
-    GET_1000_KILLS(5, 1, 1000, "Kill 100 enemies"),
+    KILL_50(0, 1, 50, "Kill 50 enemies"),
+    KILL_100(1, 1, 100, "Kill 100 enemies"),
+    KILL_250(2, 1, 250, "Kill 250 enemies"),
+    KILL_500(3, 1, 500, "Kill 500 enemies"),
+    KILL_1000(5, 1, 1000, "Kill 100 enemies"),
     KILL_GIG(6, -1, -1, "Gigssassination"),
-    WIN_5_GAMES(7, 3, 5),
-    WIN_10_GAMES(8, 3, 10),
-    WIN_25_GAMES(9, 3, 25),
-    WIN_50_GAMES(10, 3, 50),
-    WIN_100_GAMES(11, 3, 100),
-    FIRE_1000_ARROWS(12, 6, 1000),
-    FIRE_2500_ARROWS(13, 6, 2500),
-    FIRE_5000_ARROWS(14, 6, 5000),
-    FIRE_10000_ARROWS(15, 6, 10000);
+    WIN_5(7, 3, 5, ""),
+    WIN_10(8, 3, 10, ""),
+    WIN_25(9, 3, 25, ""),
+    WIN_50(10, 3, 50, ""),
+    WIN_100(11, 3, 100, ""),
+    FIRE_1000(12, 6, 1000, ""),
+    FIRE_2500(13, 6, 2500, ""),
+    FIRE_5000(14, 6, 5000, ""),
+    FIRE_10000(15, 6, 10000, ""),
+    LOGIN_5(16, 3, 5, ""),
+    LOGIN_10(17, 3, 10, ""),
+    LOGIN_25(18, 3, 25, ""),
+    LOGIN_50(19, 3, 50, ""),
+    LOGIN_100(20, 3, 100, "");;
     
     private final int id;
     private final int statid;

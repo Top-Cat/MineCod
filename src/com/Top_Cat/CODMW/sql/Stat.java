@@ -37,7 +37,12 @@ public enum Stat {
     MAX_POINTS(31),
     MAX_KILLS(32),
     MAX_DEATHS(33),
-    SENTRIES_DESTROYED(34);
+    SENTRIES_DESTROYED(34),
+    CLAYMORES_ACHIEVED(35),
+    APPLES_ACHIEVED(36),
+    DOGS_ACHIEVED(37),
+    SENTRIES_ACHIEVED(38),
+    CHOPPERS_ACHIEVED(39);
     
     private final int id;
 

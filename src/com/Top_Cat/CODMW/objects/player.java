@@ -119,13 +119,12 @@ public class player {
     public void addStreak() {
         streak++;
         s.maxStat(Stat.MAX_STREAK, streak);
-        //System.out.println(plugin.p(p).nick + " got a " + streak + " kill streak!");
         switch (streak) {
-            case 3: giveItem(2, new ItemStack(Material.WALL_SIGN, 2)); break;
-            case 5: giveItem(3, new ItemStack(Material.APPLE, 1)); break;
-            case 7: giveItem(4, new ItemStack(Material.BONE, 1)); break;
-            case 9: giveItem(5, new ItemStack(Material.DISPENSER, 1)); break;
-            case 11: giveItem(6, new ItemStack(Material.DIAMOND, 1)); break;
+            case 3: giveItem(2, new ItemStack(Material.WALL_SIGN, 2)); s.incStat(Stat.CLAYMORES_ACHIEVED); break;
+            case 5: giveItem(3, new ItemStack(Material.APPLE, 1)); s.incStat(Stat.APPLES_ACHIEVED); break;
+            case 7: giveItem(4, new ItemStack(Material.BONE, 1)); s.incStat(Stat.DOGS_ACHIEVED); break;
+            case 9: giveItem(5, new ItemStack(Material.DISPENSER, 1)); s.incStat(Stat.SENTRIES_ACHIEVED); break;
+            case 11: giveItem(6, new ItemStack(Material.DIAMOND, 1)); s.incStat(Stat.CHOPPERS_ACHIEVED); break;
         }
     }
     
