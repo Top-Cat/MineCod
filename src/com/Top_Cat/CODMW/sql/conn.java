@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.mysql.jdbc.Statement;
+
 public class conn {
     
     Connection conn;
@@ -36,14 +38,20 @@ public class conn {
         return null;
     }
     
-    public void update(String q) {
+    public int update(String q) {
         PreparedStatement pr;
         try {
-            pr = conn.prepareStatement(q);
+            pr = conn.prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
             pr.executeUpdate();
+            
+            ResultSet r = pr.getGeneratedKeys();
+            if (r.next()) {
+                return r.getInt(1);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return 0;
     }
     
 }

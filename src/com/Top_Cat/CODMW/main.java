@@ -204,11 +204,11 @@ public class main extends JavaPlugin {
                         t = team.DIAMOND;
                     }
                     int td = 0;
-                    p.sendMessage(d + c + "Player Name | A | Kn | Ki | D |");
+                    p.sendMessage(d + c + "Player Name | Ki | A | D |");
                     for (player i : players.values()) {
                         if (i.getTeam() == t) {
                             td += i.kill;
-                            p.sendMessage(d + c + i.nick + " | " + i.arrow + " | " + i.knife + " | " + i.kill + " | " + i.death + " |");
+                            p.sendMessage(d + c + i.nick + " | " + i.kill + " | " + i.assists + " | " + i.death + " |");
                         }
                     }
                     p.sendMessage(d + c + td + " / 50");

@@ -4,6 +4,7 @@ import java.util.List;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -16,22 +17,30 @@ public class stats {
     Timer t = new Timer();
     player p;
     HashMap<Stat, Integer> stats = new HashMap<Stat, Integer>();
+    List<Achievement> achs = new ArrayList<Achievement>();
+    List<Achievement> toach = Arrays.asList(Achievement.values());
     List<Stat> updated = new ArrayList<Stat>();
     List<Stat> newv = new ArrayList<Stat>();
+    List<Achievement> newa = new ArrayList<Achievement>();
     main plugin;
     
     public stats(main instance, player _p) {
         plugin = instance;
         p = _p;
         ResultSet r = plugin.sql.query("SELECT type, count FROM cod_stats WHERE PID = '" + p.dbid + "'");
+        ResultSet r2 = plugin.sql.query("SELECT aid FROM cod_achievement WHERE PID = '" + p.dbid + "'");
         try {
             while (r.next()) {
                 stats.put(Stat.valueOf(r.getInt("type")), r.getInt("count"));
             }
+            while (r2.next()) {
+                achs.add(Achievement.valueOf(r.getInt("aid")));
+            }
+            toach.removeAll(achs);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        t.schedule(new updatestats(), 20000, 20000);
+        t.schedule(new updatestats(), 30000, 30000);
     }
     
     public void incStat(Stat s) {
@@ -44,7 +53,14 @@ public class stats {
         } else {
             newv.add(s);
         }
-        stats.put(s, getStat(s) + c);
+        int out = getStat(s) + c;
+        if (out < 0) { out = 0; }
+        for (Achievement a : toach) {
+        	if (a.getStatId() == s.getId() && a.getCount() <= out) {
+        		awardAchievement(a);
+        	}
+        }
+        stats.put(s, out);
     }
     
     public void maxStat(Stat s, int c) {
@@ -55,6 +71,11 @@ public class stats {
         } else {
             return;
         }
+        for (Achievement a : toach) {
+        	if (a.getStatId() == s.getId() && a.getCount() <= c) {
+        		awardAchievement(a);
+        	}
+        }
         stats.put(s, c);
     }
     
@@ -63,6 +84,14 @@ public class stats {
             return stats.get(s);
         }
         return 0;
+    }
+    
+    public void awardAchievement(Achievement a) {
+    	if (!achs.contains(a)) {
+    		newa.add(a);
+    		achs.add(a);
+    		toach.remove(a);
+    	}
     }
     
     public void destroy() {
@@ -94,5 +123,9 @@ public class stats {
         }
         updated.removeAll(r);
         r.clear();
+        for (Achievement a : newa) {
+        	plugin.sql.update("INSERT INTO cod_achievement VALUES(NULL, '" + p.dbid + "', '" + a.getId() + "')");
+        }
+        newa.clear();
     }
 }

@@ -77,6 +77,7 @@ public class game {
             }
             if (i.getTeam() == winners) {
                 i.s.incStat(Stat.WINS);
+                i.addPoints(10);
             } else {
                 i.s.incStat(Stat.LOSSES);
             }

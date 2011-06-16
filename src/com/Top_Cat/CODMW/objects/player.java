@@ -18,7 +18,7 @@ import com.Top_Cat.CODMW.sql.stats;
 
 public class player {
     
-    public int kill, streak, arrow, knife, death, points;
+    public int kill, streak, arrow, knife, death, assists, points;
     public streaks last = new streaks();
     private final main plugin;
     public Player p;
@@ -44,12 +44,12 @@ public class player {
         
         ResultSet r = plugin.sql.query("SELECT * FROM cod_players WHERE username = '" + _p.getDisplayName() + "'");
         try {
-r.next();
+            r.next();
         nick = r.getString("nick");
         dbid = r.getInt("Id");
-} catch (SQLException e) {
-e.printStackTrace();
-}
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         s = new stats(plugin, this);
         s.incStat(Stat.LOGIN);
@@ -106,6 +106,7 @@ e.printStackTrace();
         knife = 0;
         death = 0;
         streak = 0;
+        assists = 0;
         points = 0;
     }
     
@@ -117,7 +118,7 @@ e.printStackTrace();
     
     public void addStreak() {
         streak++;
-        s.maxStat(Stat.MAX_KILLS, streak);
+        s.maxStat(Stat.MAX_STREAK, streak);
         //System.out.println(plugin.p(p).nick + " got a " + streak + " kill streak!");
         switch (streak) {
             case 3: giveItem(2, new ItemStack(Material.WALL_SIGN, 2)); break;
@@ -150,8 +151,10 @@ e.printStackTrace();
             }
             if (h <= 0) {
                 if (plugin.p(attacker) != this) {
-                plugin.p(attacker).s.incStat(Stat.KILLS);
+                    plugin.p(attacker).s.incStat(Stat.KILLS);
+                    plugin.p(attacker).addPoints(5);
                     plugin.p(attacker).kill++;
+                    plugin.p(attacker).s.maxStat(Stat.MAX_KILLS, plugin.p(attacker).kill);
                     if (reason <= 3) {
                         plugin.p(attacker).addStreak();
                     }
@@ -165,11 +168,15 @@ e.printStackTrace();
                 }
                 String assist_txt = "";
                 if (assist != null && assist != attacker) {
-                assist_txt = " (Assist: " + plugin.p(assist).nick + ")";
-                plugin.p(assist).s.incStat(Stat.ASSISTS);
+                    assist_txt = " (Assist: " + plugin.p(assist).nick + ")";
+                    plugin.p(assist).assists++;
+                    plugin.p(assist).s.incStat(Stat.ASSISTS);
+                    plugin.p(assist).addPoints(2);
                 }
                 plugin.p(attacker).s.incStat(Stat.DEATHS);
                 death++;
+                addPoints(-2);
+                s.maxStat(Stat.MAX_DEATHS, death);
                 streak = 0;
                 
                 h = 2;

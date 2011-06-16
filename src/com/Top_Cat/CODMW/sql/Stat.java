@@ -23,7 +23,7 @@ public enum Stat {
     SENTRY_DEATHS(17),
     CHOPPER_DEATHS(18),
     FALL_DEATHS(19),
-    MAX_KILLS(20),
+    MAX_STREAK(20),
     CLAYMORES_USED(21),
     APPLES_USED(22),
     DOGS_USED(23),
@@ -34,7 +34,10 @@ public enum Stat {
     LAST_DEATH(28),
     LAST_KILL(29),
     TOP_SCORE(30),
-    MAX_POINTS(31);
+    MAX_POINTS(31),
+    MAX_KILLS(32),
+    MAX_DEATHS(33),
+    SENTRIES_DESTROYED(34);
     
     private final int id;
 

@@ -65,6 +65,13 @@ public class CODEntityListener extends EntityListener {
                     Player attacker = (Player) (((EntityDamageByProjectileEvent) event).getDamager());
                     Player defender = (Player) (((EntityDamageByProjectileEvent) event).getEntity());
                     if (plugin.p(attacker).getTeam() != plugin.p(defender).getTeam()) {
+                    	if (reason == 2) {
+                    		double dif = (((EntityDamageByProjectileEvent) event).getProjectile().getLocation().getY() - event.getEntity().getLocation().getY()) - 1.5;
+                    		if (dif > 0 && dif < 0.5) {
+                    			System.out.println("Headshot?");
+                    		}
+                    		
+                    	}
                         plugin.p(defender).incHealth(1, attacker, reason);
                         event.setCancelled(false);
                     }
