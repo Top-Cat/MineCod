@@ -157,7 +157,7 @@ public class player {
                     kill--;
                 }
                 String assist_txt = "";
-                if (assist != attacker) {
+                if (assist != null && assist != attacker) {
                 	assist_txt = " (Assist: " + plugin.p(assist).nick + ")";
                 	plugin.p(assist).s.incStat(Stat.ASSISTS);
                 }

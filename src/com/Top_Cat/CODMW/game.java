@@ -140,8 +140,8 @@ public class game {
             }
             List<Wolf> r = new ArrayList<Wolf>();
             for (Wolf i : plugin.wolves.keySet()) {
-                if (plugin.wolves.get(i) < new Date().getTime()) {
-                    i.remove();
+                if (plugin.wolves.get(i).expire < new Date().getTime()) {
+                	i.remove();
                     r.add(i);
                 }
             }
@@ -171,7 +171,7 @@ public class game {
                             i.remove();
                             
                             for (chopper j : plugin.choppers) {
-                            	System.out.println(j.l.distance(l));
+                            	//System.out.println(j.l.distance(l));
                                 if (j.l.distance(l) < 1.5) {
                                     j.arrowhit();
                                 }

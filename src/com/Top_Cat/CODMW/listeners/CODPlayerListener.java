@@ -31,6 +31,7 @@ import org.bukkit.inventory.PlayerInventory;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
+import com.Top_Cat.CODMW.objects.CWolf;
 import com.Top_Cat.CODMW.objects.chopper;
 import com.Top_Cat.CODMW.objects.claymore;
 import com.Top_Cat.CODMW.objects.player;
@@ -46,6 +47,11 @@ public class CODPlayerListener extends PlayerListener {
     
     public CODPlayerListener(main instance) {
         plugin = instance;
+        allowed_pickup.add(Material.BOW);
+        allowed_pickup.add(Material.IRON_SWORD);
+        allowed_pickup.add(Material.ARROW);
+        allowed_pickup.add(Material.GOLD_HELMET);
+        allowed_pickup.add(Material.DIAMOND_HELMET);
         allowed_pickup.add(Material.FEATHER);
         allowed_pickup.add(Material.WALL_SIGN);
         allowed_pickup.add(Material.APPLE);
@@ -262,8 +268,8 @@ public class CODPlayerListener extends PlayerListener {
                     if (_p.getTeam() == t) {
                         Wolf w = (Wolf) plugin.currentWorld.spawnCreature(plugin.game.spawns3.get(plugin.game.generator.nextInt(plugin.game.spawns3.size())), CreatureType.WOLF);
                         w.setTarget(i);
-                        w.setOwner(event.getPlayer());
-                        plugin.wolves.put(w, new Date().getTime() + 30000);
+                        w.setAngry(true);
+                        plugin.wolves.put(w, new CWolf(plugin, w, event.getPlayer(), new Date().getTime() + 60000));
                     }
                 }
             } else if (um == Material.DIAMOND) {

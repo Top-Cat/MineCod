@@ -26,6 +26,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.Top_Cat.CODMW.listeners.CODBlockListener;
 import com.Top_Cat.CODMW.listeners.CODEntityListener;
 import com.Top_Cat.CODMW.listeners.CODPlayerListener;
+import com.Top_Cat.CODMW.objects.CWolf;
 import com.Top_Cat.CODMW.objects.chopper;
 import com.Top_Cat.CODMW.objects.claymore;
 import com.Top_Cat.CODMW.objects.door;
@@ -46,7 +47,7 @@ public class main extends JavaPlugin {
     public final CODBlockListener blockListener = new CODBlockListener(this);
     public final CODEntityListener entityListener = new CODEntityListener(this);
     public ArrayList<claymore> clays = new ArrayList<claymore>();
-    public HashMap<Wolf, Long> wolves = new HashMap<Wolf, Long>();
+    public HashMap<Wolf, CWolf> wolves = new HashMap<Wolf, CWolf>();
     public ArrayList<sentry> sentries = new ArrayList<sentry>();
     public ArrayList<Player> totele = new ArrayList<Player>();
     public ArrayList<chopper> choppers = new ArrayList<chopper>();

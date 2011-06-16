@@ -34,7 +34,7 @@ public class chopper {
         
         plugin.choppers.add(this);
         
-        k.schedule(new tick(), 200, 200);
+        k.schedule(new tick(), 150, 150);
         k.schedule(new destroyTask(), 60000);
         l = avgEnemies();
         moveto();
@@ -81,7 +81,7 @@ public class chopper {
                     } catch (Exception e) {
                         System.out.println("Error moving chopper");
                     }
-                } else if (tick > 15) {
+                } else if (tick > 18) {
                     tick = 0;
                     moveto();
                 } else {
@@ -119,7 +119,7 @@ public class chopper {
                 a++;
             }
         }
-        Location out = new Location(plugin.currentWorld, ax, 0, az);
+        Location out = new Location(plugin.currentWorld, (ax - 3) + plugin.game.generator.nextInt(7), 0, (az - 3) + plugin.game.generator.nextInt(7));
         out.setY(out.getWorld().getHighestBlockYAt(out) + 7);
         return out;
     }
