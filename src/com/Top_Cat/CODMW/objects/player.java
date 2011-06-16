@@ -18,7 +18,7 @@ import com.Top_Cat.CODMW.sql.stats;
 
 public class player {
     
-    public int kill, streak, arrow, knife, death;
+    public int kill, streak, arrow, knife, death, points;
     public streaks last = new streaks();
     private final main plugin;
     public Player p;
@@ -106,6 +106,13 @@ public class player {
         knife = 0;
         death = 0;
         streak = 0;
+        points = 0;
+    }
+    
+    public void addPoints(int c) {
+    	points += c;
+    	s.incStat(Stat.POINTS, c);
+    	s.maxStat(Stat.MAX_POINTS, points);
     }
     
     public void addStreak() {

@@ -33,7 +33,8 @@ public enum Stat {
 	ASSISTS(27),
 	LAST_DEATH(28),
 	LAST_KILL(29),
-	TOP_SCORE(30);
+	TOP_SCORE(30),
+	MAX_POINTS(31);
 	
 	private final int id;
 
