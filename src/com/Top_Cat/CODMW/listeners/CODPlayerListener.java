@@ -70,14 +70,14 @@ public class CODPlayerListener extends PlayerListener {
         String nick = event.getPlayer().getDisplayName();
         ResultSet r = plugin.sql.query("SELECT * FROM cod_players WHERE username = '" + event.getPlayer().getDisplayName() + "'");
         try {
-			if (r.next()) {
-				nick = r.getString("nick");
-			} else {
-				plugin.sql.update("INSERT INTO cod_players VALUES (NULL, '" + event.getPlayer().getDisplayName() + "', '" + event.getPlayer().getDisplayName() + "')");
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+            if (r.next()) {
+                nick = r.getString("nick");
+            } else {
+                plugin.sql.update("INSERT INTO cod_players VALUES (NULL, '" + event.getPlayer().getDisplayName() + "', '" + event.getPlayer().getDisplayName() + "')");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         
         event.setJoinMessage(plugin.d + "9" + nick + " has joined the fray");
         event.getPlayer().sendMessage(plugin.d + "9Welcome to The Gigcast's MineCod Server!");
@@ -111,8 +111,8 @@ public class CODPlayerListener extends PlayerListener {
             
             int d = (int) Math.floor(Math.abs(plugin.diam - plugin.gold) / 2);
             if (d > 0) {
-            	nextbalance = new Date().getTime() + 10000;
-            	
+                nextbalance = new Date().getTime() + 10000;
+                
             }
         }
     }
@@ -121,30 +121,30 @@ public class CODPlayerListener extends PlayerListener {
     
     public class balanceteams extends TimerTask {
 
-		@Override
-		public void run() {
-			if (nextbalance < new Date().getTime()) {
-				int d = (int) Math.floor(Math.abs(plugin.diam - plugin.gold) / 2);
-	            team b = team.DIAMOND;
-	            if (plugin.gold > plugin.diam) {
-	            	b = team.GOLD;
-	            }
-	            
-	            if (d > 0) {
-	    			plugin.game.sendMessage(team.BOTH, "Balancing teams...");
-	            	ArrayList<player> bigteam = new ArrayList<player>();
-	            	for (player i : plugin.players.values()) {
-	            		if (i.getTeam() == b) {
-	            			bigteam.add(i);
-	            		}
-	            	}
-	            	for (int i = 0; i < d; i++) {
-	            		plugin.switchplayer(bigteam.remove(generator.nextInt(bigteam.size())).p);
-	            	}
-	            }
-			}
-		}
-    	
+        @Override
+        public void run() {
+            if (nextbalance < new Date().getTime()) {
+                int d = (int) Math.floor(Math.abs(plugin.diam - plugin.gold) / 2);
+                team b = team.DIAMOND;
+                if (plugin.gold > plugin.diam) {
+                    b = team.GOLD;
+                }
+                
+                if (d > 0) {
+                    plugin.game.sendMessage(team.BOTH, "Balancing teams...");
+                    ArrayList<player> bigteam = new ArrayList<player>();
+                    for (player i : plugin.players.values()) {
+                        if (i.getTeam() == b) {
+                            bigteam.add(i);
+                        }
+                    }
+                    for (int i = 0; i < d; i++) {
+                        plugin.switchplayer(bigteam.remove(generator.nextInt(bigteam.size())).p);
+                    }
+                }
+            }
+        }
+        
     }
 
     @Override
@@ -238,7 +238,7 @@ public class CODPlayerListener extends PlayerListener {
             if (um == Material.BOW) {
                 plugin.p(event.getPlayer()).stime = new Date().getTime() + 5000;
                 if (event.getPlayer().getInventory().contains(Material.ARROW)) {
-                	plugin.p(event.getPlayer()).s.incStat(Stat.ARROWS_FIRED);
+                    plugin.p(event.getPlayer()).s.incStat(Stat.ARROWS_FIRED);
                 }
             } else if (um == Material.APPLE) {
                 plugin.p(event.getPlayer()).vtime = new Date().getTime() + 10000;
@@ -267,7 +267,7 @@ public class CODPlayerListener extends PlayerListener {
                 for (Player i : plugin.players.keySet()) {
                     player _p = plugin.p(i);
                     if (_p.getTeam() == t) {
-                    	double theta = (generator.nextFloat() * Math.PI * 2);
+                        double theta = (generator.nextFloat() * Math.PI * 2);
                         Wolf w = (Wolf) plugin.currentWorld.spawnCreature(i.getLocation().add(15 * Math.cos(theta), 0, 15 * Math.sin(theta)), CreatureType.WOLF);
                         w.setTarget(i);
                         w.setAngry(true);
@@ -280,14 +280,14 @@ public class CODPlayerListener extends PlayerListener {
                 new chopper(plugin, event.getPlayer());
             }
         } else if (event.getAction() == Action.LEFT_CLICK_BLOCK && event.getPlayer().getItemInHand().getType() == Material.IRON_SWORD) {
-        	ArrayList<sentry> r = new ArrayList<sentry>();
-        	for (sentry i : plugin.sentries) {
-        		if (event.getClickedBlock() == i.bt && plugin.p(event.getPlayer()).getTeam() != i.t) {
-        			i.destroy();
-        			r.add(i);
-        		}
-        	}
-        	plugin.sentries.removeAll(r);
+            ArrayList<sentry> r = new ArrayList<sentry>();
+            for (sentry i : plugin.sentries) {
+                if (event.getClickedBlock() == i.bt && plugin.p(event.getPlayer()).getTeam() != i.t) {
+                    i.destroy();
+                    r.add(i);
+                }
+            }
+            plugin.sentries.removeAll(r);
         }
     }
     

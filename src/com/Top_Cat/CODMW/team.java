@@ -5,7 +5,7 @@ public enum team {
     DIAMOND("b"),
     BOTH("f");
     
-	private final String colour;
+    private final String colour;
 
     team(String c) {
         this.colour = c;

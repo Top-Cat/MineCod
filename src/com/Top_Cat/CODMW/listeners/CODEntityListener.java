@@ -90,10 +90,10 @@ public class CODEntityListener extends EntityListener {
                 } else if (((EntityDamageByEntityEvent) event).getDamager() instanceof Wolf && ((EntityDamageByEntityEvent) event).getEntity() instanceof Player) {
                     Player defender = (Player) (((EntityDamageByEntityEvent) event).getEntity());
                     if (plugin.wolves.containsKey(((EntityDamageByEntityEvent) event).getDamager())) {
-	                    if (plugin.p(defender).getTeam() != plugin.wolves.get(((EntityDamageByEntityEvent) event).getDamager()).t) {
-		                    plugin.p(defender).incHealth(2, (Player) ((Wolf) ((EntityDamageByEntityEvent) event).getDamager()).getOwner(), 4);
-	                    }
-	                    plugin.wolves.remove(((EntityDamageByEntityEvent) event).getDamager());
+                    if (plugin.p(defender).getTeam() != plugin.wolves.get(((EntityDamageByEntityEvent) event).getDamager()).t) {
+                    plugin.p(defender).incHealth(2, (Player) ((Wolf) ((EntityDamageByEntityEvent) event).getDamager()).getOwner(), 4);
+                    }
+                    plugin.wolves.remove(((EntityDamageByEntityEvent) event).getDamager());
                     }
                     ((Wolf) ((EntityDamageByEntityEvent) event).getDamager()).remove();
                 } else if (((EntityDamageByEntityEvent) event).getEntity() instanceof Wolf) {

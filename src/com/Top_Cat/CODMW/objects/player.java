@@ -44,13 +44,13 @@ public class player {
         
         ResultSet r = plugin.sql.query("SELECT * FROM cod_players WHERE username = '" + _p.getDisplayName() + "'");
         try {
-			r.next();
-	        nick = r.getString("nick");
-	        dbid = r.getInt("Id");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
+r.next();
+        nick = r.getString("nick");
+        dbid = r.getInt("Id");
+} catch (SQLException e) {
+e.printStackTrace();
+}
+
         s = new stats(plugin, this);
         s.incStat(Stat.LOGIN);
         
@@ -110,9 +110,9 @@ public class player {
     }
     
     public void addPoints(int c) {
-    	points += c;
-    	s.incStat(Stat.POINTS, c);
-    	s.maxStat(Stat.MAX_POINTS, points);
+    points += c;
+    s.incStat(Stat.POINTS, c);
+    s.maxStat(Stat.MAX_POINTS, points);
     }
     
     public void addStreak() {
@@ -150,7 +150,7 @@ public class player {
             }
             if (h <= 0) {
                 if (plugin.p(attacker) != this) {
-                	plugin.p(attacker).s.incStat(Stat.KILLS);
+                plugin.p(attacker).s.incStat(Stat.KILLS);
                     plugin.p(attacker).kill++;
                     if (reason <= 3) {
                         plugin.p(attacker).addStreak();
@@ -165,8 +165,8 @@ public class player {
                 }
                 String assist_txt = "";
                 if (assist != null && assist != attacker) {
-                	assist_txt = " (Assist: " + plugin.p(assist).nick + ")";
-                	plugin.p(assist).s.incStat(Stat.ASSISTS);
+                assist_txt = " (Assist: " + plugin.p(assist).nick + ")";
+                plugin.p(assist).s.incStat(Stat.ASSISTS);
                 }
                 plugin.p(attacker).s.incStat(Stat.DEATHS);
                 death++;
@@ -214,7 +214,7 @@ public class player {
                 plugin.game.death(this, plugin.p(attacker), p.getLocation());
             }
             if (_h > 0) {
-            	assist = attacker;
+            assist = attacker;
             }
         } else {
             h = 2;

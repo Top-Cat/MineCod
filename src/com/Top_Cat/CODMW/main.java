@@ -70,7 +70,7 @@ public class main extends JavaPlugin {
     }
     
     public player p(Player p) {
-    	return players.get(p);
+        return players.get(p);
     }
     
     @Override
@@ -232,7 +232,7 @@ public class main extends JavaPlugin {
             gold++;
             diam--;
         } else {
-        	p.sendMessage("Teams cannot be stacked!");
+            p.sendMessage("Teams cannot be stacked!");
             return;
         }
         p(p).resetScore();

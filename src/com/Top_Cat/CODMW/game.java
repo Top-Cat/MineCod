@@ -47,18 +47,18 @@ public class game {
         dl = !dl;
         
         if (p.getTeam() == team.DIAMOND) {
-        	gold++;
+            gold++;
         } else {
-        	diam++;
+            diam++;
         }
         
         team winners;
         if (diam >= 50) {
-        	winners = team.DIAMOND;
+            winners = team.DIAMOND;
             sendMessage(team.DIAMOND, winmesssages.get(generator.nextInt(winmesssages.size())));
             sendMessage(team.GOLD, lossmesssages.get(generator.nextInt(lossmesssages.size())));
         } else if (gold >= 50) {
-        	winners = team.GOLD;
+            winners = team.GOLD;
             sendMessage(team.GOLD, winmesssages.get(generator.nextInt(winmesssages.size())));
             sendMessage(team.DIAMOND, lossmesssages.get(generator.nextInt(lossmesssages.size())));
         } else {
@@ -76,9 +76,9 @@ public class game {
                 case DIAMOND: i.p.getInventory().setHelmet(new ItemStack(Material.DIAMOND_HELMET, 1)); break;
             }
             if (i.getTeam() == winners) {
-            	i.s.incStat(Stat.WINS);
+                i.s.incStat(Stat.WINS);
             } else {
-            	i.s.incStat(Stat.LOSSES);
+                i.s.incStat(Stat.LOSSES);
             }
         }
         
@@ -141,7 +141,7 @@ public class game {
             List<Wolf> r = new ArrayList<Wolf>();
             for (Wolf i : plugin.wolves.keySet()) {
                 if (plugin.wolves.get(i).expire < new Date().getTime()) {
-                	i.remove();
+                    i.remove();
                     r.add(i);
                 }
             }
@@ -171,7 +171,6 @@ public class game {
                             i.remove();
                             
                             for (chopper j : plugin.choppers) {
-                            	//System.out.println(j.l.distance(l));
                                 if (j.l.distance(l) < 1.5) {
                                     j.arrowhit();
                                 }

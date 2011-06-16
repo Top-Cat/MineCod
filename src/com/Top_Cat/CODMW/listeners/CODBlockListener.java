@@ -63,7 +63,7 @@ public class CODBlockListener extends BlockListener {
             plugin.clays.add(new claymore(plugin, event.getBlockPlaced(), r, event.getPlayer()));
             plugin.p(event.getPlayer()).s.incStat(Stat.CLAYMORES_USED);
         } else if (event.getBlockPlaced().getType() == Material.DISPENSER && event.getBlockPlaced().getRelative(0, 1, 0).getType() == Material.AIR) {
-        	plugin.p(event.getPlayer()).s.incStat(Stat.SENTRIES_PLACED);
+        plugin.p(event.getPlayer()).s.incStat(Stat.SENTRIES_PLACED);
             event.getBlockPlaced().setType(Material.FENCE);
             event.getBlockPlaced().getRelative(0, 1, 0).setType(Material.DISPENSER);
             int r = rotateblock(event.getPlayer(), event.getBlockPlaced().getRelative(0, 1, 0));
