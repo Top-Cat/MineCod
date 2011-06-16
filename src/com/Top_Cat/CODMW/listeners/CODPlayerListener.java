@@ -263,13 +263,15 @@ public class CODPlayerListener extends PlayerListener {
                 if (plugin.p(event.getPlayer()).getTeam() == team.DIAMOND) {
                     t = team.GOLD;
                 }
+                plugin.game.sendMessage(team.BOTH, plugin.d + plugin.p(event.getPlayer()).getTeam().getColour() + plugin.p(event.getPlayer()).nick + plugin.d + "f called in a pack of dogs!");
                 for (Player i : plugin.players.keySet()) {
                     player _p = plugin.p(i);
                     if (_p.getTeam() == t) {
-                        Wolf w = (Wolf) plugin.currentWorld.spawnCreature(plugin.game.spawns3.get(plugin.game.generator.nextInt(plugin.game.spawns3.size())), CreatureType.WOLF);
+                    	double theta = (generator.nextFloat() * Math.PI * 2);
+                        Wolf w = (Wolf) plugin.currentWorld.spawnCreature(i.getLocation().add(15 * Math.cos(theta), 0, 15 * Math.sin(theta)), CreatureType.WOLF);
                         w.setTarget(i);
                         w.setAngry(true);
-                        plugin.wolves.put(w, new CWolf(plugin, w, event.getPlayer(), new Date().getTime() + 60000));
+                        plugin.wolves.put(w, new CWolf(plugin, w, event.getPlayer(), new Date().getTime() + 30000));
                     }
                 }
             } else if (um == Material.DIAMOND) {

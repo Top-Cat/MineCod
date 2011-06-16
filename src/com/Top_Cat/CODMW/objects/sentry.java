@@ -23,10 +23,10 @@ public class sentry {
     public sentry(main instance, Block _c, int r, Player _o) {
         rot = r;
         plugin = instance;
-        t = plugin.p(_o).getTeam();
+        owner = _o;
+        t = plugin.p(owner).getTeam();
         b = _c;
         bt = _c.getRelative(0, 1, 0);
-        owner = _o;
         k.schedule(new tick(), 200, 200);
         k.schedule(new destroyTask(), 60000);
         plugin.sentries.add(this);

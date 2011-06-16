@@ -31,6 +31,7 @@ public class chopper {
         plugin = instance;
         owner = _o;
         t = plugin.p(owner).getTeam();
+        plugin.game.sendMessage(team.BOTH, plugin.d + t.getColour() + plugin.p(owner).nick + plugin.d + "f called in a chopper!");
         
         plugin.choppers.add(this);
         
