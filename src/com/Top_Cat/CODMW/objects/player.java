@@ -120,7 +120,7 @@ public class player {
     public void addStreak() {
         streak++;
         s.maxStat(Stat.MAX_STREAK, streak);
-        System.out.println(nick + " got a " + streak + " kill streak!");
+        //System.out.println(nick + " got a " + streak + " kill streak!");
         switch (streak) {
             case 3: giveItem(2, new ItemStack(Material.WALL_SIGN, 2)); s.incStat(Stat.CLAYMORES_ACHIEVED); break;
             case 5: giveItem(3, new ItemStack(Material.APPLE, 1)); s.incStat(Stat.APPLES_ACHIEVED); break;
@@ -162,6 +162,8 @@ public class player {
                     }
                     if (p.getDisplayName().equalsIgnoreCase("Gigthank")) {
                     	a.s.awardAchievement(Achievement.KILL_GIG);
+                    } else if (p.getDisplayName().equalsIgnoreCase("Notch")) {
+                    	a.s.awardAchievement(Achievement.KILL_NOTCH);
                     }
                     if (reason <= 3) {
                         a.addStreak();

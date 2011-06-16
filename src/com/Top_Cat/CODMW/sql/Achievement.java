@@ -67,7 +67,8 @@ public enum Achievement {
     CHOPPER_KILL_10(61, Stat.CHOPPER_KILLS, 10, "Target neutralised."),
     CHOPPER_KILL_25(62, Stat.CHOPPER_KILLS, 25, "Mass murder"),
     CHOPPER_KILL_50(63, Stat.CHOPPER_KILLS, 50, "Overpowered!"),
-    CHOPPER_KILL_100(64, Stat.CHOPPER_KILLS, 100, "Ragequit");
+    CHOPPER_KILL_100(64, Stat.CHOPPER_KILLS, 100, "Ragequit"),
+    KILL_NOTCH(65, Stat.OTHER, -1, "Kill Notch");
     
     private final int id;
     private final Stat s;
