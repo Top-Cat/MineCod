@@ -115,7 +115,6 @@ public class game {
         @Override
         public void run() {
             for (player p : plugin.players.values()) {
-                p.resetScore();
                 if (p.vtime < new Date().getTime()) {
                     p.p.getInventory().clear(38);
                     p.p.getInventory().clear(37);
@@ -219,6 +218,7 @@ public class game {
         diam = 0;
         gold = 0;
         for (Player p : plugin.players.keySet()) {
+            plugin.p(p).resetScore();
             spawn(p, true);
         }
         initspawn = true;
@@ -257,12 +257,16 @@ public class game {
         return g;
     }
     
-    public void sendMessage(team t, String s) {
-        for (Player p : plugin.players.keySet()) {
-            if (t == team.BOTH || t == plugin.p(p).getTeam()) {
+    public void sendMessage(team t, String s, Player exclude) {
+    	for (Player p : plugin.players.keySet()) {
+            if ((t == team.BOTH || t == plugin.p(p).getTeam()) && p != exclude) {
                 p.sendMessage(s);
             }
         }
+    }
+    
+    public void sendMessage(team t, String s) {
+        sendMessage(t, s, null);
     }
     
 }

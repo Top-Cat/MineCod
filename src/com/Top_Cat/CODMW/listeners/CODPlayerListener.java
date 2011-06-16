@@ -208,7 +208,9 @@ public class CODPlayerListener extends PlayerListener {
                 amm = ammo;
             }
             if (amm > 99) { amm = 99; }
-            plugin.p(event.getPlayer()).s.incStat(Stat.AMMO_PICKED_UP, amm - ammo);
+            if (plugin.players.containsKey(event.getPlayer())) {
+            	plugin.p(event.getPlayer()).s.incStat(Stat.AMMO_PICKED_UP, amm - ammo);
+            }
             PlayerInventory i = event.getPlayer().getInventory();
             if (i.getItem(7) != null && i.getItem(7).getType() != Material.FEATHER && i.getItem(7).getType() != Material.AIR) {
                 i.addItem(new ItemStack(Material.FEATHER, amm));

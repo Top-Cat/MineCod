@@ -3,6 +3,7 @@ package com.Top_Cat.CODMW.sql;
 import java.util.ArrayList;
 
 public enum Stat {
+    OTHER(-1),
     POINTS(0),
     KILLS(1),
     DEATHS(2),
@@ -42,7 +43,8 @@ public enum Stat {
     APPLES_ACHIEVED(36),
     DOGS_ACHIEVED(37),
     SENTRIES_ACHIEVED(38),
-    CHOPPERS_ACHIEVED(39);
+    CHOPPERS_ACHIEVED(39),
+    INVULNERABLE_KILLS(40);
     
     private final int id;
 
@@ -57,7 +59,9 @@ public enum Stat {
     private static ArrayList<Stat> table = new ArrayList<Stat>(); 
     static {
         for (Stat i : Stat.values()) {
-            table.add(i.getId(), i);
+        	if (i.getId() >= 0) {
+        	    table.add(i.getId(), i);
+        	}
         }
     }
 
