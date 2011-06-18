@@ -20,7 +20,9 @@ import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerInventoryEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -47,17 +49,21 @@ public class CODPlayerListener extends PlayerListener {
     
     public CODPlayerListener(main instance) {
         plugin = instance;
-        allowed_pickup.add(Material.BOW);
-        allowed_pickup.add(Material.IRON_SWORD);
-        allowed_pickup.add(Material.ARROW);
-        allowed_pickup.add(Material.GOLD_HELMET);
-        allowed_pickup.add(Material.DIAMOND_HELMET);
         allowed_pickup.add(Material.FEATHER);
         allowed_pickup.add(Material.WALL_SIGN);
         allowed_pickup.add(Material.APPLE);
         allowed_pickup.add(Material.BONE);
         allowed_pickup.add(Material.DISPENSER);
         allowed_pickup.add(Material.DIAMOND);
+    }
+    
+    @Override
+    public void onPlayerDropItem(PlayerDropItemEvent event) {
+    	CraftEntity item = (CraftEntity)event.getItemDrop();
+        int itemId = ((EntityItem)item.getHandle()).itemStack.id;
+        if (!allowed_pickup.contains(Material.getMaterial(itemId))) {
+        	event.setCancelled(true);
+        }
     }
     
     @Override

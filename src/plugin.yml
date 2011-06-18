@@ -2,6 +2,7 @@ name: CODMW
 main: com.Top_Cat.CODMW.main
 version: 0.1
 author: Top_Cat
+softdepend: [BukkitContrib]
 commands:
     r:
         description: Reload bow

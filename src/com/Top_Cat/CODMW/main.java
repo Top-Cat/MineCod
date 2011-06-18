@@ -25,6 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.Top_Cat.CODMW.listeners.CODBlockListener;
 import com.Top_Cat.CODMW.listeners.CODEntityListener;
+import com.Top_Cat.CODMW.listeners.CODInventoryListener;
 import com.Top_Cat.CODMW.listeners.CODPlayerListener;
 import com.Top_Cat.CODMW.objects.CWolf;
 import com.Top_Cat.CODMW.objects.chopper;
@@ -46,6 +47,7 @@ public class main extends JavaPlugin {
     public final CODPlayerListener playerListener = new CODPlayerListener(this);
     public final CODBlockListener blockListener = new CODBlockListener(this);
     public final CODEntityListener entityListener = new CODEntityListener(this);
+    public final CODInventoryListener inventoryListener = new CODInventoryListener(this);
     public ArrayList<claymore> clays = new ArrayList<claymore>();
     public HashMap<Wolf, CWolf> wolves = new HashMap<Wolf, CWolf>();
     public ArrayList<sentry> sentries = new ArrayList<sentry>();
@@ -252,6 +254,7 @@ public class main extends JavaPlugin {
         pm.registerEvent(Event.Type.INVENTORY_OPEN, playerListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_PICKUP_ITEM, playerListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Normal, this);
+        pm.registerEvent(Event.Type.PLAYER_DROP_ITEM, playerListener, Priority.Normal, this);
         
         pm.registerEvent(Event.Type.BLOCK_DAMAGE, blockListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Normal, this);
@@ -261,6 +264,8 @@ public class main extends JavaPlugin {
         pm.registerEvent(Event.Type.CREATURE_SPAWN, entityListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PAINTING_BREAK, entityListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PAINTING_PLACE, entityListener, Priority.Normal, this);
+        
+        pm.registerEvent(Event.Type.CUSTOM_EVENT, inventoryListener, Priority.Normal, this);
         
         PluginDescriptionFile pdfFile = this.getDescription();
         System.out.println( pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!" );

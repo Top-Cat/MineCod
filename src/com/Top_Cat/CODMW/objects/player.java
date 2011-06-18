@@ -120,7 +120,6 @@ public class player {
     public void addStreak() {
         streak++;
         s.maxStat(Stat.MAX_STREAK, streak);
-        //System.out.println(nick + " got a " + streak + " kill streak!");
         switch (streak) {
             case 3: giveItem(2, new ItemStack(Material.WALL_SIGN, 2)); s.incStat(Stat.CLAYMORES_ACHIEVED); break;
             case 5: giveItem(3, new ItemStack(Material.APPLE, 1)); s.incStat(Stat.APPLES_ACHIEVED); break;
@@ -133,7 +132,7 @@ public class player {
     public void giveItem(int pslot, ItemStack s) {
         if (s.getAmount() > 0) {
             PlayerInventory i = p.getInventory();
-            if (i.contains(s.getType()) || i.getItem(pslot) != null) {
+            if (i.contains(s.getType()) || (i.getItem(pslot) != null && i.getItem(pslot).getType() != s.getType() && i.getItem(pslot).getType() != Material.AIR )) {
                 i.addItem(s);
             } else {
                 i.setItem(pslot, s);
@@ -178,7 +177,7 @@ public class player {
                 }
                 String assist_txt = "";
                 if (assist != null && assist != attacker) {
-                    assist_txt = " (Assist: " + plugin.p(assist).nick + ")";
+                    assist_txt = " (Assist: " + plugin.d + plugin.p(assist).getTeam().getColour() + plugin.p(assist).nick + ")";
                     plugin.p(assist).assists++;
                     plugin.p(assist).s.incStat(Stat.ASSISTS);
                     plugin.p(assist).addPoints(2);
@@ -212,14 +211,18 @@ public class player {
                 }
                 ammo = (int) (ammo / 15);
                 
+                String desc = "";
                 switch (reason) {
                     case 0: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(p).nick + " fell to his death. LOL!" + assist_txt); plugin.p(p).s.incStat(Stat.FALL_DEATHS); break;
-                    case 1: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + " knifed " + plugin.p(p).nick + assist_txt); plugin.p(p).s.incStat(Stat.KNIFE_DEATHS); plugin.p(attacker).s.incStat(Stat.KNIFE_KILLS); break;
-                    case 2: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + " shot " + plugin.p(p).nick + assist_txt); plugin.p(p).s.incStat(Stat.BOW_DEATHS); plugin.p(attacker).s.incStat(Stat.BOW_KILLS); break;
-                    case 3: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + " claymored " + plugin.p(p).nick + assist_txt); plugin.p(p).s.incStat(Stat.CLAYMORE_DEATHS); plugin.p(attacker).s.incStat(Stat.CLAYMORE_KILLS); break;
-                    case 4: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + "'s dogs mauled " + plugin.p(p).nick + assist_txt); plugin.p(p).s.incStat(Stat.DOG_DEATHS); plugin.p(attacker).s.incStat(Stat.DOG_KILLS); break;
-                    case 5: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + "'s sentry shot " + plugin.p(p).nick + assist_txt); plugin.p(p).s.incStat(Stat.SENTRY_DEATHS); plugin.p(attacker).s.incStat(Stat.SENTRY_KILLS); break;
-                    case 6: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(attacker).nick + "'s chopper battered " + plugin.p(p).nick + assist_txt); plugin.p(p).s.incStat(Stat.CHOPPER_DEATHS); plugin.p(attacker).s.incStat(Stat.CHOPPER_KILLS); break;
+                    case 1: desc = " kinfed"; plugin.p(p).s.incStat(Stat.KNIFE_DEATHS); plugin.p(attacker).s.incStat(Stat.KNIFE_KILLS); break;
+                    case 2: desc = " shot"; plugin.p(p).s.incStat(Stat.BOW_DEATHS); plugin.p(attacker).s.incStat(Stat.BOW_KILLS); break;
+                    case 3: desc = " claymored"; plugin.p(p).s.incStat(Stat.CLAYMORE_DEATHS); plugin.p(attacker).s.incStat(Stat.CLAYMORE_KILLS); break;
+                    case 4: desc = "'s dogs mauled"; plugin.p(p).s.incStat(Stat.DOG_DEATHS); plugin.p(attacker).s.incStat(Stat.DOG_KILLS); break;
+                    case 5: desc = "'s sentry shot"; plugin.p(p).s.incStat(Stat.SENTRY_DEATHS); plugin.p(attacker).s.incStat(Stat.SENTRY_KILLS); break;
+                    case 6: desc = "'s chopper battered"; plugin.p(p).s.incStat(Stat.CHOPPER_DEATHS); plugin.p(attacker).s.incStat(Stat.CHOPPER_KILLS); break;
+                }
+                if (reason > 0) {
+                	plugin.game.sendMessage(team.BOTH, plugin.d + plugin.p(attacker).getTeam().getColour() + plugin.p(attacker).nick + plugin.d + "c" + desc + " " + plugin.d + t.getColour() + nick + assist_txt);
                 }
                 clearinv();
                 todrop += ammo;
