@@ -55,7 +55,7 @@ public class sentry {
             for (player i : plugin.players.values()) {
                 Location l1 = i.p.getLocation();
                 Location l2 = b.getLocation();
-                if (i.getTeam() != t && l1.distance(l2) < 10) {
+                if (i.getTeam() != t && l1.distance(l2) < 10 && Math.abs(l1.getY() - l2.getY()) < 3) {
                     int yaw = (int) (Math.toDegrees(Math.atan2(l1.getX() - (l2.getX() + 0.5), (l2.getZ() + 0.5) - l1.getZ())) + 180);
                     if (yaw >= 315) { yaw -= 359; }
                     int r = (int) Math.ceil((yaw + 45) / 90);

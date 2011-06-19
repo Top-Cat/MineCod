@@ -84,7 +84,7 @@ public class CODEntityListener extends EntityListener {
                     Location d = defender.getLocation();
                     if (attacker.getItemInHand().getType() == Material.IRON_SWORD) {
                         if (plugin.p(attacker).getTeam() != plugin.p(defender).getTeam()) {
-                            double dist = Math.sqrt(Math.pow(a.getX() - d.getX(), 2) + Math.pow(a.getY() - d.getY(), 2) + Math.pow(a.getZ() - d.getZ(), 2));
+                            double dist = Math.sqrt(Math.pow(a.getX() - d.getX(), 2) + Math.pow(a.getZ() - d.getZ(), 2));
                             if (dist < 1.5) {
                                 plugin.p(defender).incHealth(2, attacker, 1);
                                 event.setCancelled(false);

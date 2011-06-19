@@ -7,7 +7,7 @@ import java.util.TimerTask;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import com.Top_Cat.CODMW.game;
+import com.Top_Cat.CODMW.gamemodes.gamemode;
 
 public class redstone {
     
@@ -31,9 +31,9 @@ public class redstone {
         t.schedule(new countdown(), 1000, 1000);
     }
     
-    game g;
+    gamemode g;
     
-    public void countdown(game _g) {
+    public void countdown(gamemode _g) {
         g = _g;
         cur = 6;
     }

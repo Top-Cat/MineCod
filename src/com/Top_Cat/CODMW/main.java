@@ -7,15 +7,12 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import net.minecraft.server.EntityItem;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -28,6 +25,8 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.Top_Cat.CODMW.gamemodes.TDM;
+import com.Top_Cat.CODMW.gamemodes.gamemode;
 import com.Top_Cat.CODMW.listeners.CODBlockListener;
 import com.Top_Cat.CODMW.listeners.CODEntityListener;
 import com.Top_Cat.CODMW.listeners.CODInventoryListener;
@@ -60,12 +59,12 @@ public class main extends JavaPlugin {
     public ArrayList<chopper> choppers = new ArrayList<chopper>();
     public final String d = "\u00C2\u00A7";
     door d1,d2,d3,d4;
-    public game game;
+    public gamemode game;
     public boolean activeGame = false;
     public redstone r;
     Timer t = new Timer();
     public conn sql = new conn();
-    map currentMap;
+    public map currentMap;
     
     public void clearinv(Player p) {
         PlayerInventory i = p.getInventory();
@@ -169,7 +168,7 @@ public class main extends JavaPlugin {
         public void run() {
             if (activeGame == false) {
                 if (players.size() >= minplayers) {
-                    game = new game(plugin);
+                    game = new TDM(plugin);
                 } else {
                     scheduleGame();
                 }
@@ -208,24 +207,13 @@ public class main extends JavaPlugin {
                 return true;
             } else if (command.getName().equalsIgnoreCase("s")) {
                 if (args.length == 0) {
-                    p.sendMessage(d + "6Gold: " + game.gold + d + "f  " + d + "bDiamond: " + game.diam + d + "f      / 50");
+                	game.printScore(p, team.BOTH);
                     return true;
-                } else if (args[0].equalsIgnoreCase("d") || args[0].equalsIgnoreCase("g")) {
-                    String c = "6";
-                    team t = team.GOLD;
-                    if (args[0].equalsIgnoreCase("d")) {
-                        c = "b";
-                        t = team.DIAMOND;
-                    }
-                    int td = 0;
-                    p.sendMessage(d + c + "Player Name | Ki | A | D |");
-                    for (player i : players.values()) {
-                        if (i.getTeam() == t) {
-                            td += i.kill;
-                            p.sendMessage(d + c + i.nick + " | " + i.kill + " | " + i.assists + " | " + i.death + " |");
-                        }
-                    }
-                    p.sendMessage(d + c + td + " / 50");
+                } else if (args[0].equalsIgnoreCase("d")) {
+                	game.printScore(p, team.DIAMOND);
+                    return true;
+                } else if (args[0].equalsIgnoreCase("g")) {
+                	game.printScore(p, team.GOLD);
                     return true;
                 }
             } else if (command.getName().equalsIgnoreCase("team") && args[0].equalsIgnoreCase("switch")) {

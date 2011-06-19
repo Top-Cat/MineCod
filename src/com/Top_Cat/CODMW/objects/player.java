@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import com.Top_Cat.CODMW.game;
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
+import com.Top_Cat.CODMW.gamemodes.TDM;
 import com.Top_Cat.CODMW.sql.Achievement;
 import com.Top_Cat.CODMW.sql.Stat;
 import com.Top_Cat.CODMW.sql.stats;
@@ -68,12 +68,12 @@ public class player {
         plugin.tot++;
         plugin.players.put(_p, this);
         
-        if (plugin.activeGame == true && plugin.game.initspawn == true) {
+        if (plugin.activeGame == true) {
             dead = true;
         }
         
         if (plugin.tot >= plugin.minplayers && plugin.activeGame == false) {
-            plugin.game = new game(plugin);
+            plugin.game = new TDM(plugin);
         }
         
         p.teleport(plugin.prespawn);
@@ -164,7 +164,7 @@ public class player {
                     } else if (p.getDisplayName().equalsIgnoreCase("Notch")) {
                     	a.s.awardAchievement(Achievement.KILL_NOTCH);
                     }
-                    if (reason <= 3) {
+                    if (reason <= 3 || reason == 7) {
                         a.addStreak();
                     }
                     
@@ -232,7 +232,7 @@ public class player {
                 p.teleport(plugin.prespawn);
                 dead = true;
                 
-                plugin.game.death(this, plugin.p(attacker), p.getLocation());
+                plugin.game.onKill(plugin.p(attacker), this, p.getLocation());
             }
             if (_h > 0) {
             assist = attacker;

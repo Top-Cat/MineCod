@@ -114,7 +114,7 @@ public class chopper {
         int az = 0;
         int a = 0;
         for (Player i : plugin.players.keySet()) {
-            if (plugin.p(i).getTeam() != t) {
+            if (plugin.p(i).getTeam() != t && plugin.p(i).dead == false) {
                 ax = (int) (((ax * a) + i.getLocation().getX()) / (a + 1));
                 az = (int) (((az * a) + i.getLocation().getZ()) / (a + 1));
                 a++;

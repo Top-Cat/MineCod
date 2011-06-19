@@ -183,7 +183,7 @@ public class CODPlayerListener extends PlayerListener {
         if (event.getTo().getBlock().getRelative(0, -1, 0).getType() == Material.DISPENSER) {
             for (sentry i : plugin.sentries) {
                 if (i.b == event.getTo().getBlock().getRelative(0, -2, 0)) {
-                    event.setTo(plugin.game.spawntele(plugin.p(event.getPlayer()), event.getPlayer(), false));
+                    event.setTo(plugin.game.spawnTele(plugin.p(event.getPlayer()), event.getPlayer(), false));
                     event.getPlayer().sendMessage(plugin.d + "bOnly Gigs stand on dispensers, you have been respawned!");
                 }
             }
