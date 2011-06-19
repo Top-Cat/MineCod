@@ -164,7 +164,7 @@ public class CODPlayerListener extends PlayerListener {
                 new player(plugin, event.getPlayer(), team.DIAMOND);
             } else if (t.getX() > -8 && t.getX() < -6 && t.getZ() > 12 && t.getZ() < 14 && t.getBlockY() == 64) {
                 //Random team
-                if (plugin.gold > plugin.diam) {
+                if (generator.nextInt(2) > 0) {
                     new player(plugin, event.getPlayer(), team.DIAMOND);
                 } else {
                     new player(plugin, event.getPlayer(), team.GOLD);
