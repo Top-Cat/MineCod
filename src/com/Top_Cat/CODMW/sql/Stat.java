@@ -44,7 +44,8 @@ public enum Stat {
     DOGS_ACHIEVED(37),
     SENTRIES_ACHIEVED(38),
     CHOPPERS_ACHIEVED(39),
-    INVULNERABLE_KILLS(40);
+    INVULNERABLE_KILLS(40),
+    HEADSHOTS(41);
     
     private final int id;
 

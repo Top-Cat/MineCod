@@ -70,6 +70,7 @@ public class CODBlockListener extends BlockListener {
             int r = rotateblock(event.getPlayer(), event.getBlockPlaced().getRelative(0, 1, 0));
             new sentry(plugin, event.getBlockPlaced(), r, event.getPlayer());
         } else if (!event.getPlayer().isOp()) {
+        	System.out.println("Hmmm???");
             event.setBuild(false);
         }
     }

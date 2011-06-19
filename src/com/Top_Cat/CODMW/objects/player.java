@@ -177,7 +177,7 @@ public class player {
                 }
                 String assist_txt = "";
                 if (assist != null && assist != attacker) {
-                    assist_txt = " (Assist: " + plugin.d + plugin.p(assist).getTeam().getColour() + plugin.p(assist).nick + ")";
+                    assist_txt = plugin.d + "c (Assist: " + plugin.d + plugin.p(assist).getTeam().getColour() + plugin.p(assist).nick + plugin.d + "c)";
                     plugin.p(assist).assists++;
                     plugin.p(assist).s.incStat(Stat.ASSISTS);
                     plugin.p(assist).addPoints(2);
@@ -220,6 +220,7 @@ public class player {
                     case 4: desc = "'s dogs mauled"; plugin.p(p).s.incStat(Stat.DOG_DEATHS); plugin.p(attacker).s.incStat(Stat.DOG_KILLS); break;
                     case 5: desc = "'s sentry shot"; plugin.p(p).s.incStat(Stat.SENTRY_DEATHS); plugin.p(attacker).s.incStat(Stat.SENTRY_KILLS); break;
                     case 6: desc = "'s chopper battered"; plugin.p(p).s.incStat(Stat.CHOPPER_DEATHS); plugin.p(attacker).s.incStat(Stat.CHOPPER_KILLS); break;
+                    case 7: desc = " headshot"; plugin.p(p).s.incStat(Stat.BOW_DEATHS); plugin.p(attacker).s.incStat(Stat.HEADSHOTS); plugin.p(attacker).s.incStat(Stat.BOW_KILLS); break;
                 }
                 if (reason > 0) {
                 	plugin.game.sendMessage(team.BOTH, plugin.d + plugin.p(attacker).getTeam().getColour() + plugin.p(attacker).nick + plugin.d + "c" + desc + " " + plugin.d + t.getColour() + nick + assist_txt);

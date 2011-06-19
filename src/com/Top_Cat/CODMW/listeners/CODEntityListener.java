@@ -67,8 +67,8 @@ public class CODEntityListener extends EntityListener {
                     if (plugin.p(attacker).getTeam() != plugin.p(defender).getTeam()) {
                     	if (reason == 2) {
                     		double dif = (((EntityDamageByProjectileEvent) event).getProjectile().getLocation().getY() - event.getEntity().getLocation().getY()) - 1.5;
-                    		if (dif > 0 && dif < 0.5) {
-                    			System.out.println("Headshot?");
+                    		if (dif > 0.1 && dif < 0.5) {
+                    			reason = 7;
                     		}
                     		
                     	}
