@@ -118,6 +118,8 @@ public class main extends JavaPlugin {
             _r.next();
             currentMap = new map(sql, this, _r);
             currentWorld = getServer().createWorld(currentMap.folder, Environment.NORMAL);
+            currentWorld.setPVP(true);
+            currentWorld.setSpawnFlags(true, true);
             teamselect = new Location(currentWorld, -14, 64, 13, 270, 0);
             prespawn = new Location(currentWorld, -15.5, 64, 2.5, 270, 0);
             
