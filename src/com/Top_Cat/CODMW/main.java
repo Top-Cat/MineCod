@@ -7,12 +7,17 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import net.minecraft.server.EntityItem;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
 import org.bukkit.event.Event;
@@ -120,6 +125,11 @@ public class main extends JavaPlugin {
             currentWorld = getServer().createWorld(currentMap.folder, Environment.NORMAL);
             currentWorld.setPVP(true);
             currentWorld.setSpawnFlags(true, true);
+            for (Entity i : currentWorld.getEntities()) {
+            	if (i instanceof Item) {
+                    i.remove();
+            	}
+            }
             teamselect = new Location(currentWorld, -14, 64, 13, 270, 0);
             prespawn = new Location(currentWorld, -15.5, 64, 2.5, 270, 0);
             
