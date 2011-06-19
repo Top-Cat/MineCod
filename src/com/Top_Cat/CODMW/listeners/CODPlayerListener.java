@@ -22,7 +22,6 @@ import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerInventoryEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -44,7 +43,7 @@ public class CODPlayerListener extends PlayerListener {
     
     main plugin;
     Timer t = new Timer();
-    ArrayList<Material> allowed_pickup = new ArrayList<Material>();
+    public ArrayList<Material> allowed_pickup = new ArrayList<Material>();
     Random generator = new Random();
     
     public CODPlayerListener(main instance) {
@@ -122,6 +121,11 @@ public class CODPlayerListener extends PlayerListener {
                 
             }
         }
+        for (player i : plugin.players.values()) {
+        	if (i.assist == event.getPlayer()) {
+        		i.assist = null;
+        	}
+        }
     }
     
     long nextbalance = 0;
@@ -164,10 +168,14 @@ public class CODPlayerListener extends PlayerListener {
                 new player(plugin, event.getPlayer(), team.DIAMOND);
             } else if (t.getX() > -8 && t.getX() < -6 && t.getZ() > 12 && t.getZ() < 14 && t.getBlockY() == 64) {
                 //Random team
-                if (generator.nextInt(2) > 0) {
+                if (plugin.diam > plugin.gold) {
                     new player(plugin, event.getPlayer(), team.DIAMOND);
-                } else {
+                } else if (plugin.gold > plugin.diam) {
                     new player(plugin, event.getPlayer(), team.GOLD);
+                } else if (generator.nextInt(2) > 0) {
+                	new player(plugin, event.getPlayer(), team.DIAMOND);
+                } else {
+                	new player(plugin, event.getPlayer(), team.GOLD);
                 }
             } else {
                 return;

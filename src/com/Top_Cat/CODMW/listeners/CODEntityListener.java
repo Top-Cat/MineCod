@@ -85,7 +85,7 @@ public class CODEntityListener extends EntityListener {
                     if (attacker.getItemInHand().getType() == Material.IRON_SWORD) {
                         if (plugin.p(attacker).getTeam() != plugin.p(defender).getTeam()) {
                             double dist = Math.sqrt(Math.pow(a.getX() - d.getX(), 2) + Math.pow(a.getZ() - d.getZ(), 2));
-                            if (dist < 1.5) {
+                            if (dist < 1.8) {
                                 plugin.p(defender).incHealth(2, attacker, 1);
                                 event.setCancelled(false);
                             }
@@ -98,7 +98,7 @@ public class CODEntityListener extends EntityListener {
                     Player defender = (Player) (((EntityDamageByEntityEvent) event).getEntity());
                     if (plugin.wolves.containsKey(((EntityDamageByEntityEvent) event).getDamager())) {
                     if (plugin.p(defender).getTeam() != plugin.wolves.get(((EntityDamageByEntityEvent) event).getDamager()).t) {
-                    plugin.p(defender).incHealth(2, (Player) ((Wolf) ((EntityDamageByEntityEvent) event).getDamager()).getOwner(), 4);
+                    	plugin.p(defender).incHealth(2, plugin.wolves.get((Wolf) ((EntityDamageByEntityEvent) event).getDamager()).owner, 4);
                     }
                     plugin.wolves.remove(((EntityDamageByEntityEvent) event).getDamager());
                     }

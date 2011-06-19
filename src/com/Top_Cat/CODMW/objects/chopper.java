@@ -15,8 +15,8 @@ public class chopper {
     Location p;
     public Location l;
     main plugin;
-    Player owner;
-    team t;
+    public Player owner;
+    public team t;
     double mx = 0, mz = 0, tx = 0, tz = 0;
     int tick = 0;
     Timer k = new Timer();

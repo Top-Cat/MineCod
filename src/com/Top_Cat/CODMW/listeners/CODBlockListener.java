@@ -46,23 +46,27 @@ public class CODBlockListener extends BlockListener {
     
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
-        if (event.getBlockPlaced().getType() == Material.WALL_SIGN) {
-            int r = rotateblock(event.getPlayer(), event.getBlockPlaced());
-            Sign s = (Sign) event.getBlockPlaced().getState();
-            if (plugin.p(event.getPlayer()).getTeam() == team.DIAMOND) {
-                s.setLine(0, plugin.d + "b** DIAMOND **");
-                s.setLine(3, plugin.d + "b** DIAMOND **");
-            } else {
-                s.setLine(0, plugin.d + "6-- GOLD --");
-                s.setLine(3, plugin.d + "6-- GOLD --");
-            }
-            
-            s.setLine(1, "This side");
-            s.setLine(2, "towards enemy");
-            s.update();
-            plugin.clays.add(new claymore(plugin, event.getBlockPlaced(), r, event.getPlayer()));
-            plugin.p(event.getPlayer()).s.incStat(Stat.CLAYMORES_USED);
-        } else if (event.getBlockPlaced().getType() == Material.DISPENSER && event.getBlockPlaced().getRelative(0, 1, 0).getType() == Material.AIR) {
+    	if (event.getBlockPlaced().getType() == Material.WALL_SIGN) {
+    		int r = rotateblock(event.getPlayer(), event.getBlockPlaced());
+    		if (event.getBlockPlaced().getState() instanceof Sign) {
+	            Sign s = (Sign) event.getBlockPlaced().getState();
+	            if (plugin.p(event.getPlayer()).getTeam() == team.DIAMOND) {
+	                s.setLine(0, plugin.d + "b** DIAMOND **");
+	                s.setLine(3, plugin.d + "b** DIAMOND **");
+	            } else {
+	                s.setLine(0, plugin.d + "6-- GOLD --");
+	                s.setLine(3, plugin.d + "6-- GOLD --");
+	            }
+	            
+	            s.setLine(1, "This side");
+	            s.setLine(2, "towards enemy");
+	            s.update();
+	            plugin.clays.add(new claymore(plugin, event.getBlockPlaced(), r, event.getPlayer()));
+	            plugin.p(event.getPlayer()).s.incStat(Stat.CLAYMORES_USED);
+    		} else {
+    			event.setCancelled(true);
+    		}
+    	} else if (event.getBlockPlaced().getType() == Material.DISPENSER && event.getBlockPlaced().getRelative(0, 1, 0).getType() == Material.AIR) {
             plugin.p(event.getPlayer()).s.incStat(Stat.SENTRIES_PLACED);
             plugin.p(event.getPlayer()).addPoints(3);
             event.getBlockPlaced().setType(Material.FENCE);

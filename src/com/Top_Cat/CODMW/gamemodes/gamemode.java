@@ -8,10 +8,15 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import net.minecraft.server.EntityItem;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Sign;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
 import org.bukkit.inventory.ItemStack;
@@ -207,6 +212,7 @@ public class gamemode {
 	
 	public void tickfast() {
 		List<claymore> r = new ArrayList<claymore>();
+		List<Entity> r2 = new ArrayList<Entity>();
         for (Entity i : plugin.currentWorld.getEntities()) {
             if (i instanceof Arrow) {
                 Location l = i.getLocation();
@@ -218,7 +224,7 @@ public class gamemode {
                 }
                 if (ploc.containsKey(i)) {
                     if (l.distance(ploc.get(i)) < 0.1) {
-                        i.remove();
+                        r2.add(i);
                         
                         for (chopper j : plugin.choppers) {
                             if (j.l.distance(l) < 1.5) {
@@ -229,9 +235,42 @@ public class gamemode {
                     }
                 }
                 ploc.put((Arrow) i, l);
+            } else if (i instanceof Item) {
+                int itemId = ((EntityItem)((CraftEntity)i).getHandle()).itemStack.id;
+                if (!plugin.playerListener.allowed_pickup.contains(Material.getMaterial(itemId))) {
+                	r2.add(i);
+                }
+            }
+            for (Entity j : r2) {
+            	j.remove();
             }
         }
         for (claymore i : plugin.clays) {
+        	if (i.init < new Date().getTime() && i.b.getType() != Material.WALL_SIGN) {
+        		i.b.setType(Material.WALL_SIGN);
+        		
+        		switch (i.r) {
+                    case 1: i.b.setData((byte) 4); break;
+                    case 2: i.b.setData((byte) 2); break;
+                    case 3: i.b.setData((byte) 5); break;
+                    case 4: i.b.setData((byte) 3); break;
+                }
+        		
+        		if (i.b.getState() instanceof Sign) {
+	        		Sign s = (Sign) i.b.getState();
+	                if (i.t == team.DIAMOND) {
+	                    s.setLine(0, plugin.d + "b** DIAMOND **");
+	                    s.setLine(3, plugin.d + "b** DIAMOND **");
+	                } else {
+	                    s.setLine(0, plugin.d + "6-- GOLD --");
+	                    s.setLine(3, plugin.d + "6-- GOLD --");
+	                }
+	                
+	                s.setLine(1, "This side");
+	                s.setLine(2, "towards enemy");
+	                s.update();
+        		}
+        	}
             if (i.exploded && i.explode < new Date().getTime()) {
                 i.kill();
                 r.add(i);

@@ -12,24 +12,27 @@ import com.Top_Cat.CODMW.team;
 
 public class claymore {
 
-    team t;
+    public team t;
     public Block b, d1, d2;
     main plugin;
-    Player owner;
+    public Player owner;
     public boolean exploded = false;
-    public long explode = 0;
+    public long explode = 0, init = 0;
+    public int r;
 
-    public claymore(main instance, Block _c, int r, Player _o) {
+    public claymore(main instance, Block _c, int _r, Player _o) {
         plugin = instance;
         t = plugin.p(_o).getTeam();
         b = _c;
         owner = _o;
-        switch (r) {
+        init = new Date().getTime() + 1000;
+        switch (_r) {
             case 0: d1 = b.getRelative(0, 0, 1); d2 = b.getRelative(0, 0, 2); break;
             case 1: d1 = b.getRelative(-1, 0, 0); d2 = b.getRelative(-2, 0, 0); break;
             case 2: d1 = b.getRelative(0, 0, -1); d2 = b.getRelative(0, 0, -2); break;
             case 3: d1 = b.getRelative(1, 0, 0); d2 = b.getRelative(2, 0, 0); break;
         }
+        r = _r;
     }
 
     public void kill() {
@@ -40,6 +43,7 @@ public class claymore {
                 kill++;
             }
         }
+        init = new Date().getTime() + 10000;
         plugin.currentWorld.createExplosion(b.getLocation(), 0);
         b.setType(Material.AIR);
     }

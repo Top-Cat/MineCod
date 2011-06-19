@@ -16,7 +16,7 @@ public class sentry {
     public team t;
     public Block b, bt;
     main plugin;
-    Player owner;
+    public Player owner;
     Timer k = new Timer();
     int rot;
     

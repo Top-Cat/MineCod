@@ -75,6 +75,7 @@ public class TDM extends gamemode {
         }
         _p.stime = new Date().getTime() + 5000;
         p.teleport(g);
+        p.sendMessage(plugin.d + _p.getTeam().getColour() + _p.getTeam().toString() + " team go!");
         return g;
 	}
 	

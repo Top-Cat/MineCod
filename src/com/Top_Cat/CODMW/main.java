@@ -31,6 +31,7 @@ import com.Top_Cat.CODMW.listeners.CODBlockListener;
 import com.Top_Cat.CODMW.listeners.CODEntityListener;
 import com.Top_Cat.CODMW.listeners.CODInventoryListener;
 import com.Top_Cat.CODMW.listeners.CODPlayerListener;
+import com.Top_Cat.CODMW.listeners.CODWeatherListener;
 import com.Top_Cat.CODMW.objects.CWolf;
 import com.Top_Cat.CODMW.objects.chopper;
 import com.Top_Cat.CODMW.objects.claymore;
@@ -47,11 +48,12 @@ public class main extends JavaPlugin {
     public Location teamselect;
     public Location prespawn;
     public HashMap<Player, player> players = new HashMap<Player, player>();
-    public int gold, diam, tot, minplayers = 1;
+    public int gold, diam, tot, minplayers = 0;
     public final CODPlayerListener playerListener = new CODPlayerListener(this);
     public final CODBlockListener blockListener = new CODBlockListener(this);
     public final CODEntityListener entityListener = new CODEntityListener(this);
     public final CODInventoryListener inventoryListener = new CODInventoryListener(this);
+    public final CODWeatherListener weatherListener = new CODWeatherListener(this);
     public ArrayList<claymore> clays = new ArrayList<claymore>();
     public HashMap<Wolf, CWolf> wolves = new HashMap<Wolf, CWolf>();
     public ArrayList<sentry> sentries = new ArrayList<sentry>();
@@ -237,9 +239,31 @@ public class main extends JavaPlugin {
             p.sendMessage("Teams cannot be stacked!");
             return;
         }
-        p(p).resetScore();
+        player _p = p(p);
+        for (claymore i : clays) {
+        	if (i.owner == p) {
+        		i.t = _p.getTeam();
+        	}
+        }
+        for (sentry i : sentries) {
+        	if (i.owner == p) {
+        		i.t = _p.getTeam();
+        	}
+        }
+        for (CWolf i : wolves.values()) {
+        	if (i.owner == p) {
+        		i.wolf.remove();
+        	}
+        }
+        for (chopper i : choppers) {
+        	if (i.owner == p) {
+        		i.t = _p.getTeam();
+        	}
+        }
+        game.sendMessage(team.BOTH, d + _p.getTeam().getColour() + _p.nick + " switched to " + _p.getTeam().toString() + " team!");
+        _p.resetScore();
         p.teleport(prespawn);
-        p(p).dead = true;
+        _p.dead = true;
     }
     
     @Override
@@ -266,6 +290,8 @@ public class main extends JavaPlugin {
         pm.registerEvent(Event.Type.PAINTING_PLACE, entityListener, Priority.Normal, this);
         
         pm.registerEvent(Event.Type.CUSTOM_EVENT, inventoryListener, Priority.Normal, this);
+        
+        pm.registerEvent(Event.Type.WEATHER_CHANGE, weatherListener, Priority.Normal, this);
         
         PluginDescriptionFile pdfFile = this.getDescription();
         System.out.println( pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!" );
