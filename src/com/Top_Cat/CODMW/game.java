@@ -31,7 +31,7 @@ public class game {
     public Random generator = new Random();
     Timer t = new Timer();
     HashMap<Arrow, Location> ploc = new HashMap<Arrow, Location>();
-    Location d1, d2;
+    Location d1, d2, d3, d4;
     public int diam, gold;
     boolean dl = false;
     ArrayList<String> lossmesssages = new ArrayList<String>();
@@ -41,8 +41,10 @@ public class game {
     public void death(player p, player k, Location l) {
         if (dl) {
             d1 = l;
+            d3 = k.p.getLocation();
         } else {
             d2 = l;
+            d4 = k.p.getLocation();
         }
         dl = !dl;
         
@@ -236,7 +238,7 @@ public class game {
         Location g = null;
         ArrayList<Player> alivePlayers = new ArrayList<Player>();
         for (player i : plugin.players.values()) {
-            if (i.dead == false && i.getTeam() == _p.getTeam() && i.stime < new Date().getTime() && (d1 == null || i.p.getLocation().distance(d1) > 5) && (d2 == null || i.p.getLocation().distance(d2) > 5)) {
+            if (i.dead == false && i.getTeam() == _p.getTeam() && i.stime < new Date().getTime() && (d1 == null || i.p.getLocation().distance(d1) > 7) && (d2 == null || i.p.getLocation().distance(d2) > 7) && (d3 == null || i.p.getLocation().distance(d3) > 7) && (d4 == null || i.p.getLocation().distance(d4) > 7)) {
                 alivePlayers.add(i.p);
             }
         }
@@ -247,7 +249,13 @@ public class game {
                     case GOLD: g = spawns2.get(generator.nextInt(spawns2.size())); break;
                 }
             } else {
-                g = spawns3.get(generator.nextInt(spawns3.size()));
+				ArrayList<Location> spawns = new ArrayList<Location>();
+            	for (Location i : spawns3) {
+            		if ((d1 == null || i.distance(d1) > 7) && (d2 == null || i.distance(d2) > 7) && (d3 == null || i.distance(d3) > 7) && (d4 == null || i.distance(d4) > 7)) {
+            			spawns.add(i);
+            		}
+            	}
+                g = spawns3.get(generator.nextInt(spawns.size()));
             }
         } else {
             g = alivePlayers.get(generator.nextInt(alivePlayers.size())).getLocation();
