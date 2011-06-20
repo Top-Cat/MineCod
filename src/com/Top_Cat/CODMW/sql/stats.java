@@ -19,7 +19,7 @@ public class stats {
     player p;
     HashMap<Stat, Integer> stats = new HashMap<Stat, Integer>();
     List<Achievement> achs = new ArrayList<Achievement>();
-    List<Achievement> toach = new java.util.ArrayList(Arrays.asList(Achievement.values()));
+    List<Achievement> toach = new java.util.ArrayList<Achievement>(Arrays.asList(Achievement.values()));
     List<Stat> updated = new ArrayList<Stat>();
     List<Stat> newv = new ArrayList<Stat>();
     List<Achievement> newa = new ArrayList<Achievement>();
@@ -49,23 +49,25 @@ public class stats {
     }
     
     public void incStat(Stat s, int c) {
-        if (stats.containsKey(s)) {
-            updated.add(s);
-        } else {
-            newv.add(s);
-        }
-        int out = getStat(s) + c;
-        if (out < 0) { out = 0; }
-        ArrayList<Achievement> tmp = new ArrayList<Achievement>();
-        for (Achievement a : toach) {
-            if (a.getStat() == s && a.getCount() <= out) {
-                tmp.add(a);
-            }
-        }
-        for (Achievement a : tmp) {
-        	awardAchievement(a);
-        }
-        stats.put(s, out);
+    	synchronized (this) {
+	        if (stats.containsKey(s)) {
+	            updated.add(s);
+	        } else {
+	            newv.add(s);
+	        }
+	        int out = getStat(s) + c;
+	        if (out < 0) { out = 0; }
+	        ArrayList<Achievement> tmp = new ArrayList<Achievement>();
+	        for (Achievement a : toach) {
+	            if (a.getStat() == s && a.getCount() <= out) {
+	                tmp.add(a);
+	            }
+	        }
+	        for (Achievement a : tmp) {
+	        	awardAchievement(a);
+	        }
+	        stats.put(s, out);
+    	}
     }
     
     public void maxStat(Stat s, int c) {
@@ -116,23 +118,25 @@ public class stats {
     }
     
     public void update() {
-        List<Stat> r = new ArrayList<Stat>();
-        for (Stat i : newv) {
-            plugin.sql.update("INSERT INTO cod_stats VALUES(NULL, '" + p.dbid + "', '" + i.getId() + "', '" + stats.get(i) + "')");
-            r.add(i);
-        }
-        newv.removeAll(r);
-        updated.removeAll(r);
-        r.clear();
-        for (Stat i : updated) {
-            plugin.sql.update("UPDATE cod_stats SET count = '" + stats.get(i) + "' WHERE PID = '" + p.dbid + "' and type = '" + i.getId() + "'");
-            r.add(i);
-        }
-        updated.removeAll(r);
-        r.clear();
-        for (Achievement a : newa) {
-            plugin.sql.update("INSERT INTO cod_achievement VALUES(NULL, '" + p.dbid + "', '" + a.getId() + "')");
-        }
-        newa.clear();
+    	synchronized (this) {
+	        List<Stat> r = new ArrayList<Stat>();
+	        for (Stat i : newv) {
+	            plugin.sql.update("INSERT INTO cod_stats VALUES(NULL, '" + p.dbid + "', '" + i.getId() + "', '" + stats.get(i) + "')");
+	            r.add(i);
+	        }
+	        newv.removeAll(r);
+	        updated.removeAll(r);
+	        r.clear();
+	        for (Stat i : updated) {
+	            plugin.sql.update("UPDATE cod_stats SET count = '" + stats.get(i) + "' WHERE PID = '" + p.dbid + "' and type = '" + i.getId() + "'");
+	            r.add(i);
+	        }
+	        updated.removeAll(r);
+	        r.clear();
+	        for (Achievement a : newa) {
+	            plugin.sql.update("INSERT INTO cod_achievement VALUES(NULL, '" + p.dbid + "', '" + a.getId() + "')");
+	        }
+	        newa.clear();
+		}
     }
 }
