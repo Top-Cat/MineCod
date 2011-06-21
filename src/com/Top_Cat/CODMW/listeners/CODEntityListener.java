@@ -6,6 +6,7 @@ import org.bukkit.craftbukkit.entity.CraftArrow;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageByProjectileEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -118,7 +119,7 @@ public class CODEntityListener extends EntityListener {
     
     @Override
     public void onCreatureSpawn(CreatureSpawnEvent event) {
-        if (!(event.getEntity() instanceof Wolf)) {
+    	if (event.getSpawnReason() == SpawnReason.NATURAL) {
             event.setCancelled(true);
         }
     }
