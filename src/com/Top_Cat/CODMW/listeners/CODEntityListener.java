@@ -29,7 +29,7 @@ public class CODEntityListener extends EntityListener {
     
     @Override
     public void onPaintingBreak(PaintingBreakEvent event) {
-        if (event.getCause() == RemoveCause.WORLD || !(((PaintingBreakByEntityEvent) event).getRemover() instanceof Player) || !(((Player) ((PaintingBreakByEntityEvent) event).getRemover()).isOp())) {
+        if (event.getCause() == RemoveCause.WORLD || !(((PaintingBreakByEntityEvent) event).getRemover() instanceof Player)) {
             event.setCancelled(true);
         }
     }

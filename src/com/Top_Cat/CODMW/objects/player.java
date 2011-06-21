@@ -12,6 +12,7 @@ import org.bukkit.inventory.PlayerInventory;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
+import com.Top_Cat.CODMW.gamemodes.CTF;
 import com.Top_Cat.CODMW.gamemodes.TDM;
 import com.Top_Cat.CODMW.sql.Achievement;
 import com.Top_Cat.CODMW.sql.Stat;
@@ -73,7 +74,7 @@ public class player {
         }
         
         if (plugin.tot >= plugin.minplayers && plugin.activeGame == false) {
-            plugin.game = new TDM(plugin);
+            plugin.game = new CTF(plugin);
         }
         
         p.teleport(plugin.prespawn);
@@ -229,10 +230,9 @@ public class player {
                 todrop += ammo;
                 dropl = p.getLocation();
                 
+                plugin.game.onKill(plugin.p(attacker), this, p.getLocation());
                 p.teleport(plugin.prespawn);
                 dead = true;
-                
-                plugin.game.onKill(plugin.p(attacker), this, p.getLocation());
             }
             if (_h > 0) {
             assist = attacker;

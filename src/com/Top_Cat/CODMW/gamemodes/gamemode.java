@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import net.minecraft.server.EntityItem;
 
@@ -15,10 +13,13 @@ import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.Top_Cat.CODMW.main;
@@ -32,16 +33,14 @@ import com.Top_Cat.CODMW.sql.Stat;
 public class gamemode {
 	
 	main plugin;
-	ArrayList<Location> spawns1 = new ArrayList<Location>();
-    ArrayList<Location> spawns2 = new ArrayList<Location>();
-    public ArrayList<Location> spawns3 = new ArrayList<Location>();
+	ArrayList<ArrayList<Location>> spawns = new ArrayList<ArrayList<Location>>();
     HashMap<Arrow, Location> ploc = new HashMap<Arrow, Location>();
 	ArrayList<String> lossmesssages = new ArrayList<String>();
     ArrayList<String> winmesssages = new ArrayList<String>();
     public Random generator = new Random();
-    Timer t = new Timer();
     Location d1, d2, d3, d4;
     boolean dl = false;
+    int time = 0;
 	
 	public gamemode(main instance) {
 		plugin = instance;
@@ -71,14 +70,19 @@ public class gamemode {
         sendMessage(t, s, null);
     }
     
-    public class tick extends TimerTask {
+    public class tick implements Runnable {
 		@Override
-		public void run() { tick(); }
+		public void run() { try { tick(); } catch (Exception e) { e.printStackTrace(); } }
     }
     
-    public class tickfast extends TimerTask {
+    public class tickone implements Runnable {
 		@Override
-		public void run() { tickfast(); }
+		public void run() { time++; }
+    }
+    
+    public class tickfast implements Runnable {
+		@Override
+		public void run() { try { tickfast(); } catch (Exception e) { e.printStackTrace(); } }
     }
     
     public boolean spawnCheck(Location i) {
@@ -93,6 +97,13 @@ public class gamemode {
 		player _p = plugin.p(p);
         _p.clearinv();
         _p.setinv();
+        
+        _p.giveItem(2, new ItemStack(Material.WALL_SIGN, _p.last.clays));
+        _p.giveItem(3, new ItemStack(Material.APPLE, _p.last.apples));
+        _p.giveItem(4, new ItemStack(Material.BONE, _p.last.dogs));
+        _p.giveItem(5, new ItemStack(Material.DISPENSER, _p.last.sentry));
+        _p.giveItem(6, new ItemStack(Material.DIAMOND, _p.last.chop));
+        
         spawnTele(_p, p, start);
         _p.dead = false;
 	}
@@ -106,8 +117,9 @@ public class gamemode {
             plugin.p(p).resetScore();
             spawnPlayer(p, true);
         }
-		t.schedule(new tick(), 2000, 2000);
-        t.schedule(new tickfast(), 200, 200);
+        plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new tick(), 40L, 40L);
+        plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new tickone(), 20L, 20L);
+        plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new tickfast(), 2L, 2L);
 	}
 	
 	public void onWin(team winners, player lastkill, player lastdeath) {
@@ -135,9 +147,13 @@ public class gamemode {
             }
         }
         
-        lastdeath.p.getInventory().setHelmet(new ItemStack(Material.WOOD, 1));
-        lastdeath.s.incStat(Stat.LAST_DEATH);
-        lastkill.s.incStat(Stat.LAST_KILL);
+        if (lastdeath != null) {
+	        lastdeath.p.getInventory().setHelmet(new ItemStack(Material.WOOD, 1));
+	        lastdeath.s.incStat(Stat.LAST_DEATH);
+        }
+        if (lastkill != null) {
+        	lastkill.s.incStat(Stat.LAST_KILL);
+        }
         
         sendMessage(team.BOTH, plugin.d + "9Game ended, game will resume on '" + plugin.currentMap.name + "' in 60 seconds");
 	}
@@ -154,7 +170,7 @@ public class gamemode {
 	}
 	
 	public void destroy() {
-		t.cancel();
+		plugin.getServer().getScheduler().cancelTasks(plugin);
         for (claymore i : plugin.clays) {
             i.b.setType(Material.AIR);
         }
@@ -170,8 +186,11 @@ public class gamemode {
         plugin.clays.clear();
         plugin.wolves.clear();
         plugin.sentries.clear();
+        plugin.choppers.clear();
         plugin.activeGame = false;
 	}
+	
+	public void onRespawn(Player p) {}
 	
 	public void tick() {
         for (player p : plugin.players.values()) {
@@ -182,16 +201,12 @@ public class gamemode {
                 p.inv = false;
             }
             if (p.dead) {
+            	onRespawn(p.p);
                 if (p.todrop > 0) {
                     plugin.currentWorld.dropItem(p.dropl, new ItemStack(Material.FEATHER, p.todrop));
                     p.todrop = 0;
                 }
                 spawnPlayer(p.p, false);
-                p.giveItem(2, new ItemStack(Material.WALL_SIGN, p.last.clays));
-                p.giveItem(3, new ItemStack(Material.APPLE, p.last.apples));
-                p.giveItem(4, new ItemStack(Material.BONE, p.last.dogs));
-                p.giveItem(5, new ItemStack(Material.DISPENSER, p.last.sentry));
-                p.giveItem(6, new ItemStack(Material.DIAMOND, p.last.chop));
             }
             if (p.htime < new Date().getTime()) {
                 p.incHealth(-1, null, 0);
@@ -218,6 +233,7 @@ public class gamemode {
                 Location l = i.getLocation();
                 for (claymore j : plugin.clays) {
                     if (j.b.getLocation().add(0.5, 0, 0.5).distance(l) < 1) {
+                    	j.t = plugin.p((Player) ((Arrow)i).getShooter()).getTeam();
                         j.kill();
                         r.add(j);
                     }
@@ -240,6 +256,8 @@ public class gamemode {
                 if (!plugin.playerListener.allowed_pickup.contains(Material.getMaterial(itemId))) {
                 	r2.add(i);
                 }
+            } else if (i instanceof Creature && !(i instanceof Wolf)) {
+            	r2.add(i);
             }
             for (Entity j : r2) {
             	j.remove();
@@ -280,5 +298,9 @@ public class gamemode {
 	}
 	
 	public void printScore(Player p, team t) {};
+	
+	public void playermove(PlayerMoveEvent event) {};
+	
+	public void playerpickup(PlayerPickupItemEvent event, Material pickedup) {};
 	
 }

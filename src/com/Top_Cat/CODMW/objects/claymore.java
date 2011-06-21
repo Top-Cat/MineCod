@@ -38,7 +38,7 @@ public class claymore {
     public void kill() {
         int kill = 0;
         for (Player p : plugin.players.keySet()) {
-            if (plugin.p(p).getTeam() != t && (p.getLocation().getBlock() == b || p.getLocation().getBlock() == d1 || p.getLocation().getBlock() == d2)) {
+            if ((plugin.p(p).getTeam() != t || p == owner) && (p.getLocation().getBlock() == b || p.getLocation().getBlock() == d1 || p.getLocation().getBlock() == d2)) {
                 plugin.p(p).incHealth(2, owner, 3);
                 kill++;
             }

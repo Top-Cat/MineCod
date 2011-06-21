@@ -25,6 +25,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.Top_Cat.CODMW.gamemodes.CTF;
 import com.Top_Cat.CODMW.gamemodes.TDM;
 import com.Top_Cat.CODMW.gamemodes.gamemode;
 import com.Top_Cat.CODMW.listeners.CODBlockListener;
@@ -170,7 +171,7 @@ public class main extends JavaPlugin {
         public void run() {
             if (activeGame == false) {
                 if (players.size() >= minplayers) {
-                    game = new TDM(plugin);
+                    game = new CTF(plugin);
                 } else {
                     scheduleGame();
                 }
@@ -279,6 +280,7 @@ public class main extends JavaPlugin {
         pm.registerEvent(Event.Type.PLAYER_PICKUP_ITEM, playerListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_DROP_ITEM, playerListener, Priority.Normal, this);
+        pm.registerEvent(Event.Type.PLAYER_TOGGLE_SNEAK, playerListener, Priority.Normal, this);
         
         pm.registerEvent(Event.Type.BLOCK_DAMAGE, blockListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Normal, this);

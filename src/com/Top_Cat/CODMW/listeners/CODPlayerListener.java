@@ -27,6 +27,7 @@ import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -54,6 +55,8 @@ public class CODPlayerListener extends PlayerListener {
         allowed_pickup.add(Material.BONE);
         allowed_pickup.add(Material.DISPENSER);
         allowed_pickup.add(Material.DIAMOND);
+        allowed_pickup.add(Material.DIAMOND_BLOCK);
+        allowed_pickup.add(Material.GOLD_BLOCK);
     }
     
     @Override
@@ -63,6 +66,13 @@ public class CODPlayerListener extends PlayerListener {
         if (!allowed_pickup.contains(Material.getMaterial(itemId))) {
         	event.setCancelled(true);
         }
+    }
+    
+    @Override
+    public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
+    	if (event.isSneaking()) {
+    		event.setCancelled(true);
+    	}
     }
     
     @Override
@@ -160,6 +170,9 @@ public class CODPlayerListener extends PlayerListener {
 
     @Override
     public void onPlayerMove(PlayerMoveEvent event) {
+    	if (plugin.activeGame == true) {
+    		plugin.game.playermove(event);
+    	}
         Location t = event.getTo();
         if (!plugin.players.containsKey(event.getPlayer())) {
             if (t.getX() > -10 && t.getX() < -8 && t.getZ() > 14 && t.getZ() < 16 && t.getBlockY() == 64) {
@@ -233,6 +246,8 @@ public class CODPlayerListener extends PlayerListener {
             }
             event.setCancelled(true);
         }
+        plugin.game.playerpickup(event, Material.getMaterial(itemId));
+        
     }
     
     @Override

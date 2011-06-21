@@ -20,9 +20,9 @@ public class TDM extends gamemode {
 	
 	@Override
 	public void setup() {
-		spawns1 = plugin.currentMap.getSpawns(0);
-        spawns2 = plugin.currentMap.getSpawns(1);
-        spawns3 = plugin.currentMap.getSpawns(2);
+		spawns.add(0, plugin.currentMap.getSpawns(0));
+		spawns.add(1, plugin.currentMap.getSpawns(1));
+		spawns.add(2, plugin.currentMap.getSpawns(2));
 	}
 	
 	@Override
@@ -60,22 +60,24 @@ public class TDM extends gamemode {
         if (alivePlayers.size() <= 1 || start) {
             if (start) {
                 switch (_p.getTeam()) {
-                    case DIAMOND: g = spawns1.get(generator.nextInt(spawns1.size())); break;
-                    case GOLD: g = spawns2.get(generator.nextInt(spawns2.size())); break;
+                    case DIAMOND: g = spawns.get(0).get(generator.nextInt(spawns.get(0).size())); break;
+                    case GOLD: g = spawns.get(1).get(generator.nextInt(spawns.get(1).size())); break;
                 }
             } else {
-				ArrayList<Location> spawns = new ArrayList<Location>();
-            	for (Location i : spawns3) {
-            		if (spawnCheck(i)) { spawns.add(i); }
+				ArrayList<Location> spawn = new ArrayList<Location>();
+            	for (Location i : spawns.get(2)) {
+            		if (spawnCheck(i)) { spawn.add(i); }
             	}
-                g = spawns.get(generator.nextInt(spawns.size()));
+                g = spawn.get(generator.nextInt(spawn.size()));
             }
         } else {
             g = alivePlayers.get(generator.nextInt(alivePlayers.size())).getLocation();
         }
         _p.stime = new Date().getTime() + 5000;
         p.teleport(g);
-        p.sendMessage(plugin.d + _p.getTeam().getColour() + _p.getTeam().toString() + " team go!");
+        if (start) {
+        	p.sendMessage(plugin.d + _p.getTeam().getColour() + _p.getTeam().toString() + " team go!");
+        }
         return g;
 	}
 	
