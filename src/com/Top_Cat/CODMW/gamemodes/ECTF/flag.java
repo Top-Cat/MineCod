@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
+import com.Top_Cat.CODMW.sql.Stat;
 
 public class flag {
 	
@@ -38,6 +39,7 @@ public class flag {
 	public void takeFlag(Player _p) {
 		if (!taken || toret) {
 			plugin.game.sendMessage(team.BOTH, plugin.d + t2.getColour() + t2.toString() + " team have taken their flag!");
+			plugin.p(_p).s.incStat(Stat.FLAG_PICKUPS);
 			p = _p;
 			p.getInventory().setHelmet(new ItemStack(c, 1));
 			taken = true;
@@ -56,6 +58,11 @@ public class flag {
 		taken = false;
 		toret = false;
 		if (p != null) {
+			if (capped) {
+				plugin.p(p).s.incStat(Stat.FLAG_CAPTURES);
+			} else {
+				plugin.p(p).s.incStat(Stat.FLAG_RETURNS);
+			}
 			p.getInventory().setHelmet(new ItemStack(a, 1));
 			p = null;
 		}

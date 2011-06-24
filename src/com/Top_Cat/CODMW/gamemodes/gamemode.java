@@ -98,11 +98,13 @@ public class gamemode {
         _p.clearinv();
         _p.setinv();
         
-        _p.giveItem(2, new ItemStack(Material.WALL_SIGN, _p.last.clays));
-        _p.giveItem(3, new ItemStack(Material.APPLE, _p.last.apples));
-        _p.giveItem(4, new ItemStack(Material.BONE, _p.last.dogs));
-        _p.giveItem(5, new ItemStack(Material.DISPENSER, _p.last.sentry));
-        _p.giveItem(6, new ItemStack(Material.DIAMOND, _p.last.chop));
+        if (start) {
+	        _p.giveItem(2, new ItemStack(Material.WALL_SIGN, _p.last.clays));
+	        _p.giveItem(3, new ItemStack(Material.APPLE, _p.last.apples));
+	        _p.giveItem(4, new ItemStack(Material.BONE, _p.last.dogs));
+	        _p.giveItem(5, new ItemStack(Material.DISPENSER, _p.last.sentry));
+	        _p.giveItem(6, new ItemStack(Material.DIAMOND, _p.last.chop));
+        }
         
         spawnTele(_p, p, start);
         _p.dead = false;

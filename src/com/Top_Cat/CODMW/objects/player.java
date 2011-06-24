@@ -154,7 +154,6 @@ public class player {
             	player a = plugin.p(attacker);
                 if (a != this) {
                     a.s.incStat(Stat.KILLS);
-                    a.addPoints(5);
                     a.kill++;
                     a.s.maxStat(Stat.MAX_KILLS, plugin.p(attacker).kill);
                     if (a.inv) {
@@ -185,7 +184,6 @@ public class player {
                 }
                 s.incStat(Stat.DEATHS);
                 death++;
-                addPoints(-2);
                 s.maxStat(Stat.MAX_DEATHS, death);
                 streak = 0;
                 

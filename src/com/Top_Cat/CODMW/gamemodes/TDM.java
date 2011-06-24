@@ -33,8 +33,19 @@ public class TDM extends gamemode {
 	}
 	
 	@Override
+	public void tick() {
+		super.tick();
+		if (time > 600) {
+			onWin((diam > gold) ? team.DIAMOND : team.GOLD, null, null);
+		}
+	}
+	
+	@Override
 	public void onKill(player attacker, player defender, Location l) {
 		super.onKill(attacker, defender, l);
+		attacker.addPoints(5);
+		defender.addPoints(-2);
+		
 		if (attacker.getTeam() == team.GOLD) {
             gold++;
         } else {

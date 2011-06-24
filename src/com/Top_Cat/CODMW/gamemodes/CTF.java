@@ -51,6 +51,9 @@ public class CTF extends gamemode {
 	@Override
 	public void onKill(player attacker, player defender, Location l) {
 		super.onKill(attacker, defender, l);
+		attacker.addPoints(3);
+		defender.addPoints(-1);
+		
 		if (defender == plugin.p(f1.p)) {
 			f1.drop = defender.p.getLocation();
 		} else if (defender == plugin.p(f2.p)) {

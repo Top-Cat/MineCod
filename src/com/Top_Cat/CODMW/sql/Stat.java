@@ -45,7 +45,10 @@ public enum Stat {
     SENTRIES_ACHIEVED(38),
     CHOPPERS_ACHIEVED(39),
     INVULNERABLE_KILLS(40),
-    HEADSHOTS(41);
+    HEADSHOTS(41),
+    FLAG_PICKUPS(42),
+    FLAG_RETURNS(43),
+    FLAG_CAPTURES(44);
     
     private final int id;
 
