@@ -182,9 +182,9 @@ public class CODPlayerListener extends PlayerListener {
             } else if (t.getX() > -8 && t.getX() < -6 && t.getZ() > 12 && t.getZ() < 14 && t.getBlockY() == 64) {
                 //Random team
                 if (plugin.diam > plugin.gold) {
-                    new player(plugin, event.getPlayer(), team.DIAMOND);
-                } else if (plugin.gold > plugin.diam) {
                     new player(plugin, event.getPlayer(), team.GOLD);
+                } else if (plugin.gold > plugin.diam) {
+                    new player(plugin, event.getPlayer(), team.DIAMOND);
                 } else if (generator.nextInt(2) > 0) {
                 	new player(plugin, event.getPlayer(), team.DIAMOND);
                 } else {
