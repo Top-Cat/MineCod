@@ -18,6 +18,7 @@ import org.bukkit.event.painting.PaintingBreakEvent.RemoveCause;
 import org.bukkit.event.painting.PaintingPlaceEvent;
 
 import com.Top_Cat.CODMW.main;
+import com.Top_Cat.CODMW.team;
 import com.Top_Cat.CODMW.objects.CArrow;
 
 public class CODEntityListener extends EntityListener {
@@ -65,14 +66,14 @@ public class CODEntityListener extends EntityListener {
                     }
                     Player attacker = (Player) (((EntityDamageByProjectileEvent) event).getDamager());
                     Player defender = (Player) (((EntityDamageByProjectileEvent) event).getEntity());
-                    if (plugin.p(attacker).getTeam() != plugin.p(defender).getTeam()) {
-                    	if (reason == 2) {
-                    		double dif = (((EntityDamageByProjectileEvent) event).getProjectile().getLocation().getY() - event.getEntity().getLocation().getY()) - 1.5;
-                    		if (dif > 0.1 && dif < 0.5) {
-                    			reason = 7;
-                    		}
-                    		
-                    	}
+                    if (plugin.game.canHit(attacker, defender)) {
+                        if (reason == 2) {
+                            double dif = (((EntityDamageByProjectileEvent) event).getProjectile().getLocation().getY() - event.getEntity().getLocation().getY()) - 1.5;
+                            if (dif > 0.1 && dif < 0.5) {
+                                reason = 7;
+                            }
+                            
+                        }
                         plugin.p(defender).incHealth(1, attacker, reason);
                         event.setCancelled(false);
                     }
@@ -84,7 +85,7 @@ public class CODEntityListener extends EntityListener {
                     Location a = attacker.getLocation();
                     Location d = defender.getLocation();
                     if (attacker.getItemInHand().getType() == Material.IRON_SWORD) {
-                        if (plugin.p(attacker).getTeam() != plugin.p(defender).getTeam()) {
+                        if (plugin.game.canHit(attacker, defender)) {
                             double dist = Math.sqrt(Math.pow(a.getX() - d.getX(), 2) + Math.pow(a.getZ() - d.getZ(), 2));
                             if (dist < 1.8) {
                                 plugin.p(defender).incHealth(2, attacker, 1);
@@ -98,8 +99,8 @@ public class CODEntityListener extends EntityListener {
                 } else if (((EntityDamageByEntityEvent) event).getDamager() instanceof Wolf && ((EntityDamageByEntityEvent) event).getEntity() instanceof Player) {
                     Player defender = (Player) (((EntityDamageByEntityEvent) event).getEntity());
                     if (plugin.wolves.containsKey(((EntityDamageByEntityEvent) event).getDamager())) {
-                    if (plugin.p(defender).getTeam() != plugin.wolves.get(((EntityDamageByEntityEvent) event).getDamager()).t) {
-                    	plugin.p(defender).incHealth(2, plugin.wolves.get((Wolf) ((EntityDamageByEntityEvent) event).getDamager()).owner, 4);
+                    if (plugin.game.canHit(defender, (Wolf) ((EntityDamageByEntityEvent) event).getDamager())) {
+                        plugin.p(defender).incHealth(2, plugin.wolves.get((Wolf) ((EntityDamageByEntityEvent) event).getDamager()).owner, 4);
                     }
                     plugin.wolves.remove(((EntityDamageByEntityEvent) event).getDamager());
                     }
@@ -119,7 +120,7 @@ public class CODEntityListener extends EntityListener {
     
     @Override
     public void onCreatureSpawn(CreatureSpawnEvent event) {
-    	if (event.getSpawnReason() == SpawnReason.NATURAL) {
+        if (event.getSpawnReason() == SpawnReason.NATURAL) {
             event.setCancelled(true);
         }
     }

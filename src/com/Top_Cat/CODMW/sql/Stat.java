@@ -63,9 +63,9 @@ public enum Stat {
     private static ArrayList<Stat> table = new ArrayList<Stat>(); 
     static {
         for (Stat i : Stat.values()) {
-        	if (i.getId() >= 0) {
-        	    table.add(i.getId(), i);
-        	}
+            if (i.getId() >= 0) {
+                table.add(i.getId(), i);
+            }
         }
     }
 

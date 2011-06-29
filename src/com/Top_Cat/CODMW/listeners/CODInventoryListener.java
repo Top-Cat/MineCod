@@ -15,7 +15,7 @@ public class CODInventoryListener extends InventoryListener {
     
     @Override
     public void onInventoryClick(InventoryClickEvent event) {
-    	event.setCancelled(true);
+        event.setCancelled(true);
     }
     
 }

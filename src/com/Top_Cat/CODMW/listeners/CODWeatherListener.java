@@ -7,17 +7,17 @@ import com.Top_Cat.CODMW.main;
 
 public class CODWeatherListener extends WeatherListener {
 
-	main plugin;
-	
-	public CODWeatherListener(main instance) {
-		plugin = instance;
-	}
+    main plugin;
+    
+    public CODWeatherListener(main instance) {
+        plugin = instance;
+    }
 
-	@Override
-	public void onWeatherChange(WeatherChangeEvent event) {
-		if (event.toWeatherState() != plugin.currentMap.storm) {
-			event.setCancelled(true);
-		}
-	}
-	
+    @Override
+    public void onWeatherChange(WeatherChangeEvent event) {
+        if (event.toWeatherState() != plugin.currentMap.storm) {
+            event.setCancelled(true);
+        }
+    }
+    
 }

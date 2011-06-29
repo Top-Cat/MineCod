@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -26,8 +27,10 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.Top_Cat.CODMW.gamemodes.CTF;
+import com.Top_Cat.CODMW.gamemodes.FFA;
 import com.Top_Cat.CODMW.gamemodes.TDM;
 import com.Top_Cat.CODMW.gamemodes.gamemode;
+import com.Top_Cat.CODMW.gamemodes.team_gm;
 import com.Top_Cat.CODMW.listeners.CODBlockListener;
 import com.Top_Cat.CODMW.listeners.CODEntityListener;
 import com.Top_Cat.CODMW.listeners.CODInventoryListener;
@@ -44,7 +47,7 @@ import com.Top_Cat.CODMW.objects.sentry;
 import com.Top_Cat.CODMW.sql.conn;
 
 public class main extends JavaPlugin {
-    
+
     public World currentWorld;
     public Location teamselect;
     public Location prespawn;
@@ -61,14 +64,15 @@ public class main extends JavaPlugin {
     public ArrayList<Player> totele = new ArrayList<Player>();
     public ArrayList<chopper> choppers = new ArrayList<chopper>();
     public final String d = "\u00C2\u00A7";
-    door d1,d2,d3,d4;
+    door d1, d2, d3, d4;
     public gamemode game;
     public boolean activeGame = false;
     public redstone r;
     Timer t = new Timer();
     public conn sql = new conn();
     public map currentMap;
-    
+    Random gen = new Random();
+
     public void clearinv(Player p) {
         PlayerInventory i = p.getInventory();
         i.clear();
@@ -77,11 +81,11 @@ public class main extends JavaPlugin {
         i.clear(37);
         i.clear(36);
     }
-    
+
     public player p(Player p) {
         return players.get(p);
     }
-    
+
     @Override
     public void onDisable() {
         if (game != null) {
@@ -89,7 +93,7 @@ public class main extends JavaPlugin {
         }
         System.out.println("Goodbye world!");
     }
-    
+
     public void setDoors() {
         d1.open();
         d2.open();
@@ -112,76 +116,58 @@ public class main extends JavaPlugin {
             currentWorld.setStorm(currentMap.storm);
             currentWorld.setThundering(false);
         }
-        
+
     }
-    
+
     public void loadmap() {
         String w = "";
         if (currentMap != null) {
             w = " WHERE `Id` != '" + currentMap.id + "'";
         }
-        ResultSet _r = sql.query("SELECT * FROM cod_maps" + w + " ORDER BY RAND()");
+        ResultSet _r = sql.query("SELECT * FROM cod_maps" + w
+                + " ORDER BY RAND()");
         try {
             _r.next();
             currentMap = new map(sql, this, _r);
-            currentWorld = getServer().createWorld(currentMap.folder, Environment.NORMAL);
+            currentWorld = getServer().createWorld(currentMap.folder,
+                    Environment.NORMAL);
             currentWorld.setPVP(true);
             currentWorld.setSpawnFlags(true, true);
             for (Entity i : currentWorld.getEntities()) {
-            	if (i instanceof Item) {
+                if (i instanceof Item) {
                     i.remove();
-            	}
+                }
             }
             teamselect = new Location(currentWorld, -14, 64, 13, 270, 0);
-            prespawn = new Location(currentWorld, -15.5, 64, 2.5, 270, 0);
-            
+            prespawn = new Location(currentWorld, -15.5, 64, 2, 270, 0);
+
             d1 = new door(currentWorld.getBlockAt(-10, 64, 14));
             d2 = new door(currentWorld.getBlockAt(-9, 64, 14));
-            
+
             d3 = new door(currentWorld.getBlockAt(-10, 64, 11));
             d4 = new door(currentWorld.getBlockAt(-9, 64, 11));
-            
+
             r = new redstone(currentWorld.getBlockAt(-6, 64, 0));
             
+            switch (/*gen.nextInt(3)*/2) {
+                case 0: game = new TDM(this); break; 
+                case 1: game = new CTF(this); break;
+                case 2: game = new FFA(this); break;
+            }
+            
             for (Player i : getServer().getOnlinePlayers()) {
-                if (players.containsKey(i)) {
-                    i.teleport(prespawn);
-                } else {
-                    i.teleport(teamselect);
-                }
+                game.jointele(i);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    
-    public void scheduleGame() {
-        t.schedule(new startgame(this), 55000);
-    }
-    
-    public class startgame extends TimerTask {
 
-        main plugin;
-        
-        public startgame(main instance) {
-            plugin = instance;
-        }
-        
-        @Override
-        public void run() {
-            if (activeGame == false) {
-                if (players.size() >= minplayers) {
-                    game = new CTF(plugin);
-                } else {
-                    scheduleGame();
-                }
-            }
-        }
-        
-    }
     
+
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, Command command,
+            String label, String[] args) {
         if (sender instanceof Player) {
             Player p = ((Player) sender);
             if (command.getName().equals("r")) {
@@ -201,72 +187,81 @@ public class main extends JavaPlugin {
                 togive -= arrows;
                 if (togive > 0) {
                     if (arrows == 0) {
-                        p.getInventory().setItem(8, new ItemStack(Material.ARROW, togive));
+                        p.getInventory().setItem(8,
+                                new ItemStack(Material.ARROW, togive));
                     } else {
-                        p.getInventory().addItem(new ItemStack(Material.ARROW, togive));
+                        p.getInventory().addItem(
+                                new ItemStack(Material.ARROW, togive));
                     }
                 }
-                p.getInventory().removeItem(new ItemStack(Material.FEATHER, togive));
+                p.getInventory().removeItem(
+                        new ItemStack(Material.FEATHER, togive));
                 return true;
             } else if (command.getName().equalsIgnoreCase("s")) {
                 if (args.length == 0) {
-                	game.printScore(p, team.BOTH);
+                    game.printScore(p, team.BOTH);
                     return true;
                 } else if (args[0].equalsIgnoreCase("d")) {
-                	game.printScore(p, team.DIAMOND);
+                    game.printScore(p, team.DIAMOND);
                     return true;
                 } else if (args[0].equalsIgnoreCase("g")) {
-                	game.printScore(p, team.GOLD);
+                    game.printScore(p, team.GOLD);
                     return true;
                 }
-            } else if (command.getName().equalsIgnoreCase("team") && args[0].equalsIgnoreCase("switch")) {
+            } else if (command.getName().equalsIgnoreCase("team")
+                    && args[0].equalsIgnoreCase("switch")) {
                 switchplayer(p);
                 return true;
             }
         }
         return false;
     }
-    
+
     public void switchplayer(Player p) {
-        if (p(p).getTeam() == team.GOLD && gold > diam) {
-            p(p).setTeam(team.DIAMOND);
-            gold--;
-            diam++;
-        } else if (p(p).getTeam() == team.DIAMOND && gold < diam) {
-            p(p).setTeam(team.GOLD);
-            gold++;
-            diam--;
+        if (game instanceof team_gm) {
+            if (p(p).getTeam() == team.GOLD && gold > diam) {
+                p(p).setTeam(team.DIAMOND);
+                gold--;
+                diam++;
+            } else if (p(p).getTeam() == team.DIAMOND && gold < diam) {
+                p(p).setTeam(team.GOLD);
+                gold++;
+                diam--;
+            } else {
+                p.sendMessage("Teams cannot be stacked!");
+                return;
+            }
+            player _p = p(p);
+            for (claymore i : clays) {
+                if (i.owner == p) {
+                    i.t = _p.getTeam();
+                }
+            }
+            for (sentry i : sentries) {
+                if (i.owner == p) {
+                    i.t = _p.getTeam();
+                }
+            }
+            for (CWolf i : wolves.values()) {
+                if (i.owner == p) {
+                    i.wolf.remove();
+                }
+            }
+            for (chopper i : choppers) {
+                if (i.owner == p) {
+                    i.t = _p.getTeam();
+                }
+            }
+            game.sendMessage(team.BOTH, d + _p.getTeam().getColour() + _p.nick
+                    + " switched to " + _p.getTeam().toString() + " team!");
+            _p.resetScore();
+            p.teleport(prespawn);
+            _p.dead = true;
         } else {
-            p.sendMessage("Teams cannot be stacked!");
-            return;
+            p.sendMessage("Not possible in this game type");
         }
-        player _p = p(p);
-        for (claymore i : clays) {
-        	if (i.owner == p) {
-        		i.t = _p.getTeam();
-        	}
-        }
-        for (sentry i : sentries) {
-        	if (i.owner == p) {
-        		i.t = _p.getTeam();
-        	}
-        }
-        for (CWolf i : wolves.values()) {
-        	if (i.owner == p) {
-        		i.wolf.remove();
-        	}
-        }
-        for (chopper i : choppers) {
-        	if (i.owner == p) {
-        		i.t = _p.getTeam();
-        	}
-        }
-        game.sendMessage(team.BOTH, d + _p.getTeam().getColour() + _p.nick + " switched to " + _p.getTeam().toString() + " team!");
-        _p.resetScore();
-        p.teleport(prespawn);
-        _p.dead = true;
     }
-    
+
     @Override
     public void onEnable() {
         loadmap();
@@ -281,32 +276,35 @@ public class main extends JavaPlugin {
         pm.registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_DROP_ITEM, playerListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_TOGGLE_SNEAK, playerListener, Priority.Normal, this);
-        
+
         pm.registerEvent(Event.Type.BLOCK_DAMAGE, blockListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.BLOCK_PLACE, blockListener, Priority.Normal, this);
-        
+
         pm.registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.CREATURE_SPAWN, entityListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PAINTING_BREAK, entityListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PAINTING_PLACE, entityListener, Priority.Normal, this);
-        
+
         pm.registerEvent(Event.Type.CUSTOM_EVENT, inventoryListener, Priority.Normal, this);
-        
+
         pm.registerEvent(Event.Type.WEATHER_CHANGE, weatherListener, Priority.Normal, this);
-        
+
         PluginDescriptionFile pdfFile = this.getDescription();
-        System.out.println( pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!" );
-        
+        System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
+
         t.schedule(new sun(), 0, 60000);
-        
+
         setDoors();
         for (Player p : getServer().getOnlinePlayers()) {
+            if (!(game instanceof team_gm)) {
+                new player(this, p, team.BOTH);
+            }
             clearinv(p);
             p.sendMessage(d + "9Welcome to The Gigcast's MineCod Server!");
             p.sendMessage(d + "9Please choose your team!");
             p.setHealth(20);
         }
     }
-    
+
 }

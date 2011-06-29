@@ -73,10 +73,6 @@ public class player {
             dead = true;
         }
         
-        if (plugin.tot >= plugin.minplayers && plugin.activeGame == false) {
-            plugin.game = new CTF(plugin);
-        }
-        
         p.teleport(plugin.prespawn);
     }
     
@@ -151,18 +147,18 @@ public class player {
                 stime = new Date().getTime() + 5000;
             }
             if (h <= 0) {
-            	player a = plugin.p(attacker);
+                player a = plugin.p(attacker);
                 if (a != this) {
                     a.s.incStat(Stat.KILLS);
                     a.kill++;
                     a.s.maxStat(Stat.MAX_KILLS, plugin.p(attacker).kill);
                     if (a.inv) {
-                    	a.s.incStat(Stat.INVULNERABLE_KILLS);
+                        a.s.incStat(Stat.INVULNERABLE_KILLS);
                     }
                     if (p.getDisplayName().equalsIgnoreCase("Gigthank")) {
-                    	a.s.awardAchievement(Achievement.KILL_GIG);
+                        a.s.awardAchievement(Achievement.KILL_GIG);
                     } else if (p.getDisplayName().equalsIgnoreCase("Notch")) {
-                    	a.s.awardAchievement(Achievement.KILL_NOTCH);
+                        a.s.awardAchievement(Achievement.KILL_NOTCH);
                     }
                     if (reason <= 3 || reason == 7) {
                         a.addStreak();
@@ -222,7 +218,7 @@ public class player {
                     case 7: desc = " headshot"; plugin.p(p).s.incStat(Stat.BOW_DEATHS); plugin.p(attacker).s.incStat(Stat.HEADSHOTS); plugin.p(attacker).s.incStat(Stat.BOW_KILLS); break;
                 }
                 if (reason > 0) {
-                	plugin.game.sendMessage(team.BOTH, plugin.d + plugin.p(attacker).getTeam().getColour() + plugin.p(attacker).nick + plugin.d + "c" + desc + " " + plugin.d + t.getColour() + nick + assist_txt);
+                    plugin.game.sendMessage(team.BOTH, plugin.d + plugin.p(attacker).getTeam().getColour() + plugin.p(attacker).nick + plugin.d + "c" + desc + " " + plugin.d + t.getColour() + nick + assist_txt);
                 }
                 clearinv();
                 todrop += ammo;

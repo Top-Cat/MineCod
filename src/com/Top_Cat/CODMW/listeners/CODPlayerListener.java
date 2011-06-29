@@ -1,11 +1,8 @@
 package com.Top_Cat.CODMW.listeners;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
-import java.util.Timer;
 import java.util.TimerTask;
 
 import net.minecraft.server.EntityItem;
@@ -43,7 +40,6 @@ import com.Top_Cat.CODMW.sql.Stat;
 public class CODPlayerListener extends PlayerListener {
     
     main plugin;
-    Timer t = new Timer();
     public ArrayList<Material> allowed_pickup = new ArrayList<Material>();
     Random generator = new Random();
     
@@ -61,62 +57,23 @@ public class CODPlayerListener extends PlayerListener {
     
     @Override
     public void onPlayerDropItem(PlayerDropItemEvent event) {
-    	CraftEntity item = (CraftEntity)event.getItemDrop();
+        CraftEntity item = (CraftEntity)event.getItemDrop();
         int itemId = ((EntityItem)item.getHandle()).itemStack.id;
         if (!allowed_pickup.contains(Material.getMaterial(itemId))) {
-        	event.setCancelled(true);
+            event.setCancelled(true);
         }
     }
     
     @Override
     public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
-    	if (event.isSneaking()) {
-    		event.setCancelled(true);
-    	}
+        if (event.isSneaking()) {
+            event.setCancelled(true);
+        }
     }
     
     @Override
     public void onPlayerJoin(PlayerJoinEvent event) {
-        plugin.setDoors();
-        plugin.totele.add(event.getPlayer());
-        t.schedule(new tele(plugin), 200);
-        plugin.clearinv(event.getPlayer());
-        
-        String nick = event.getPlayer().getDisplayName();
-        ResultSet r = plugin.sql.query("SELECT * FROM cod_players WHERE username = '" + event.getPlayer().getDisplayName() + "'");
-        try {
-            if (r.next()) {
-                nick = r.getString("nick");
-            } else {
-                int id = plugin.sql.update("INSERT INTO cod_players VALUES (NULL, '" + event.getPlayer().getDisplayName() + "', '" + event.getPlayer().getDisplayName() + "')");
-                plugin.sql.update("INSERT INTO cod_stats VALUES (NULL, '" + id + "', '0', '1000')");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        
-        event.setJoinMessage(plugin.d + "9" + nick + " has joined the fray");
-        event.getPlayer().sendMessage(plugin.d + "9Welcome to The Gigcast's MineCod Server!");
-        event.getPlayer().sendMessage(plugin.d + "9Please choose your team!");
-        event.getPlayer().setHealth(20);
-    }
-    
-    public class tele extends TimerTask {
-
-        main plugin;
-        
-        public tele(main instance) {
-            plugin = instance;
-        }
-        
-        @Override
-        public void run() {
-            for (Player i : plugin.totele) {
-                i.teleport(plugin.teamselect);
-            }
-            plugin.totele.clear();
-        }
-        
+        plugin.game.playerjoin(event);
     }
     
     @Override
@@ -132,9 +89,9 @@ public class CODPlayerListener extends PlayerListener {
             }
         }
         for (player i : plugin.players.values()) {
-        	if (i.assist == event.getPlayer()) {
-        		i.assist = null;
-        	}
+            if (i.assist == event.getPlayer()) {
+                i.assist = null;
+            }
         }
     }
     
@@ -170,32 +127,40 @@ public class CODPlayerListener extends PlayerListener {
 
     @Override
     public void onPlayerMove(PlayerMoveEvent event) {
-    	if (plugin.activeGame == true) {
-    		plugin.game.playermove(event);
-    	}
+        plugin.game.playermove(event);
         Location t = event.getTo();
-        if (!plugin.players.containsKey(event.getPlayer())) {
-            if (t.getX() > -10 && t.getX() < -8 && t.getZ() > 14 && t.getZ() < 16 && t.getBlockY() == 64) {
-                new player(plugin, event.getPlayer(), team.GOLD);
-            } else if (t.getX() > -10 && t.getX() < -8 && t.getZ() > 10 && t.getZ() < 12 && t.getBlockY() == 64) {
-                new player(plugin, event.getPlayer(), team.DIAMOND);
-            } else if (t.getX() > -8 && t.getX() < -6 && t.getZ() > 12 && t.getZ() < 14 && t.getBlockY() == 64) {
-                //Random team
-                if (plugin.diam > plugin.gold) {
-                    new player(plugin, event.getPlayer(), team.GOLD);
-                } else if (plugin.gold > plugin.diam) {
-                    new player(plugin, event.getPlayer(), team.DIAMOND);
-                } else if (generator.nextInt(2) > 0) {
-                	new player(plugin, event.getPlayer(), team.DIAMOND);
-                } else {
-                	new player(plugin, event.getPlayer(), team.GOLD);
-                }
+        team e;
+        if (t.getX() > -10 && t.getX() < -8 && t.getZ() > 14 && t.getZ() < 16 && t.getBlockY() == 64) {
+            e = team.GOLD;
+        } else if (t.getX() > -10 && t.getX() < -8 && t.getZ() > 10 && t.getZ() < 12 && t.getBlockY() == 64) {
+            e = team.DIAMOND;
+        } else if (t.getX() > -8 && t.getX() < -6 && t.getZ() > 12 && t.getZ() < 14 && t.getBlockY() == 64) {
+            //Random team
+            if (plugin.diam > plugin.gold) {
+                e = team.GOLD;
+            } else if (plugin.gold > plugin.diam) {
+                e = team.DIAMOND;
+            } else if (generator.nextInt(2) > 0) {
+                e = team.DIAMOND;
             } else {
-                return;
+                e = team.GOLD;
             }
-            plugin.setDoors();
-            event.setTo(plugin.prespawn);
+        } else {
+            return;
         }
+        if (!plugin.players.containsKey(event.getPlayer())) {
+            new player(plugin, event.getPlayer(), e);
+        } else {
+            plugin.players.get(event.getPlayer()).setTeam(e);
+            if (plugin.activeGame) {
+                plugin.game.spawnTele(plugin.p(event.getPlayer()), event.getPlayer(), false);
+            } else {
+                plugin.players.get(event.getPlayer()).dead = false;
+            }
+            recount();
+        }
+        plugin.setDoors();
+        event.setTo(plugin.prespawn);
         for (claymore i : plugin.clays) {
             if (i.exploded == false) {
                 i.detect(event.getPlayer());
@@ -207,6 +172,18 @@ public class CODPlayerListener extends PlayerListener {
                     event.setTo(plugin.game.spawnTele(plugin.p(event.getPlayer()), event.getPlayer(), false));
                     event.getPlayer().sendMessage(plugin.d + "bOnly Gigs stand on dispensers, you have been respawned!");
                 }
+            }
+        }
+    }
+    
+    public void recount() {
+        plugin.diam = 0;
+        plugin.gold = 0;
+        for (player i : plugin.players.values()) {
+            if (i.getTeam() == team.DIAMOND) {
+                plugin.diam++;
+            } else {
+                plugin.gold++;
             }
         }
     }
@@ -236,7 +213,7 @@ public class CODPlayerListener extends PlayerListener {
             }
             if (amm > 99) { amm = 99; }
             if (plugin.players.containsKey(event.getPlayer())) {
-            	plugin.p(event.getPlayer()).s.incStat(Stat.AMMO_PICKED_UP, amm - ammo);
+                plugin.p(event.getPlayer()).s.incStat(Stat.AMMO_PICKED_UP, amm - ammo);
             }
             PlayerInventory i = event.getPlayer().getInventory();
             if (i.getItem(7) != null && i.getItem(7).getType() != Material.FEATHER && i.getItem(7).getType() != Material.AIR) {
