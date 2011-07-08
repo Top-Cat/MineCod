@@ -2,29 +2,28 @@ package com.Top_Cat.CODMW.objects;
 
 import java.util.Date;
 
+import net.minecraft.server.World;
+
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Player;
 
 import com.Top_Cat.CODMW.main;
-import com.Top_Cat.CODMW.team;
 
-public class claymore {
+public class claymore extends ownable {
 
-    public team t;
     public Block b, d1, d2;
     main plugin;
-    public Player owner;
     public boolean exploded = false;
     public long explode = 0, init = 0;
     public int r;
 
     public claymore(main instance, Block _c, int _r, Player _o) {
         plugin = instance;
-        t = plugin.p(_o).getTeam();
         b = _c;
-        owner = _o;
+        setOwner(_o);
         init = new Date().getTime() + 1000;
         switch (_r) {
             case 0: d1 = b.getRelative(0, 0, 1); d2 = b.getRelative(0, 0, 2); break;
@@ -38,18 +37,20 @@ public class claymore {
     public void kill() {
         int kill = 0;
         for (Player p : plugin.players.keySet()) {
-            if ((plugin.p(p).getTeam() != t || p == owner) && (p.getLocation().getBlock() == b || p.getLocation().getBlock() == d1 || p.getLocation().getBlock() == d2)) {
-                plugin.p(p).incHealth(2, owner, 3);
+            if ((plugin.game.canHit(p, getOwner()) || p == getOwner()) && (p.getLocation().getBlock() == b || p.getLocation().getBlock() == d1 || p.getLocation().getBlock() == d2)) {
+                plugin.p(p).incHealth(2, getOwner(), 3);
                 kill++;
             }
         }
         init = new Date().getTime() + 10000;
         plugin.currentWorld.createExplosion(b.getLocation(), 0);
+        ((World) ((CraftWorld)plugin.currentWorld).getHandle()).a("explode", b.getX(), b.getY(), b.getZ(), 1, 1, 1);
+        ((World) ((CraftWorld)plugin.currentWorld).getHandle()).a("smoke", b.getX(), b.getY(), b.getZ(), 1, 1, 1);
         b.setType(Material.AIR);
     }
 
     public void detect(Player p) {
-        if (plugin.p(p).getTeam() != t && (p.getLocation().getBlock() == b || p.getLocation().getBlock() == d1 || p.getLocation().getBlock() == d2)) {
+        if (plugin.game.canHit(p, getOwner()) && (p.getLocation().getBlock() == b || p.getLocation().getBlock() == d1 || p.getLocation().getBlock() == d2)) {
             if (!exploded) {
                 plugin.currentWorld.playEffect(p.getLocation(), Effect.CLICK2, 0);
             }

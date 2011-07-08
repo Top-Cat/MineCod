@@ -5,10 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
@@ -111,6 +109,11 @@ public class FFA extends gamemode {
     @Override
     public boolean canHit(LivingEntity a, LivingEntity d) {
         return (a != d);
+    }
+    
+    @Override
+    public String getClaymoreText(Player p) {
+    	return "[ " + plugin.p(p).nick + " ]";
     }
 
 }

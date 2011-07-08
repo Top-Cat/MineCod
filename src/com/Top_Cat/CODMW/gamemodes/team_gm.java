@@ -4,9 +4,10 @@ import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkitcontrib.BukkitContrib;
+import org.bukkitcontrib.player.ContribPlayer;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
@@ -17,6 +18,18 @@ public class team_gm extends gamemode {
     
     public team_gm(main instance) {
         super(instance);
+    }
+    
+    @Override
+    public void startGame() {
+    	super.startGame();
+    	for (player i : plugin.players.values()) {
+    		for (player j : plugin.players.values()) {
+    			if (i.getTeam() != j.getTeam() || i.getTeam() == team.BOTH) {
+    				BukkitContrib.getAppearanceManager().hidePlayerTitle((ContribPlayer) i.p, j.p);
+    			}
+    		}
+    	}
     }
     
     @Override
@@ -62,15 +75,24 @@ public class team_gm extends gamemode {
         team t2 = team.BOTH;
         if (a instanceof Player) {
             t1 = plugin.p((Player) a).getTeam();
-        } else if (d instanceof Wolf) {
-            t1 = plugin.wolves.get(a).t;
+        } else if (a instanceof Wolf) {
+            t1 = plugin.p(plugin.wolves.get(a).getOwner()).getTeam();
         }
         if (d instanceof Player) {
             t2 = plugin.p((Player) d).getTeam();
         } else if (d instanceof Wolf) {
-            t2 = plugin.wolves.get(d).t;
+            t2 = plugin.p(plugin.wolves.get(d).getOwner()).getTeam();
         }
         return (t1 != t2);
+    }
+    
+    @Override
+    public String getClaymoreText(Player p) {
+    	if (plugin.p(p).getTeam() == team.DIAMOND) {
+    		return plugin.d + "b** DIAMOND **";
+    	} else {
+    		return plugin.d + "6-- GOLD --";
+    	}
     }
     
 }

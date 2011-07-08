@@ -179,6 +179,7 @@ public class CODPlayerListener extends PlayerListener {
     public void recount() {
         plugin.diam = 0;
         plugin.gold = 0;
+        plugin.tot = plugin.players.size();
         for (player i : plugin.players.values()) {
             if (i.getTeam() == team.DIAMOND) {
                 plugin.diam++;

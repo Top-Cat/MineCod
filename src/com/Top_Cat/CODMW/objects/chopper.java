@@ -10,13 +10,11 @@ import org.bukkit.entity.Player;
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
 
-public class chopper {
+public class chopper extends ownable {
 
     Location p;
     public Location l;
     main plugin;
-    public Player owner;
-    public team t;
     double mx = 0, mz = 0, tx = 0, tz = 0;
     int tick = 0;
     Timer k = new Timer();
@@ -29,9 +27,8 @@ public class chopper {
 
     public chopper(main instance, Player _o) {
         plugin = instance;
-        owner = _o;
-        t = plugin.p(owner).getTeam();
-        plugin.game.sendMessage(team.BOTH, plugin.d + t.getColour() + plugin.p(owner).nick + plugin.d + "f called in a chopper!");
+        setOwner(_o);
+        plugin.game.sendMessage(team.BOTH, plugin.d + plugin.p(getOwner()).getTeam().getColour() + plugin.p(getOwner()).nick + plugin.d + "f called in a chopper!");
         
         plugin.choppers.add(this);
         
@@ -75,9 +72,10 @@ public class chopper {
                         tz += mz;
                         l = p.clone().add(tx, 0, tz);
                         l.setY(l.getWorld().getHighestBlockYAt(l) + 7);
-                        switch (t) {
+                        switch (plugin.p(getOwner()).getTeam()) {
                             case DIAMOND: l.getBlock().setType(Material.DIAMOND_BLOCK); break;
                             case GOLD: l.getBlock().setType(Material.GOLD_BLOCK); break;
+                            case BOTH: l.getBlock().setType(Material.OBSIDIAN); break;
                         }
                     } catch (Exception e) {
                         System.out.println("Error moving chopper");
@@ -89,7 +87,7 @@ public class chopper {
                     
                     for (player i : plugin.players.values()) {
                         Location l1 = i.p.getLocation();
-                        if (i.getTeam() != t) {
+                        if (plugin.game.canHit(getOwner(), i.p)) {
                             int yaw = (int) (Math.toDegrees(Math.atan2(l1.getX() - (l.getX() + 0.5), (l.getZ() + 0.5) - l1.getZ())) + 180);
                             if (yaw >= 315) { yaw -= 359; }
                             int r = (int) Math.ceil((yaw + 45) / 90);
@@ -98,7 +96,7 @@ public class chopper {
                             l2.setY(l.getY());
                             int pitch = (int) ((Math.toDegrees(Math.atan2(l2.distance(l), (l.getY() + 0.5) - l1.getY())) - 85) * 1.1);
                             
-                            CArrow arrow = new CArrow(plugin.currentWorld, owner, l.getBlock(), plugin, yaw, -pitch, r, 6);
+                            CArrow arrow = new CArrow(plugin.currentWorld, getOwner(), l.getBlock(), plugin, yaw, -pitch, r, 6);
                             arrow.world.addEntity(arrow);
                         }
                     }
@@ -114,7 +112,7 @@ public class chopper {
         int az = 0;
         int a = 0;
         for (Player i : plugin.players.keySet()) {
-            if (plugin.p(i).getTeam() != t && plugin.p(i).dead == false) {
+            if (plugin.game.canHit(getOwner(), i) && plugin.p(i).dead == false) {
                 ax = (int) (((ax * a) + i.getLocation().getX()) / (a + 1));
                 az = (int) (((az * a) + i.getLocation().getZ()) / (a + 1));
                 a++;

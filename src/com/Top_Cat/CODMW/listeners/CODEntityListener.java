@@ -10,6 +10,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageByProjectileEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.painting.PaintingBreakByEntityEvent;
@@ -18,7 +19,6 @@ import org.bukkit.event.painting.PaintingBreakEvent.RemoveCause;
 import org.bukkit.event.painting.PaintingPlaceEvent;
 
 import com.Top_Cat.CODMW.main;
-import com.Top_Cat.CODMW.team;
 import com.Top_Cat.CODMW.objects.CArrow;
 
 public class CODEntityListener extends EntityListener {
@@ -100,7 +100,7 @@ public class CODEntityListener extends EntityListener {
                     Player defender = (Player) (((EntityDamageByEntityEvent) event).getEntity());
                     if (plugin.wolves.containsKey(((EntityDamageByEntityEvent) event).getDamager())) {
                     if (plugin.game.canHit(defender, (Wolf) ((EntityDamageByEntityEvent) event).getDamager())) {
-                        plugin.p(defender).incHealth(2, plugin.wolves.get((Wolf) ((EntityDamageByEntityEvent) event).getDamager()).owner, 4);
+                        plugin.p(defender).incHealth(2, plugin.wolves.get((Wolf) ((EntityDamageByEntityEvent) event).getDamager()).getOwner(), 4);
                     }
                     plugin.wolves.remove(((EntityDamageByEntityEvent) event).getDamager());
                     }
@@ -116,6 +116,11 @@ public class CODEntityListener extends EntityListener {
                 ((Player) event.getEntity()).teleport(plugin.teamselect);
             }
         }
+    }
+    
+    @Override
+    public void onEntityRegainHealth(EntityRegainHealthEvent event) {
+    	event.setCancelled(true);
     }
     
     @Override

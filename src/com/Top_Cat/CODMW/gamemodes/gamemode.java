@@ -28,6 +28,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkitcontrib.BukkitContrib;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
@@ -112,7 +113,7 @@ public class gamemode {
         if (plugin.activeGame == false) {
             if (plugin.players.size() >= plugin.minplayers) {
                 sendMessage(team.BOTH, plugin.d + "9Game starting in 5 seconds!");
-                plugin.r.countdown(this);
+                plugin.r.countdowns();
                 plugin.activeGame = true;
             } else {
                 scheduleGame();
@@ -145,7 +146,6 @@ public class gamemode {
     
     public void startGame() {
         sendMessage(team.BOTH, plugin.d + "9Game starting now!");
-        
         for (Player p : plugin.players.keySet()) {
             plugin.p(p).resetScore();
             spawnPlayer(p, true);
@@ -188,6 +188,7 @@ public class gamemode {
     
     public void destroy() {
         plugin.getServer().getScheduler().cancelTasks(plugin);
+        BukkitContrib.getAppearanceManager().resetAllCloaks();
         for (claymore i : plugin.clays) {
             i.b.setType(Material.AIR);
         }
@@ -205,6 +206,7 @@ public class gamemode {
         plugin.sentries.clear();
         plugin.choppers.clear();
         plugin.activeGame = false;
+        t.cancel();
     }
     
     public void onRespawn(Player p) {}
@@ -253,7 +255,7 @@ public class gamemode {
                 Location l = i.getLocation();
                 for (claymore j : plugin.clays) {
                     if (j.b.getLocation().add(0.5, 0, 0.5).distance(l) < 1) {
-                        j.t = plugin.p((Player) ((Arrow)i).getShooter()).getTeam();
+                    	j.setOwner((Player) ((Arrow)i).getShooter());
                         j.kill();
                         r.add(j);
                     }
@@ -296,13 +298,8 @@ public class gamemode {
                 
                 if (i.b.getState() instanceof Sign) {
                     Sign s = (Sign) i.b.getState();
-                    if (i.t == team.DIAMOND) {
-                        s.setLine(0, plugin.d + "b** DIAMOND **");
-                        s.setLine(3, plugin.d + "b** DIAMOND **");
-                    } else {
-                        s.setLine(0, plugin.d + "6-- GOLD --");
-                        s.setLine(3, plugin.d + "6-- GOLD --");
-                    }
+                    s.setLine(0, getClaymoreText(i.getOwner()));
+                    s.setLine(3, getClaymoreText(i.getOwner()));
                     
                     s.setLine(1, "This side");
                     s.setLine(2, "towards enemy");
@@ -340,7 +337,6 @@ public class gamemode {
         plugin.totele.add(event.getPlayer());
         t.schedule(new tele(), 200);
         plugin.clearinv(event.getPlayer());    
-        
         String nick = event.getPlayer().getDisplayName();
         ResultSet r = plugin.sql.query("SELECT * FROM cod_players WHERE username = '" + event.getPlayer().getDisplayName() + "'");
         try {
@@ -362,5 +358,7 @@ public class gamemode {
     public void jointele(Player p) {};
     
     public boolean canHit(LivingEntity a, LivingEntity d) { return false; };
+    
+    public String getClaymoreText(Player p) { return "^^ CLAYMORE ^^"; };
     
 }

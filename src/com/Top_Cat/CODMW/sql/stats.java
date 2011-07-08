@@ -9,6 +9,10 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkitcontrib.player.ContribPlayer;
+
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
 import com.Top_Cat.CODMW.objects.player;
@@ -95,8 +99,15 @@ public class stats {
     
     public void awardAchievement(Achievement a) {
         if (!achs.contains(a)) {
-            plugin.game.sendMessage(team.BOTH, plugin.d + p.getTeam().getColour() + p.nick + " earned achievement: '" + a.getName() + "'", p.p);
-            p.p.sendMessage(plugin.d + p.getTeam().getColour() + "You earned achievement: '" + a.getName() + "'");
+        	Player ex = p.p;
+            ContribPlayer cp = (ContribPlayer) p.p;
+            if (cp.isEnabledBukkitContribSinglePlayerMod()) {
+            	ex = null;
+            	cp.sendNotification("Achievement Get!", a.getName(), Material.DIAMOND);
+            } else {
+            	p.p.sendMessage(plugin.d + p.getTeam().getColour() + "You earned achievement: '" + a.getText() + "'");
+            }
+            plugin.game.sendMessage(team.BOTH, plugin.d + p.getTeam().getColour() + p.nick + " earned achievement: '" + a.getText() + "'", ex);
             newa.add(a);
             achs.add(a);
             toach.remove(a);

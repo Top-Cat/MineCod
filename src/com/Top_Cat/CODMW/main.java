@@ -25,6 +25,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkitcontrib.BukkitContrib;
 
 import com.Top_Cat.CODMW.gamemodes.CTF;
 import com.Top_Cat.CODMW.gamemodes.FFA;
@@ -33,6 +34,7 @@ import com.Top_Cat.CODMW.gamemodes.gamemode;
 import com.Top_Cat.CODMW.gamemodes.team_gm;
 import com.Top_Cat.CODMW.listeners.CODBlockListener;
 import com.Top_Cat.CODMW.listeners.CODEntityListener;
+import com.Top_Cat.CODMW.listeners.CODInputListener;
 import com.Top_Cat.CODMW.listeners.CODInventoryListener;
 import com.Top_Cat.CODMW.listeners.CODPlayerListener;
 import com.Top_Cat.CODMW.listeners.CODWeatherListener;
@@ -45,12 +47,17 @@ import com.Top_Cat.CODMW.objects.player;
 import com.Top_Cat.CODMW.objects.redstone;
 import com.Top_Cat.CODMW.objects.sentry;
 import com.Top_Cat.CODMW.sql.conn;
+import com.Top_Cat.CODMW.vote.GameModes;
+import com.Top_Cat.CODMW.vote.GameTypeVote;
+import com.Top_Cat.CODMW.vote.MapVote;
+import com.Top_Cat.CODMW.vote.Vote;
 
 public class main extends JavaPlugin {
 
     public World currentWorld;
     public Location teamselect;
     public Location prespawn;
+    public HashMap<String, Integer> maps = new HashMap<String, Integer>();
     public HashMap<Player, player> players = new HashMap<Player, player>();
     public int gold, diam, tot, minplayers = 0;
     public final CODPlayerListener playerListener = new CODPlayerListener(this);
@@ -58,6 +65,7 @@ public class main extends JavaPlugin {
     public final CODEntityListener entityListener = new CODEntityListener(this);
     public final CODInventoryListener inventoryListener = new CODInventoryListener(this);
     public final CODWeatherListener weatherListener = new CODWeatherListener(this);
+    public final CODInputListener inputListener = new CODInputListener(this);
     public ArrayList<claymore> clays = new ArrayList<claymore>();
     public HashMap<Wolf, CWolf> wolves = new HashMap<Wolf, CWolf>();
     public ArrayList<sentry> sentries = new ArrayList<sentry>();
@@ -66,12 +74,14 @@ public class main extends JavaPlugin {
     public final String d = "\u00C2\u00A7";
     door d1, d2, d3, d4;
     public gamemode game;
+    public Vote v;
     public boolean activeGame = false;
     public redstone r;
     Timer t = new Timer();
     public conn sql = new conn();
     public map currentMap;
     Random gen = new Random();
+    public GameModes gm = GameModes.FFA;
 
     public void clearinv(Player p) {
         PlayerInventory i = p.getInventory();
@@ -119,45 +129,61 @@ public class main extends JavaPlugin {
 
     }
 
+    public void preparemap() {
+    	if (activeGame) { game.destroy(); }
+    	currentWorld = getServer().createWorld(currentMap.folder, Environment.NORMAL);
+        currentWorld.setPVP(true);
+        currentWorld.setSpawnFlags(true, true);
+        for (Entity i : currentWorld.getEntities()) {
+            if (i instanceof Item) {
+                i.remove();
+            }
+        }
+        teamselect = new Location(currentWorld, -14, 64, 13, 270, 0);
+        prespawn = new Location(currentWorld, -15.5, 64, 2, 270, 0);
+
+        d1 = new door(currentWorld.getBlockAt(-10, 64, 14));
+        d2 = new door(currentWorld.getBlockAt(-9, 64, 14));
+
+        d3 = new door(currentWorld.getBlockAt(-10, 64, 11));
+        d4 = new door(currentWorld.getBlockAt(-9, 64, 11));
+
+        r = new redstone(currentWorld.getBlockAt(-6, 64, 0), this);
+        
+        switch (gm) {
+            case TDM: game = new TDM(this); break; 
+            case CTF: game = new CTF(this); break;
+            case FFA: game = new FFA(this); break;
+        }
+        
+        players.clear();
+        for (Player i : getServer().getOnlinePlayers()) {
+        	clearinv(i);
+            game.jointele(i);
+        }
+    }
+    
+    public void loadmap(Integer mapid) {
+        ResultSet _r = sql.query("SELECT * FROM cod_maps WHERE `Id` = '" + mapid + "'");
+        try {
+            _r.next();
+            currentMap = new map(sql, this, _r);
+            preparemap();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
     public void loadmap() {
         String w = "";
         if (currentMap != null) {
             w = " WHERE `Id` != '" + currentMap.id + "'";
         }
-        ResultSet _r = sql.query("SELECT * FROM cod_maps" + w
-                + " ORDER BY RAND()");
+        ResultSet _r = sql.query("SELECT * FROM cod_maps" + w + " ORDER BY RAND()");
         try {
             _r.next();
             currentMap = new map(sql, this, _r);
-            currentWorld = getServer().createWorld(currentMap.folder,
-                    Environment.NORMAL);
-            currentWorld.setPVP(true);
-            currentWorld.setSpawnFlags(true, true);
-            for (Entity i : currentWorld.getEntities()) {
-                if (i instanceof Item) {
-                    i.remove();
-                }
-            }
-            teamselect = new Location(currentWorld, -14, 64, 13, 270, 0);
-            prespawn = new Location(currentWorld, -15.5, 64, 2, 270, 0);
-
-            d1 = new door(currentWorld.getBlockAt(-10, 64, 14));
-            d2 = new door(currentWorld.getBlockAt(-9, 64, 14));
-
-            d3 = new door(currentWorld.getBlockAt(-10, 64, 11));
-            d4 = new door(currentWorld.getBlockAt(-9, 64, 11));
-
-            r = new redstone(currentWorld.getBlockAt(-6, 64, 0));
-            
-            switch (/*gen.nextInt(3)*/2) {
-                case 0: game = new TDM(this); break; 
-                case 1: game = new CTF(this); break;
-                case 2: game = new FFA(this); break;
-            }
-            
-            for (Player i : getServer().getOnlinePlayers()) {
-                game.jointele(i);
-            }
+            preparemap();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -208,10 +234,36 @@ public class main extends JavaPlugin {
                     game.printScore(p, team.GOLD);
                     return true;
                 }
-            } else if (command.getName().equalsIgnoreCase("team")
-                    && args[0].equalsIgnoreCase("switch")) {
+            } else if (command.getName().equalsIgnoreCase("team") && args[0].equalsIgnoreCase("switch")) {
                 switchplayer(p);
                 return true;
+            } else if (command.getName().equalsIgnoreCase("vote") && players.containsKey(sender)) {
+            	if (v == null) {
+	            	if (args.length > 1) {
+	            		if (args[0].equalsIgnoreCase("map")) {
+	            			if (maps.containsKey(args[1])) {
+	            				v = new MapVote(this, args[1], maps.get(args[1]), p((Player) sender));
+	            			} else {
+	            				((Player) sender).sendMessage("Could not find map!");
+	            			}
+	            		} else if (args[0].equalsIgnoreCase("mode")) {
+	            			v = new GameTypeVote(this, args[1].toUpperCase(), p((Player) sender));
+	            		} else {
+	            			((Player) sender).sendMessage("Invalid vote type. Possible types are 'map' and 'mode'");
+	            		}
+	            	} else {
+	            		((Player) sender).sendMessage("Wrong number of arguments. Correct format is /vote <type> <for>");
+	            	}
+            	} else {
+            		((Player) sender).sendMessage("Vote already in progress!");
+            	}
+            } else if (command.getName().equalsIgnoreCase("y") && v != null) {
+            	v.VoteUp((Player) sender);
+            } else if (command.getName().equalsIgnoreCase("n") && v != null) {
+            	v.VoteDown((Player) sender);
+            }
+            if ((command.getName().equalsIgnoreCase("y") || command.getName().equalsIgnoreCase("n")) && v == null) {
+            	((Player) sender).sendMessage("No vote in progress!");
             }
         }
         return false;
@@ -232,24 +284,9 @@ public class main extends JavaPlugin {
                 return;
             }
             player _p = p(p);
-            for (claymore i : clays) {
-                if (i.owner == p) {
-                    i.t = _p.getTeam();
-                }
-            }
-            for (sentry i : sentries) {
-                if (i.owner == p) {
-                    i.t = _p.getTeam();
-                }
-            }
             for (CWolf i : wolves.values()) {
-                if (i.owner == p) {
+                if (i.getOwner() == p) {
                     i.wolf.remove();
-                }
-            }
-            for (chopper i : choppers) {
-                if (i.owner == p) {
-                    i.t = _p.getTeam();
                 }
             }
             game.sendMessage(team.BOTH, d + _p.getTeam().getColour() + _p.nick
@@ -285,8 +322,10 @@ public class main extends JavaPlugin {
         pm.registerEvent(Event.Type.CREATURE_SPAWN, entityListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PAINTING_BREAK, entityListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PAINTING_PLACE, entityListener, Priority.Normal, this);
+        pm.registerEvent(Event.Type.ENTITY_REGAIN_HEALTH, entityListener, Priority.Normal, this);
 
         pm.registerEvent(Event.Type.CUSTOM_EVENT, inventoryListener, Priority.Normal, this);
+        pm.registerEvent(Event.Type.CUSTOM_EVENT, inputListener, Priority.Normal, this);
 
         pm.registerEvent(Event.Type.WEATHER_CHANGE, weatherListener, Priority.Normal, this);
 
@@ -295,6 +334,14 @@ public class main extends JavaPlugin {
 
         t.schedule(new sun(), 0, 60000);
 
+        BukkitContrib.getItemManager().setItemName(Material.FEATHER, "Ammo");
+        BukkitContrib.getItemManager().setItemName(Material.WALL_SIGN, "Wall Sign");
+        BukkitContrib.getItemManager().setItemName(Material.APPLE, "Invulnerability");
+        BukkitContrib.getItemManager().setItemName(Material.BONE, "Dogs");
+        BukkitContrib.getItemManager().setItemName(Material.DISPENSER, "Sentry");
+        BukkitContrib.getItemManager().setItemName(Material.DIAMOND, "Chopper");
+        BukkitContrib.getItemManager().setItemName(Material.IRON_SWORD, "Knife");
+        
         setDoors();
         for (Player p : getServer().getOnlinePlayers()) {
             if (!(game instanceof team_gm)) {
@@ -305,6 +352,15 @@ public class main extends JavaPlugin {
             p.sendMessage(d + "9Please choose your team!");
             p.setHealth(20);
         }
+        
+        ResultSet _r = sql.query("SELECT * FROM cod_maps");
+        try {
+			while (_r.next()) {
+				maps.put(_r.getString("name"), _r.getInt("Id"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
     }
 
 }

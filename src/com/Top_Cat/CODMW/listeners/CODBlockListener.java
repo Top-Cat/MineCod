@@ -10,7 +10,6 @@ import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 import com.Top_Cat.CODMW.main;
-import com.Top_Cat.CODMW.team;
 import com.Top_Cat.CODMW.objects.claymore;
 import com.Top_Cat.CODMW.objects.sentry;
 import com.Top_Cat.CODMW.sql.Stat;
@@ -50,13 +49,8 @@ public class CODBlockListener extends BlockListener {
             int r = rotateblock(event.getPlayer(), event.getBlockPlaced());
             if (event.getBlockPlaced().getState() instanceof Sign) {
                 Sign s = (Sign) event.getBlockPlaced().getState();
-                if (plugin.p(event.getPlayer()).getTeam() == team.DIAMOND) {
-                    s.setLine(0, plugin.d + "b** DIAMOND **");
-                    s.setLine(3, plugin.d + "b** DIAMOND **");
-                } else {
-                    s.setLine(0, plugin.d + "6-- GOLD --");
-                    s.setLine(3, plugin.d + "6-- GOLD --");
-                }
+                s.setLine(0, plugin.game.getClaymoreText(event.getPlayer()));
+                s.setLine(3, plugin.game.getClaymoreText(event.getPlayer()));
                 
                 s.setLine(1, "This side");
                 s.setLine(2, "towards enemy");

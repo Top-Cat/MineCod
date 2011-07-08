@@ -10,3 +10,9 @@ commands:
         description: Display score
     team:
         description: Team operations
+    vote:
+        description: Vote for game options
+    y:
+        description: Vote yes
+    n:
+        description: Vote no

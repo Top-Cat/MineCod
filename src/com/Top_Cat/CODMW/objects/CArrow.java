@@ -47,8 +47,8 @@ public class CArrow extends EntityArrow {
         a(this.motX, this.motY, this.motZ, 1.5F, 1.0F);
     }
 
-    public void o_() {
-        super.o_();
+    public void m_() {
+        super.m_();
 
         if (this.firstY == 123.0D) this.firstY = this.motY;
         if (this.speed > 0) {

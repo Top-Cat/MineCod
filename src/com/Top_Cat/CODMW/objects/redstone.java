@@ -7,6 +7,7 @@ import java.util.TimerTask;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
+import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.gamemodes.gamemode;
 
 public class redstone {
@@ -15,8 +16,11 @@ public class redstone {
     ArrayList<String> nums = new ArrayList<String>();
     int cur = 0;
     Timer t = new Timer();
+    main plugin;
+    boolean s = true;
     
-    public redstone(Block bl) {
+    public redstone(Block bl, main instance) {
+    	plugin = instance;
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
                 torches.add(bl.getRelative(0, j, i));
@@ -31,11 +35,9 @@ public class redstone {
         t.schedule(new countdown(), 1000, 1000);
     }
     
-    gamemode g;
-    
-    public void countdown(gamemode _g) {
-        g = _g;
+    public void countdowns() {
         cur = 6;
+        s = false;
     }
     
     public class countdown extends TimerTask {
@@ -45,9 +47,9 @@ public class redstone {
             if (cur > 0) {
                 display(nums.get(--cur));
             } else {
-                if (g != null) {
-                    g.startGame();
-                    g = null;
+                if (!s && plugin.game != null) {
+                	plugin.game.startGame();
+                	s = true;
                 }
             }
         }

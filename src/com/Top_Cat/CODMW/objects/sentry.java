@@ -11,20 +11,19 @@ import org.bukkit.entity.Player;
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
 
-public class sentry {
+public class sentry extends ownable {
     
     public team t;
     public Block b, bt;
     main plugin;
-    public Player owner;
     Timer k = new Timer();
     int rot;
     
     public sentry(main instance, Block _c, int r, Player _o) {
         rot = r;
         plugin = instance;
-        owner = _o;
-        t = plugin.p(owner).getTeam();
+        setOwner(_o);
+        t = plugin.p(getOwner()).getTeam();
         b = _c;
         bt = _c.getRelative(0, 1, 0);
         k.schedule(new tick(), 200, 200);
@@ -60,7 +59,7 @@ public class sentry {
                     if (yaw >= 315) { yaw -= 359; }
                     int r = (int) Math.ceil((yaw + 45) / 90);
                     if (r == rot) {
-                        CArrow arrow = new CArrow(plugin.currentWorld, owner, bt, plugin, yaw, 0, r, 5);
+                        CArrow arrow = new CArrow(plugin.currentWorld, getOwner(), bt, plugin, yaw, 0, r, 5);
                         arrow.world.addEntity(arrow);
                     }
                 }

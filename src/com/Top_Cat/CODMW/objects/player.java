@@ -9,11 +9,11 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkitcontrib.BukkitContrib;
+import org.bukkitcontrib.player.ContribPlayer;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
-import com.Top_Cat.CODMW.gamemodes.CTF;
-import com.Top_Cat.CODMW.gamemodes.TDM;
 import com.Top_Cat.CODMW.sql.Achievement;
 import com.Top_Cat.CODMW.sql.Stat;
 import com.Top_Cat.CODMW.sql.stats;
@@ -59,10 +59,12 @@ public class player {
         switch(t) {
             case GOLD:
                 p.getInventory().setHelmet(new ItemStack(Material.GOLD_HELMET, 1));
+                BukkitContrib.getAppearanceManager().setGlobalCloak(p, "http://www.thorgaming.com/minecraft/redteamcape.png");
                 plugin.gold++;
                 break;
             case DIAMOND:
                 p.getInventory().setHelmet(new ItemStack(Material.DIAMOND_HELMET, 1));
+                BukkitContrib.getAppearanceManager().setGlobalCloak(p, "http://www.thorgaming.com/minecraft/blueteamcape.png");
                 plugin.diam++;
                 break;
         }
