@@ -22,14 +22,14 @@ public class team_gm extends gamemode {
     
     @Override
     public void startGame() {
-    	super.startGame();
-    	for (player i : plugin.players.values()) {
-    		for (player j : plugin.players.values()) {
-    			if (i.getTeam() != j.getTeam() || i.getTeam() == team.BOTH) {
-    				BukkitContrib.getAppearanceManager().hidePlayerTitle((ContribPlayer) i.p, j.p);
-    			}
-    		}
-    	}
+        super.startGame();
+        for (player i : plugin.players.values()) {
+            for (player j : plugin.players.values()) {
+                if (i.getTeam() != j.getTeam() || i.getTeam() == team.BOTH) {
+                    BukkitContrib.getAppearanceManager().hidePlayerTitle((ContribPlayer) i.p, j.p);
+                }
+            }
+        }
     }
     
     @Override
@@ -88,11 +88,11 @@ public class team_gm extends gamemode {
     
     @Override
     public String getClaymoreText(Player p) {
-    	if (plugin.p(p).getTeam() == team.DIAMOND) {
-    		return plugin.d + "b** DIAMOND **";
-    	} else {
-    		return plugin.d + "6-- GOLD --";
-    	}
+        if (plugin.p(p).getTeam() == team.DIAMOND) {
+            return plugin.d + "b** DIAMOND **";
+        } else {
+            return plugin.d + "6-- GOLD --";
+        }
     }
     
 }

@@ -120,7 +120,7 @@ public class CODEntityListener extends EntityListener {
     
     @Override
     public void onEntityRegainHealth(EntityRegainHealthEvent event) {
-    	event.setCancelled(true);
+        event.setCancelled(true);
     }
     
     @Override

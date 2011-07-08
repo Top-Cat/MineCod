@@ -99,13 +99,13 @@ public class stats {
     
     public void awardAchievement(Achievement a) {
         if (!achs.contains(a)) {
-        	Player ex = p.p;
+            Player ex = p.p;
             ContribPlayer cp = (ContribPlayer) p.p;
             if (cp.isEnabledBukkitContribSinglePlayerMod()) {
-            	ex = null;
-            	cp.sendNotification("Achievement Get!", a.getName(), Material.DIAMOND);
+                ex = null;
+                cp.sendNotification("Achievement Get!", a.getName(), Material.DIAMOND);
             } else {
-            	p.p.sendMessage(plugin.d + p.getTeam().getColour() + "You earned achievement: '" + a.getText() + "'");
+                p.p.sendMessage(plugin.d + p.getTeam().getColour() + "You earned achievement: '" + a.getText() + "'");
             }
             plugin.game.sendMessage(team.BOTH, plugin.d + p.getTeam().getColour() + p.nick + " earned achievement: '" + a.getText() + "'", ex);
             newa.add(a);

@@ -255,7 +255,7 @@ public class gamemode {
                 Location l = i.getLocation();
                 for (claymore j : plugin.clays) {
                     if (j.b.getLocation().add(0.5, 0, 0.5).distance(l) < 1) {
-                    	j.setOwner((Player) ((Arrow)i).getShooter());
+                        j.setOwner((Player) ((Arrow)i).getShooter());
                         j.kill();
                         r.add(j);
                     }

@@ -16,9 +16,9 @@ public class CODInputListener extends InputListener {
     
     @Override
     public void onKeyPressedEvent(KeyPressedEvent event) {
-    	if (event.getKey() == Keyboard.KEY_R) {
-    		plugin.getServer().dispatchCommand(event.getPlayer(), "r");
-    	}
+        if (event.getKey() == Keyboard.KEY_R) {
+            plugin.getServer().dispatchCommand(event.getPlayer(), "r");
+        }
     }
     
 }

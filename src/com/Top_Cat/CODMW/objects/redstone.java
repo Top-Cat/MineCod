@@ -19,7 +19,7 @@ public class redstone {
     boolean s = true;
     
     public redstone(Block bl, main instance) {
-    	plugin = instance;
+        plugin = instance;
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
                 torches.add(bl.getRelative(0, j, i));
@@ -47,8 +47,8 @@ public class redstone {
                 display(nums.get(--cur));
             } else {
                 if (!s && plugin.game != null) {
-                	plugin.game.startGame();
-                	s = true;
+                    plugin.game.startGame();
+                    s = true;
                 }
             }
         }

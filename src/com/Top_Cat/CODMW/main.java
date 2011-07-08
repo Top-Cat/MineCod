@@ -130,8 +130,8 @@ public class main extends JavaPlugin {
     }
 
     public void preparemap() {
-    	if (activeGame) { game.destroy(); }
-    	currentWorld = getServer().createWorld(currentMap.folder, Environment.NORMAL);
+        if (activeGame) { game.destroy(); }
+        currentWorld = getServer().createWorld(currentMap.folder, Environment.NORMAL);
         currentWorld.setPVP(true);
         currentWorld.setSpawnFlags(true, true);
         for (Entity i : currentWorld.getEntities()) {
@@ -158,7 +158,7 @@ public class main extends JavaPlugin {
         
         players.clear();
         for (Player i : getServer().getOnlinePlayers()) {
-        	clearinv(i);
+            clearinv(i);
             game.jointele(i);
         }
     }
@@ -238,32 +238,32 @@ public class main extends JavaPlugin {
                 switchplayer(p);
                 return true;
             } else if (command.getName().equalsIgnoreCase("vote") && players.containsKey(sender)) {
-            	if (v == null) {
-	            	if (args.length > 1) {
-	            		if (args[0].equalsIgnoreCase("map")) {
-	            			if (maps.containsKey(args[1])) {
-	            				v = new MapVote(this, args[1], maps.get(args[1]), p((Player) sender));
-	            			} else {
-	            				((Player) sender).sendMessage("Could not find map!");
-	            			}
-	            		} else if (args[0].equalsIgnoreCase("mode")) {
-	            			v = new GameTypeVote(this, args[1].toUpperCase(), p((Player) sender));
-	            		} else {
-	            			((Player) sender).sendMessage("Invalid vote type. Possible types are 'map' and 'mode'");
-	            		}
-	            	} else {
-	            		((Player) sender).sendMessage("Wrong number of arguments. Correct format is /vote <type> <for>");
-	            	}
-            	} else {
-            		((Player) sender).sendMessage("Vote already in progress!");
-            	}
+                if (v == null) {
+                    if (args.length > 1) {
+                        if (args[0].equalsIgnoreCase("map")) {
+                            if (maps.containsKey(args[1])) {
+                                v = new MapVote(this, args[1], maps.get(args[1]), p((Player) sender));
+                            } else {
+                                ((Player) sender).sendMessage("Could not find map!");
+                            }
+                        } else if (args[0].equalsIgnoreCase("mode")) {
+                            v = new GameTypeVote(this, args[1].toUpperCase(), p((Player) sender));
+                        } else {
+                            ((Player) sender).sendMessage("Invalid vote type. Possible types are 'map' and 'mode'");
+                        }
+                    } else {
+                        ((Player) sender).sendMessage("Wrong number of arguments. Correct format is /vote <type> <for>");
+                    }
+                } else {
+                    ((Player) sender).sendMessage("Vote already in progress!");
+                }
             } else if (command.getName().equalsIgnoreCase("y") && v != null) {
-            	v.VoteUp((Player) sender);
+                v.VoteUp((Player) sender);
             } else if (command.getName().equalsIgnoreCase("n") && v != null) {
-            	v.VoteDown((Player) sender);
+                v.VoteDown((Player) sender);
             }
             if ((command.getName().equalsIgnoreCase("y") || command.getName().equalsIgnoreCase("n")) && v == null) {
-            	((Player) sender).sendMessage("No vote in progress!");
+                ((Player) sender).sendMessage("No vote in progress!");
             }
         }
         return false;
@@ -355,12 +355,12 @@ public class main extends JavaPlugin {
         
         ResultSet _r = sql.query("SELECT * FROM cod_maps");
         try {
-			while (_r.next()) {
-				maps.put(_r.getString("name"), _r.getInt("Id"));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+            while (_r.next()) {
+                maps.put(_r.getString("name"), _r.getInt("Id"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 }

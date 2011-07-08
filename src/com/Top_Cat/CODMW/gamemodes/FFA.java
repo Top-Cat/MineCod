@@ -113,7 +113,7 @@ public class FFA extends gamemode {
     
     @Override
     public String getClaymoreText(Player p) {
-    	return "[ " + plugin.p(p).nick + " ]";
+        return "[ " + plugin.p(p).nick + " ]";
     }
 
 }
