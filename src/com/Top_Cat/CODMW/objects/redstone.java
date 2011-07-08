@@ -15,7 +15,6 @@ public class redstone {
     ArrayList<Block> torches = new ArrayList<Block>();
     ArrayList<String> nums = new ArrayList<String>();
     int cur = 0;
-    Timer t = new Timer();
     main plugin;
     boolean s = true;
     
@@ -32,7 +31,7 @@ public class redstone {
         nums.add(". . .. . .. . ......");
         nums.add(" .... .   ...   .   ");
         nums.add(". .... . .. . .... .");
-        t.schedule(new countdown(), 1000, 1000);
+        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new countdown(), 20L, 20L);
     }
     
     public void countdowns() {

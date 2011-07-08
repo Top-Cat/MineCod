@@ -150,9 +150,9 @@ public class gamemode {
             plugin.p(p).resetScore();
             spawnPlayer(p, true);
         }
-        plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new tick(), 40L, 40L);
-        plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new tickone(), 20L, 20L);
-        plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new tickfast(), 2L, 2L);
+        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new tick(), 40L, 40L);
+        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new tickone(), 20L, 20L);
+        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new tickfast(), 2L, 2L);
     }
     
     public void onWin(team winners, player lastkill, player lastdeath) {
