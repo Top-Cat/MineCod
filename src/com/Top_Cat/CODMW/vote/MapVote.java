@@ -42,7 +42,7 @@ public class MapVote extends Vote {
             na = t.nick;
         }
         for (Player i : plugin.getServer().getOnlinePlayers()) {
-            i.sendMessage(na + " voted " + fg + " the map change. (" + ((y / (y + n)) * 100) + "% in favour, " + ((end - new Date().getTime()) / 1000) + " seconds left)");
+            i.sendMessage(na + " voted " + fg + " the map change. (" + ((y * 100) / (y + n)) + "% in favour, " + ((end - new Date().getTime()) / 1000) + " seconds left)");
         }
     }
     

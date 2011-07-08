@@ -247,7 +247,11 @@ public class main extends JavaPlugin {
                                 ((Player) sender).sendMessage("Could not find map!");
                             }
                         } else if (args[0].equalsIgnoreCase("mode")) {
-                            v = new GameTypeVote(this, args[1].toUpperCase(), p((Player) sender));
+                        	if (GameModes.getGMFromId(args[1].toUpperCase()) != null) {
+                        		v = new GameTypeVote(this, args[1].toUpperCase(), p((Player) sender));
+                        	} else {
+                        		((Player) sender).sendMessage("Could not find game type!");
+                        	}
                         } else {
                             ((Player) sender).sendMessage("Invalid vote type. Possible types are 'map' and 'mode'");
                         }

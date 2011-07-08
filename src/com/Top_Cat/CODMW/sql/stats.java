@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkitcontrib.player.ContribPlayer;
 
@@ -75,18 +74,24 @@ public class stats {
     }
     
     public void maxStat(Stat s, int c) {
+    	boolean r = false;
         if (stats.containsKey(s) && stats.get(s) < c) {
             updated.add(s);
         } else if (!stats.containsKey(s)) {
             newv.add(s);
         } else {
-            return;
+            r = true;
         }
+        ArrayList<Achievement> tmp = new ArrayList<Achievement>();
         for (Achievement a : toach) {
             if (a.getStat() == s && a.getCount() <= c) {
-                awardAchievement(a);
+                tmp.add(a);
             }
         }
+        for (Achievement a : tmp) {
+            awardAchievement(a);
+        }
+        if (r) { return; }
         stats.put(s, c);
     }
     
@@ -103,7 +108,7 @@ public class stats {
             ContribPlayer cp = (ContribPlayer) p.p;
             if (cp.isEnabledBukkitContribSinglePlayerMod()) {
                 ex = null;
-                cp.sendNotification("Achievement Get!", a.getName(), Material.DIAMOND);
+                cp.sendNotification("Achievement Get!", a.getName(), a.getMat());
             } else {
                 p.p.sendMessage(plugin.d + p.getTeam().getColour() + "You earned achievement: '" + a.getText() + "'");
             }

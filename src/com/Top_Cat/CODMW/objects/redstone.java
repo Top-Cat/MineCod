@@ -1,14 +1,12 @@
 package com.Top_Cat.CODMW.objects;
 
 import java.util.ArrayList;
-import java.util.Timer;
 import java.util.TimerTask;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 import com.Top_Cat.CODMW.main;
-import com.Top_Cat.CODMW.gamemodes.gamemode;
 
 public class redstone {
     
@@ -31,6 +29,7 @@ public class redstone {
         nums.add(". . .. . .. . ......");
         nums.add(" .... .   ...   .   ");
         nums.add(". .... . .. . .... .");
+        display(nums.get(0));
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new countdown(), 20L, 20L);
     }
     

@@ -48,7 +48,10 @@ public enum Stat {
     HEADSHOTS(41),
     FLAG_PICKUPS(42),
     FLAG_RETURNS(43),
-    FLAG_CAPTURES(44);
+    FLAG_CAPTURES(44),
+    FURTHEST_KILL(45),
+    FURTHEST_HEADSHOT(46),
+    LIFE_REGENS(47);
     
     private final int id;
 

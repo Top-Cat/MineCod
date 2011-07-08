@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkitcontrib.BukkitContrib;
-import org.bukkitcontrib.player.ContribPlayer;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
@@ -33,6 +32,7 @@ public class player {
     public long stime = 0;
     public long vtime = 0;
     public int todrop = 0;
+    public int regens = 0;
     public boolean inv = false;
     public Location dropl;
     public Player assist;
@@ -108,6 +108,7 @@ public class player {
         streak = 0;
         assists = 0;
         points = 0;
+        regens = 0;
     }
     
     public void addPoints(int c) {
@@ -140,7 +141,52 @@ public class player {
         p.updateInventory();
     }
     
+    public void onKill(player killed, int reason) {
+        s.incStat(Stat.KILLS);
+        kill++;
+        s.maxStat(Stat.MAX_KILLS, kill);
+        if (reason == 2 || reason == 7) {
+            s.maxStat(Stat.FURTHEST_KILL, (int) killed.p.getLocation().distance(p.getLocation()));
+        }
+        if (reason == 7) {
+            s.maxStat(Stat.FURTHEST_HEADSHOT, (int) killed.p.getLocation().distance(p.getLocation()));
+        }
+        if (inv) {
+            s.incStat(Stat.INVULNERABLE_KILLS);
+        }
+        if (killed.nick.equalsIgnoreCase("Gigthank")) {
+            s.awardAchievement(Achievement.KILL_GIG);
+        } else if (killed.nick.equalsIgnoreCase("Notch")) {
+            s.awardAchievement(Achievement.KILL_NOTCH);
+        }
+        if (reason <= 3 || reason == 7) {
+            addStreak();
+        }
+        
+        int ammo = 0;
+        for (ItemStack i : p.getInventory().getContents()) {
+            if (i != null) {
+                if (i.getType() == Material.FEATHER || i.getType() == Material.ARROW) {
+                    ammo += i.getAmount();
+                }
+            }
+        }
+        
+        if (ammo == 0 && reason == 1) {
+            s.awardAchievement(Achievement.LAST_RESORT);
+        }
+        
+        switch (reason) {
+            case 1: knife++; break;
+            case 2: arrow++; break;
+        }
+    }
+    
     public void incHealth(int _h, Player attacker, int reason) {
+    	if (_h < 0 && h < 2) {
+    		regens++;
+    		s.maxStat(Stat.LIFE_REGENS, regens);
+    	}
         if (_h < 0 || inv == false) {
             h -= _h;
             if (h > 2) { h = 2; }
@@ -149,27 +195,10 @@ public class player {
                 stime = new Date().getTime() + 5000;
             }
             if (h <= 0) {
+            	regens = 0;
                 player a = plugin.p(attacker);
                 if (a != this) {
-                    a.s.incStat(Stat.KILLS);
-                    a.kill++;
-                    a.s.maxStat(Stat.MAX_KILLS, plugin.p(attacker).kill);
-                    if (a.inv) {
-                        a.s.incStat(Stat.INVULNERABLE_KILLS);
-                    }
-                    if (p.getDisplayName().equalsIgnoreCase("Gigthank")) {
-                        a.s.awardAchievement(Achievement.KILL_GIG);
-                    } else if (p.getDisplayName().equalsIgnoreCase("Notch")) {
-                        a.s.awardAchievement(Achievement.KILL_NOTCH);
-                    }
-                    if (reason <= 3 || reason == 7) {
-                        a.addStreak();
-                    }
-                    
-                    switch (reason) {
-                        case 1: a.knife++; break;
-                        case 2: a.arrow++; break;
-                    }
+                    a.onKill(this, reason);
                 } else {
                     kill--;
                 }
@@ -191,7 +220,7 @@ public class player {
                 last = new streaks();
                 for (ItemStack i : p.getInventory().getContents()) {
                     if (i != null) {
-                        if (i.getType() == Material.FEATHER) {
+                        if (i.getType() == Material.FEATHER || i.getType() == Material.ARROW) {
                             ammo += i.getAmount();
                         } else if (i.getType() == Material.WALL_SIGN) {
                             last.clays += i.getAmount();

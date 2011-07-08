@@ -11,6 +11,7 @@ import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Player;
 
 import com.Top_Cat.CODMW.main;
+import com.Top_Cat.CODMW.sql.Achievement;
 
 public class claymore extends ownable {
 
@@ -41,6 +42,9 @@ public class claymore extends ownable {
                 plugin.p(p).incHealth(2, getOwner(), 3);
                 kill++;
             }
+        }
+        if (kill > 1) {
+        	plugin.p(getOwner()).s.awardAchievement(Achievement.CLAYMORE_MULTI);
         }
         init = new Date().getTime() + 10000;
         plugin.currentWorld.createExplosion(b.getLocation(), 0);

@@ -31,20 +31,8 @@ public class GameTypeVote extends Vote {
     public void onComplete(boolean result) {
         super.onComplete(result);
         if (result) {
-            plugin.game.destroy();
             plugin.gm = gm;
-            
-            switch (plugin.gm) {
-                case TDM: plugin.game = new TDM(plugin); break; 
-                case CTF: plugin.game = new CTF(plugin); break;
-                case FFA: plugin.game = new FFA(plugin); break;
-            }
-            
-            plugin.players.clear();
-            for (Player i : plugin.getServer().getOnlinePlayers()) {
-                plugin.clearinv(i);
-                plugin.game.jointele(i);
-            }
+            plugin.preparemap();
         }
     }
     
@@ -55,7 +43,7 @@ public class GameTypeVote extends Vote {
             na = t.nick;
         }
         for (Player i : plugin.getServer().getOnlinePlayers()) {
-            i.sendMessage(na + " voted " + fg + " the mode change. (" + ((y / (y + n)) * 100) + "% in favour, " + ((end - new Date().getTime()) / 1000) + " seconds left)");
+            i.sendMessage(na + " voted " + fg + " the mode change. (" + ((y * 100) / (y + n)) + "% in favour, " + ((end - new Date().getTime()) / 1000) + " seconds left)");
         }
     }
     
