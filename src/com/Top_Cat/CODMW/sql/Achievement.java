@@ -81,6 +81,15 @@ public enum Achievement {
     SAS_SNIPER(73, Stat.FURTHEST_HEADSHOT, 30, "SAS Sniper", "Headshot an enemy who is more than 30 blocks away", Material.COMPASS),
     LAST_RESORT(74, Stat.OTHER, -1, "Last Resort", "Kill someone with a knife when you have no ammo", Material.IRON_SWORD),
     CLOSE_CALL(75, Stat.LIFE_REGENS, 5, "Close Call", "Restore your health 5 times without dying", Material.GRILLED_PORK),
+    CLOSE_CHOPPER(76, Stat.OTHER, -1, "So close, but so far", "Kill an enemy who is one kill away from a helicopter", Material.FIRE),
+    NEMESIS(77, Stat.OTHER, -1, "My Arch Nemesis", "Kill an enemy team member 3 times in a row", Material.PUMPKIN),
+    FALL_HARD(78, Stat.OTHER, -1, "The harder they fall", "Kill the enemy top player 3 times in a row", Material.JACK_O_LANTERN),
+    WARGASM(79, Stat.OTHER, -1, "Wargam", "Get 2 different killstreaks within 20 seconds", Material.SUGAR),
+    HOTSHOT(80, Stat.OTHER, -1, "Hotshot", "Get 3 headshots in a row", Material.IRON_HELMET),
+    COMMANDO(81, Stat.OTHER, -1, "Commando", "Get 3 melee kills in a row without dying", Material.IRON_SWORD),
+    HIDING(82, Stat.OTHER, -1, "Hiding", "Survive for 2 minutes", Material.SLIME_BALL),
+    CAMPER(83, Stat.OTHER, -1, "Camper", "Survive for 3 minutes", Material.SLIME_BALL),
+    BEAR_GRYLLS(84, Stat.OTHER, -1, "Bear Grylls", "Survive for 5 minutes", Material.SLIME_BALL),
     ;
     
     private final int id;

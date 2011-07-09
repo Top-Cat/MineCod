@@ -36,6 +36,7 @@ import com.Top_Cat.CODMW.objects.chopper;
 import com.Top_Cat.CODMW.objects.claymore;
 import com.Top_Cat.CODMW.objects.player;
 import com.Top_Cat.CODMW.objects.sentry;
+import com.Top_Cat.CODMW.sql.Achievement;
 import com.Top_Cat.CODMW.sql.Stat;
 
 public class gamemode {
@@ -127,6 +128,7 @@ public class gamemode {
     
     public void spawnPlayer(Player p, boolean start) {
         player _p = plugin.p(p);
+        _p.spawn = new Date().getTime();
         _p.clearinv();
         _p.setinv();
         
@@ -218,6 +220,14 @@ public class gamemode {
                 p.p.getInventory().clear(37);
                 p.p.getInventory().clear(36);
                 p.inv = false;
+            }
+            int life = (int) (new Date().getTime() - p.spawn);
+            if (life > 300000) {
+                p.s.awardAchievement(Achievement.BEAR_GRYLLS);
+            } else if (life > 180000) {
+                p.s.awardAchievement(Achievement.CAMPER);
+            } else if (life > 120000) {
+                p.s.awardAchievement(Achievement.HIDING);
             }
             if (p.dead) {
                 onRespawn(p.p);
@@ -360,5 +370,7 @@ public class gamemode {
     public boolean canHit(LivingEntity a, LivingEntity d) { return false; };
     
     public String getClaymoreText(Player p) { return "^^ CLAYMORE ^^"; };
+    
+    public player getTopPlayer(team t) { return null; }
     
 }

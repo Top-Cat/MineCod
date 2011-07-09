@@ -117,5 +117,20 @@ public class TDM extends team_gm {
             p.sendMessage(plugin.d + c + (t == team.DIAMOND ? diam : gold) + " / 50");
         }
     }
+    
+    @Override
+    public player getTopPlayer(team t) {
+    	player out = null;
+    	int mkills = -1;
+    	for (player i : plugin.players.values()) {
+    		if (i.getTeam() == t) {
+	    		if (i.kill > mkills) {
+	    			out = i;
+	    			mkills = i.kill;
+	    		}
+    		}
+    	}
+    	return out;
+    }
 
 }

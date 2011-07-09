@@ -116,4 +116,17 @@ public class FFA extends gamemode {
         return "[ " + plugin.p(p).nick + " ]";
     }
 
+    @Override
+    public player getTopPlayer(team t) {
+    	player out = null;
+    	int mkills = -1;
+    	for (player i : plugin.players.values()) {
+    		if (i.kill > mkills) {
+    			out = i;
+    			mkills = i.kill;
+    		}
+    	}
+    	return out;
+    }    
+    
 }

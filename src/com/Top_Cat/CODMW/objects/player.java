@@ -36,6 +36,13 @@ public class player {
     public boolean inv = false;
     public Location dropl;
     public Player assist;
+    public long spawn = new Date().getTime();
+    player lastk;
+    int lastk_count = 0;
+    int lastk_top_count = 0;
+    long laststreak = 0;
+    int hshot_streak = 0;
+    int melee_streak = 0;
     
     public boolean dead = false;
     
@@ -119,12 +126,20 @@ public class player {
     
     public void addStreak() {
         streak++;
+        boolean gstreak = true;
         switch (streak) {
             case 3: giveItem(2, new ItemStack(Material.WALL_SIGN, 2)); s.incStat(Stat.CLAYMORES_ACHIEVED); break;
             case 5: giveItem(3, new ItemStack(Material.APPLE, 1)); s.incStat(Stat.APPLES_ACHIEVED); break;
             case 7: giveItem(4, new ItemStack(Material.BONE, 1)); s.incStat(Stat.DOGS_ACHIEVED); break;
             case 9: giveItem(5, new ItemStack(Material.DISPENSER, 1)); s.incStat(Stat.SENTRIES_ACHIEVED); break;
             case 11: giveItem(6, new ItemStack(Material.DIAMOND, 1)); s.incStat(Stat.CHOPPERS_ACHIEVED); break;
+            default: gstreak = false;
+        }
+        if (gstreak) {
+        	if ((new Date().getTime() - laststreak) < 20000) {
+        		s.awardAchievement(Achievement.WARGASM);
+        	}
+        	laststreak = new Date().getTime();
         }
         s.maxStat(Stat.MAX_STREAK, streak);
     }
@@ -175,6 +190,44 @@ public class player {
         if (ammo == 0 && reason == 1) {
             s.awardAchievement(Achievement.LAST_RESORT);
         }
+        if (killed.streak == 10) {
+            s.awardAchievement(Achievement.CLOSE_CHOPPER);
+        }
+        
+        if (killed == lastk) {
+            lastk_count++;
+            if (lastk_count >= 3) {
+                s.awardAchievement(Achievement.NEMESIS);
+            }
+        } else {
+            lastk = killed;
+            lastk_count = 1;
+        }
+        
+        if (killed == plugin.game.getTopPlayer(t == team.GOLD ? team.DIAMOND : team.GOLD)) {
+            lastk_top_count++;
+            if (lastk_count >= 3) {
+                s.awardAchievement(Achievement.FALL_HARD);
+            }
+        } else {
+        	lastk_top_count = 0;
+        }
+        if (reason == 7) {
+        	hshot_streak++;
+        	if (hshot_streak > 3) {
+        		s.awardAchievement(Achievement.HOTSHOT);
+        	}
+        } else {
+        	hshot_streak = 0;
+        }
+        if (reason == 1) {
+        	melee_streak++;
+        	if (melee_streak > 3) {
+        		s.awardAchievement(Achievement.COMMANDO);
+        	}
+        } else {
+        	melee_streak = 0;
+        }
         
         switch (reason) {
             case 1: knife++; break;
@@ -183,10 +236,10 @@ public class player {
     }
     
     public void incHealth(int _h, Player attacker, int reason) {
-    	if (_h < 0 && h < 2) {
-    		regens++;
-    		s.maxStat(Stat.LIFE_REGENS, regens);
-    	}
+        if (_h < 0 && h < 2) {
+            regens++;
+            s.maxStat(Stat.LIFE_REGENS, regens);
+        }
         if (_h < 0 || inv == false) {
             h -= _h;
             if (h > 2) { h = 2; }
@@ -195,7 +248,11 @@ public class player {
                 stime = new Date().getTime() + 5000;
             }
             if (h <= 0) {
-            	regens = 0;
+                regens = 0;
+                lastk_count = 0;
+                lastk_top_count = 0;
+                hshot_streak = 0;
+                melee_streak = 0;
                 player a = plugin.p(attacker);
                 if (a != this) {
                     a.onKill(this, reason);

@@ -2,6 +2,7 @@ package com.Top_Cat.CODMW.gamemodes;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,6 +21,7 @@ public class CTF extends team_gm {
     int diam, gold;
     flag f1, f2;
     boolean swap = false;
+    HashMap<player, Integer> scores = new HashMap<player, Integer>();
     
     public CTF(main instance) {
         super(instance);
@@ -146,6 +148,7 @@ public class CTF extends team_gm {
                 } else {
                     gold++;
                 }
+                scores.put(plugin.p(event.getPlayer()), ((int) scores.get(plugin.p(event.getPlayer()))) + 1);
             }
         } else if (event.getTo().distance(f2.l) < 2) {
             if (plugin.p(event.getPlayer()).getTeam() != f2.t) {
@@ -157,6 +160,7 @@ public class CTF extends team_gm {
                 } else {
                     diam++;
                 }
+                scores.put(plugin.p(event.getPlayer()), ((int) scores.get(plugin.p(event.getPlayer()))) + 1);
             }
         }
     }
@@ -220,6 +224,21 @@ public class CTF extends team_gm {
             }
             p.sendMessage(plugin.d + c + (t == team.DIAMOND ? diam : gold));
         }
+    }
+    
+    @Override
+    public player getTopPlayer(team t) {
+    	player out = null;
+    	int mcaps = -1;
+    	for (player i : plugin.players.values()) {
+    		if (i.getTeam() == t) {
+	    		if (scores.get(i) > mcaps) {
+	    			out = i;
+	    			mcaps = scores.get(i);
+	    		}
+    		}
+    	}
+    	return out;
     }
 
 }
