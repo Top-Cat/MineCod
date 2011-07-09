@@ -63,7 +63,7 @@ public class chopper extends ownable {
     }
     
     private void tick() {
-    	if (health <= 0) {
+        if (health <= 0) {
             destroy();
             plugin.choppers.remove(this);
         } else {

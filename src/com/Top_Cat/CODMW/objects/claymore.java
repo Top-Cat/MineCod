@@ -44,7 +44,7 @@ public class claymore extends ownable {
             }
         }
         if (kill > 1) {
-        	plugin.p(getOwner()).s.awardAchievement(Achievement.CLAYMORE_MULTI);
+            plugin.p(getOwner()).s.awardAchievement(Achievement.CLAYMORE_MULTI);
         }
         init = new Date().getTime() + 10000;
         plugin.currentWorld.createExplosion(b.getLocation(), 0);

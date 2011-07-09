@@ -136,10 +136,10 @@ public class player {
             default: gstreak = false;
         }
         if (gstreak) {
-        	if ((new Date().getTime() - laststreak) < 20000) {
-        		s.awardAchievement(Achievement.WARGASM);
-        	}
-        	laststreak = new Date().getTime();
+            if ((new Date().getTime() - laststreak) < 20000) {
+                s.awardAchievement(Achievement.WARGASM);
+            }
+            laststreak = new Date().getTime();
         }
         s.maxStat(Stat.MAX_STREAK, streak);
     }
@@ -210,23 +210,23 @@ public class player {
                 s.awardAchievement(Achievement.FALL_HARD);
             }
         } else {
-        	lastk_top_count = 0;
+            lastk_top_count = 0;
         }
         if (reason == 7) {
-        	hshot_streak++;
-        	if (hshot_streak > 3) {
-        		s.awardAchievement(Achievement.HOTSHOT);
-        	}
+            hshot_streak++;
+            if (hshot_streak > 3) {
+                s.awardAchievement(Achievement.HOTSHOT);
+            }
         } else {
-        	hshot_streak = 0;
+            hshot_streak = 0;
         }
         if (reason == 1) {
-        	melee_streak++;
-        	if (melee_streak > 3) {
-        		s.awardAchievement(Achievement.COMMANDO);
-        	}
+            melee_streak++;
+            if (melee_streak > 3) {
+                s.awardAchievement(Achievement.COMMANDO);
+            }
         } else {
-        	melee_streak = 0;
+            melee_streak = 0;
         }
         
         switch (reason) {
@@ -309,7 +309,7 @@ public class player {
                     plugin.game.sendMessage(team.BOTH, plugin.d + plugin.p(attacker).getTeam().getColour() + plugin.p(attacker).nick + plugin.d + "c" + desc + " " + plugin.d + t.getColour() + nick + assist_txt);
                 }
                 if (ks != null) {
-                	ks.incKills();
+                    ks.incKills();
                 }
                 clearinv();
                 todrop += ammo;

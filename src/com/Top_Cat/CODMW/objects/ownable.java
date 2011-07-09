@@ -11,10 +11,10 @@ public class ownable {
     private int kills = 0;
     
     public void incKills() {
-    	kills++;
-    	if (kills >= 10) {
-    		owner_p.s.awardAchievement(Achievement.EXTERMINATION);
-    	}
+        kills++;
+        if (kills >= 10) {
+            owner_p.s.awardAchievement(Achievement.EXTERMINATION);
+        }
     }
     
     public void setOwner(Player o, player p) {

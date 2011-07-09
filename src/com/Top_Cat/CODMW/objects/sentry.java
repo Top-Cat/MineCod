@@ -45,7 +45,7 @@ public class sentry extends ownable {
     }
     
     private void tick() {
-    	for (player i : plugin.players.values()) {
+        for (player i : plugin.players.values()) {
             Location l1 = i.p.getLocation();
             Location l2 = b.getLocation();
             if (plugin.game.canHit(getOwner(), i.p) && l1.distance(l2) < 10 && Math.abs(l1.getY() - l2.getY()) < 3) {
@@ -58,7 +58,7 @@ public class sentry extends ownable {
                 }
             }
         }
-	}
+    }
     
     public class tick extends TimerTask {
 
