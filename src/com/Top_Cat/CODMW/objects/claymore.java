@@ -24,7 +24,7 @@ public class claymore extends ownable {
     public claymore(main instance, Block _c, int _r, Player _o) {
         plugin = instance;
         b = _c;
-        setOwner(_o);
+        setOwner(_o, plugin.p(_o));
         init = new Date().getTime() + 1000;
         switch (_r) {
             case 0: d1 = b.getRelative(0, 0, 1); d2 = b.getRelative(0, 0, 2); break;
@@ -39,7 +39,7 @@ public class claymore extends ownable {
         int kill = 0;
         for (Player p : plugin.players.keySet()) {
             if ((plugin.game.canHit(p, getOwner()) || p == getOwner()) && (p.getLocation().getBlock() == b || p.getLocation().getBlock() == d1 || p.getLocation().getBlock() == d2)) {
-                plugin.p(p).incHealth(2, getOwner(), 3);
+                plugin.p(p).incHealth(2, getOwner(), 3, this);
                 kill++;
             }
         }

@@ -90,6 +90,7 @@ public enum Achievement {
     HIDING(82, Stat.OTHER, -1, "Hiding", "Survive for 2 minutes", Material.SLIME_BALL),
     CAMPER(83, Stat.OTHER, -1, "Camper", "Survive for 3 minutes", Material.SLIME_BALL),
     BEAR_GRYLLS(84, Stat.OTHER, -1, "Bear Grylls", "Survive for 5 minutes", Material.SLIME_BALL),
+    EXTERMINATION(85, Stat.OTHER, -1, "Extermination", "Kill 10 enemies with a single killstreak", Material.LAVA_BUCKET),
     ;
     
     private final int id;

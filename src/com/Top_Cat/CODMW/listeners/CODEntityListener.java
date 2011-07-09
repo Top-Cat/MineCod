@@ -20,6 +20,8 @@ import org.bukkit.event.painting.PaintingPlaceEvent;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.objects.CArrow;
+import com.Top_Cat.CODMW.objects.CWolfPack;
+import com.Top_Cat.CODMW.objects.ownable;
 
 public class CODEntityListener extends EntityListener {
     
@@ -49,7 +51,7 @@ public class CODEntityListener extends EntityListener {
         try {
             if (event.getCause() == DamageCause.FALL && event.getDamage() >= 4) {
                 if (event.getEntity() instanceof Player) {
-                    plugin.p((Player) event.getEntity()).incHealth(1, (Player) event.getEntity(), 0);
+                    plugin.p((Player) event.getEntity()).incHealth(1, (Player) event.getEntity(), 0, null);
                 }
                 event.setCancelled(false);
             }
@@ -61,8 +63,10 @@ public class CODEntityListener extends EntityListener {
                     return;
                 } else {
                     int reason = 2;
+                    ownable ks = null;
                     if (((CraftArrow) ((EntityDamageByProjectileEvent) event).getProjectile()).getHandle() instanceof CArrow) {
                         reason = ((CArrow) ((CraftArrow) ((EntityDamageByProjectileEvent) event).getProjectile()).getHandle()).reason;
+                        ks = ((CArrow) ((CraftArrow) ((EntityDamageByProjectileEvent) event).getProjectile()).getHandle()).killstreak;
                     }
                     Player attacker = (Player) (((EntityDamageByProjectileEvent) event).getDamager());
                     Player defender = (Player) (((EntityDamageByProjectileEvent) event).getEntity());
@@ -74,7 +78,7 @@ public class CODEntityListener extends EntityListener {
                             }
                             
                         }
-                        plugin.p(defender).incHealth(1, attacker, reason);
+                        plugin.p(defender).incHealth(1, attacker, reason, ks);
                         event.setCancelled(false);
                     }
                 }
@@ -88,7 +92,7 @@ public class CODEntityListener extends EntityListener {
                         if (plugin.game.canHit(attacker, defender)) {
                             double dist = Math.sqrt(Math.pow(a.getX() - d.getX(), 2) + Math.pow(a.getZ() - d.getZ(), 2));
                             if (dist < 1.8) {
-                                plugin.p(defender).incHealth(2, attacker, 1);
+                                plugin.p(defender).incHealth(2, attacker, 1, null);
                                 event.setCancelled(false);
                             }
                         }
@@ -98,13 +102,14 @@ public class CODEntityListener extends EntityListener {
                     }
                 } else if (((EntityDamageByEntityEvent) event).getDamager() instanceof Wolf && ((EntityDamageByEntityEvent) event).getEntity() instanceof Player) {
                     Player defender = (Player) (((EntityDamageByEntityEvent) event).getEntity());
-                    if (plugin.wolves.containsKey(((EntityDamageByEntityEvent) event).getDamager())) {
-                    if (plugin.game.canHit(defender, (Wolf) ((EntityDamageByEntityEvent) event).getDamager())) {
-                        plugin.p(defender).incHealth(2, plugin.wolves.get((Wolf) ((EntityDamageByEntityEvent) event).getDamager()).getOwner(), 4);
+                    for (CWolfPack i : plugin.wolves.values()) {
+                    	if (i.wolf.contains(((EntityDamageByEntityEvent) event).getDamager())) {
+                    		if (plugin.game.canHit(defender, (Wolf) ((EntityDamageByEntityEvent) event).getDamager())) {
+                    			plugin.p(defender).incHealth(2, i.getOwner(), 4, i);
+                    		}
+                    		i.remove((Wolf) ((EntityDamageByEntityEvent) event).getDamager());
+                    	}
                     }
-                    plugin.wolves.remove(((EntityDamageByEntityEvent) event).getDamager());
-                    }
-                    ((Wolf) ((EntityDamageByEntityEvent) event).getDamager()).remove();
                 } else if (((EntityDamageByEntityEvent) event).getEntity() instanceof Wolf) {
                     plugin.wolves.remove(event.getEntity());
                     ((EntityDamageByEntityEvent) event).getEntity().remove();

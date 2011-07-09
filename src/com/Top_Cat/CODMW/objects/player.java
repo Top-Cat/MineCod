@@ -235,7 +235,7 @@ public class player {
         }
     }
     
-    public void incHealth(int _h, Player attacker, int reason) {
+    public void incHealth(int _h, Player attacker, int reason, ownable ks) {
         if (_h < 0 && h < 2) {
             regens++;
             s.maxStat(Stat.LIFE_REGENS, regens);
@@ -307,6 +307,9 @@ public class player {
                 }
                 if (reason > 0) {
                     plugin.game.sendMessage(team.BOTH, plugin.d + plugin.p(attacker).getTeam().getColour() + plugin.p(attacker).nick + plugin.d + "c" + desc + " " + plugin.d + t.getColour() + nick + assist_txt);
+                }
+                if (ks != null) {
+                	ks.incKills();
                 }
                 clearinv();
                 todrop += ammo;

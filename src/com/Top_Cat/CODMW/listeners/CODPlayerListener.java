@@ -2,6 +2,7 @@ package com.Top_Cat.CODMW.listeners;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.TimerTask;
 
@@ -30,7 +31,7 @@ import org.bukkit.inventory.PlayerInventory;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
-import com.Top_Cat.CODMW.objects.CWolf;
+import com.Top_Cat.CODMW.objects.CWolfPack;
 import com.Top_Cat.CODMW.objects.chopper;
 import com.Top_Cat.CODMW.objects.claymore;
 import com.Top_Cat.CODMW.objects.player;
@@ -270,22 +271,18 @@ public class CODPlayerListener extends PlayerListener {
                 event.getPlayer().getInventory().removeItem(new ItemStack(Material.BONE, 1));
                 plugin.p(event.getPlayer()).s.incStat(Stat.DOGS_USED);
                 plugin.p(event.getPlayer()).addPoints(3);
-                System.out.println("BONE");
-                team t = team.DIAMOND;
-                if (plugin.p(event.getPlayer()).getTeam() == team.DIAMOND) {
-                    t = team.GOLD;
-                }
                 plugin.game.sendMessage(team.BOTH, plugin.d + plugin.p(event.getPlayer()).getTeam().getColour() + plugin.p(event.getPlayer()).nick + plugin.d + "f called in a pack of dogs!");
+                List<Wolf> wl = new ArrayList<Wolf>();
                 for (Player i : plugin.players.keySet()) {
-                    player _p = plugin.p(i);
-                    if (_p.getTeam() == t) {
+                    if (plugin.game.canHit(event.getPlayer(), i)) {
                         double theta = (generator.nextFloat() * Math.PI * 2);
                         Wolf w = (Wolf) plugin.currentWorld.spawnCreature(i.getLocation().add(15 * Math.cos(theta), 0, 15 * Math.sin(theta)), CreatureType.WOLF);
                         w.setTarget(i);
                         w.setAngry(true);
-                        plugin.wolves.put(w, new CWolf(plugin, w, event.getPlayer(), new Date().getTime() + 30000));
+                        wl.add(w);
                     }
                 }
+                new CWolfPack(plugin, wl, event.getPlayer(), new Date().getTime() + 30000);
             } else if (um == Material.DIAMOND) {
                 event.getPlayer().getInventory().removeItem(new ItemStack(Material.DIAMOND, 1));
                 plugin.p(event.getPlayer()).s.incStat(Stat.CHOPPERS_USED);
@@ -295,7 +292,7 @@ public class CODPlayerListener extends PlayerListener {
         } else if (event.getAction() == Action.LEFT_CLICK_BLOCK && event.getPlayer().getItemInHand().getType() == Material.IRON_SWORD) {
             ArrayList<sentry> r = new ArrayList<sentry>();
             for (sentry i : plugin.sentries) {
-                if (event.getClickedBlock() == i.bt && plugin.p(event.getPlayer()).getTeam() != i.t) {
+                if (event.getClickedBlock() == i.bt && plugin.game.canHit(event.getPlayer(), i.getOwner())) {
                     i.destroy();
                     r.add(i);
                     plugin.p(event.getPlayer()).addPoints(3);

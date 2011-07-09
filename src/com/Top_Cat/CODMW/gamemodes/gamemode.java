@@ -238,7 +238,7 @@ public class gamemode {
                 spawnPlayer(p.p, false);
             }
             if (p.htime < new Date().getTime()) {
-                p.incHealth(-1, null, 0);
+                p.incHealth(-1, null, 0, null);
             }
             p.p.setHealth(p.h * 10);
         }
@@ -265,7 +265,7 @@ public class gamemode {
                 Location l = i.getLocation();
                 for (claymore j : plugin.clays) {
                     if (j.b.getLocation().add(0.5, 0, 0.5).distance(l) < 1) {
-                        j.setOwner((Player) ((Arrow)i).getShooter());
+                        j.setOwner((Player) ((Arrow)i).getShooter(), plugin.p((Player) ((Arrow)i).getShooter()));
                         j.kill();
                         r.add(j);
                     }

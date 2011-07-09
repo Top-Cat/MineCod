@@ -38,7 +38,7 @@ import com.Top_Cat.CODMW.listeners.CODInputListener;
 import com.Top_Cat.CODMW.listeners.CODInventoryListener;
 import com.Top_Cat.CODMW.listeners.CODPlayerListener;
 import com.Top_Cat.CODMW.listeners.CODWeatherListener;
-import com.Top_Cat.CODMW.objects.CWolf;
+import com.Top_Cat.CODMW.objects.CWolfPack;
 import com.Top_Cat.CODMW.objects.chopper;
 import com.Top_Cat.CODMW.objects.claymore;
 import com.Top_Cat.CODMW.objects.door;
@@ -67,7 +67,7 @@ public class main extends JavaPlugin {
     public final CODWeatherListener weatherListener = new CODWeatherListener(this);
     public final CODInputListener inputListener = new CODInputListener(this);
     public ArrayList<claymore> clays = new ArrayList<claymore>();
-    public HashMap<Wolf, CWolf> wolves = new HashMap<Wolf, CWolf>();
+    public HashMap<Wolf, CWolfPack> wolves = new HashMap<Wolf, CWolfPack>();
     public ArrayList<sentry> sentries = new ArrayList<sentry>();
     public ArrayList<Player> totele = new ArrayList<Player>();
     public ArrayList<chopper> choppers = new ArrayList<chopper>();
@@ -288,9 +288,9 @@ public class main extends JavaPlugin {
                 return;
             }
             player _p = p(p);
-            for (CWolf i : wolves.values()) {
+            for (CWolfPack i : wolves.values()) {
                 if (i.getOwner() == p) {
-                    i.wolf.remove();
+                    i.removeAll();
                 }
             }
             game.sendMessage(team.BOTH, d + _p.getTeam().getColour() + _p.nick

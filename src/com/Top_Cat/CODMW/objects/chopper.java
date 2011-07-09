@@ -27,7 +27,7 @@ public class chopper extends ownable {
 
     public chopper(main instance, Player _o) {
         plugin = instance;
-        setOwner(_o);
+        setOwner(_o, plugin.p(_o));
         plugin.game.sendMessage(team.BOTH, plugin.d + plugin.p(getOwner()).getTeam().getColour() + plugin.p(getOwner()).nick + plugin.d + "f called in a chopper!");
         
         plugin.choppers.add(this);
@@ -57,54 +57,58 @@ public class chopper extends ownable {
 
         @Override
         public void run() {
-            if (health <= 0) {
-                destroy();
-                plugin.choppers.remove(this);
-            } else {
-                tick++;
-                if (tick <= 10) {
-                    try {
-                        if (started) {
-                            l.getBlock().setType(Material.AIR);
-                        }
-                        started = true;
-                        tx += mx;
-                        tz += mz;
-                        l = p.clone().add(tx, 0, tz);
-                        l.setY(l.getWorld().getHighestBlockYAt(l) + 7);
-                        switch (plugin.p(getOwner()).getTeam()) {
-                            case DIAMOND: l.getBlock().setType(Material.DIAMOND_BLOCK); break;
-                            case GOLD: l.getBlock().setType(Material.GOLD_BLOCK); break;
-                            case BOTH: l.getBlock().setType(Material.OBSIDIAN); break;
-                        }
-                    } catch (Exception e) {
-                        System.out.println("Error moving chopper");
-                    }
-                } else if (tick > 18) {
-                    tick = 0;
-                    moveto();
-                } else {
-                    
-                    for (player i : plugin.players.values()) {
-                        Location l1 = i.p.getLocation();
-                        if (plugin.game.canHit(getOwner(), i.p)) {
-                            int yaw = (int) (Math.toDegrees(Math.atan2(l1.getX() - (l.getX() + 0.5), (l.getZ() + 0.5) - l1.getZ())) + 180);
-                            if (yaw >= 315) { yaw -= 359; }
-                            int r = (int) Math.ceil((yaw + 45) / 90);
-                            
-                            Location l2 = l1.clone();
-                            l2.setY(l.getY());
-                            int pitch = (int) ((Math.toDegrees(Math.atan2(l2.distance(l), (l.getY() + 0.5) - l1.getY())) - 85) * 1.1);
-                            
-                            CArrow arrow = new CArrow(plugin.currentWorld, getOwner(), l.getBlock(), plugin, yaw, -pitch, r, 6);
-                            arrow.world.addEntity(arrow);
-                        }
-                    }
-                    
-                }
-            }
+            tick();
         }
         
+    }
+    
+    private void tick() {
+    	if (health <= 0) {
+            destroy();
+            plugin.choppers.remove(this);
+        } else {
+            tick++;
+            if (tick <= 10) {
+                try {
+                    if (started) {
+                        l.getBlock().setType(Material.AIR);
+                    }
+                    started = true;
+                    tx += mx;
+                    tz += mz;
+                    l = p.clone().add(tx, 0, tz);
+                    l.setY(l.getWorld().getHighestBlockYAt(l) + 7);
+                    switch (plugin.p(getOwner()).getTeam()) {
+                        case DIAMOND: l.getBlock().setType(Material.DIAMOND_BLOCK); break;
+                        case GOLD: l.getBlock().setType(Material.GOLD_BLOCK); break;
+                        case BOTH: l.getBlock().setType(Material.OBSIDIAN); break;
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error moving chopper");
+                }
+            } else if (tick > 18) {
+                tick = 0;
+                moveto();
+            } else {
+                
+                for (player i : plugin.players.values()) {
+                    Location l1 = i.p.getLocation();
+                    if (plugin.game.canHit(getOwner(), i.p)) {
+                        int yaw = (int) (Math.toDegrees(Math.atan2(l1.getX() - (l.getX() + 0.5), (l.getZ() + 0.5) - l1.getZ())) + 180);
+                        if (yaw >= 315) { yaw -= 359; }
+                        int r = (int) Math.ceil((yaw + 45) / 90);
+                        
+                        Location l2 = l1.clone();
+                        l2.setY(l.getY());
+                        int pitch = (int) ((Math.toDegrees(Math.atan2(l2.distance(l), (l.getY() + 0.5) - l1.getY())) - 85) * 1.1);
+                        
+                        CArrow arrow = new CArrow(plugin.currentWorld, getOwner(), l.getBlock(), plugin, yaw, -pitch, r, 6, this);
+                        arrow.world.addEntity(arrow);
+                    }
+                }
+                
+            }
+        }
     }
 
     public Location avgEnemies() {
