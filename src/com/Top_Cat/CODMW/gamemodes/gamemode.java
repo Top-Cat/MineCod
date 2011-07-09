@@ -132,7 +132,7 @@ public class gamemode {
         _p.clearinv();
         _p.setinv();
         
-        if (start) {
+        if (!start) {
             _p.giveItem(2, new ItemStack(Material.WALL_SIGN, _p.last.clays));
             _p.giveItem(3, new ItemStack(Material.APPLE, _p.last.apples));
             _p.giveItem(4, new ItemStack(Material.BONE, _p.last.dogs));
