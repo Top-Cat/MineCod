@@ -190,7 +190,9 @@ public class gamemode {
     
     public void destroy() {
         plugin.getServer().getScheduler().cancelTasks(plugin);
-        BukkitContrib.getAppearanceManager().resetAllCloaks();
+        if (plugin.getServer().getPluginManager().getPlugin("BukkitContrib") != null) {
+            BukkitContrib.getAppearanceManager().resetAllCloaks();
+        }
         for (claymore i : plugin.clays) {
             i.b.setType(Material.AIR);
         }

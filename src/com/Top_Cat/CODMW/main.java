@@ -1,5 +1,15 @@
 package com.Top_Cat.CODMW;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -7,6 +17,7 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Logger;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -82,6 +93,7 @@ public class main extends JavaPlugin {
     public map currentMap;
     Random gen = new Random();
     public GameModes gm = GameModes.FFA;
+    public String ip;
 
     public void clearinv(Player p) {
         PlayerInventory i = p.getInventory();
@@ -101,7 +113,7 @@ public class main extends JavaPlugin {
         if (game != null) {
             game.destroy();
         }
-        System.out.println("Goodbye world!");
+        System.out.println("Minecod disabled!");
     }
 
     public void setDoors() {
@@ -125,6 +137,8 @@ public class main extends JavaPlugin {
             currentWorld.setTime(currentMap.time);
             currentWorld.setStorm(currentMap.storm);
             currentWorld.setThundering(false);
+            
+            updateServerStatus(false);
         }
 
     }
@@ -157,10 +171,14 @@ public class main extends JavaPlugin {
         }
         
         players.clear();
+        diam = 0;
+        gold = 0;
+        tot = 0;
         for (Player i : getServer().getOnlinePlayers()) {
             clearinv(i);
             game.jointele(i);
         }
+        updateServerStatus(false);
     }
     
     public void loadmap(Integer mapid) {
@@ -302,11 +320,50 @@ public class main extends JavaPlugin {
             p.sendMessage("Not possible in this game type");
         }
     }
+    
+    public void updateServerStatus(boolean start) {
+        int mid = 0;
+        if (currentMap != null) { mid = currentMap.id; }
+        String s = "";
+        if (start) {
+            s = "INSERT INTO cod_servers VALUES('" + ip + "', '" + getServer().getPort() + "', NOW(), " + players.size() + ", " + mid + ", '" + gm.toString() + "') ON DUPLICATE KEY UPDATE ";
+        } else {
+            s = "UPDATE cod_servers SET ";
+        }
+        s += "`lastup`=NOW(), `players`='" + players.size() + "', `map`='" + mid + "', `mode`='" + gm.toString() + "'";
+        if (!start) {
+            s += " WHERE ip='" + ip + "' and port='" + getServer().getPort() + "'";
+        }
+        sql.update(s);
+    }
 
     @Override
     public void onEnable() {
+        Logger log = getServer().getLogger();
+        final PluginManager pm = getServer().getPluginManager();
+        if (pm.getPlugin("BukkitContrib") == null) {
+            try {
+                download(log, new URL("http://bit.ly/autoupdateBukkitContrib"), new File("plugins/BukkitContrib.jar"));
+                pm.loadPlugin(new File("plugins" + File.separator + "BukkitContrib.jar"));
+                pm.enablePlugin(pm.getPlugin("BukkitContrib"));
+            } catch (final Exception ex) {
+                log.warning("[LogBlock] Failed to install BukkitContrib, you may have to restart your server or install it manually.");
+            }
+        }
+        
+        try {
+            URL whatismyip = new URL("http://automation.whatismyip.com/n09230945.asp");
+            BufferedReader in = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
+            ip = in.readLine();
+        } catch (MalformedURLException e1) {
+            e1.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        updateServerStatus(true);
+        
         loadmap();
-        PluginManager pm = getServer().getPluginManager();
         pm.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.Normal, this);
@@ -365,6 +422,32 @@ public class main extends JavaPlugin {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+    
+    public static void download(Logger log, URL url, File file) throws IOException {
+        if (!file.getParentFile().exists())
+            file.getParentFile().mkdir();
+        if (file.exists())
+            file.delete();
+        file.createNewFile();
+        final int size = url.openConnection().getContentLength();
+        log.info("Downloading " + file.getName() + " (" + size / 1024 + "kb) ...");
+        final InputStream in = url.openStream();
+        final OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+        final byte[] buffer = new byte[1024];
+        int len, downloaded = 0, msgs = 0;
+        final long start = System.currentTimeMillis();
+        while ((len = in.read(buffer)) >= 0) {
+            out.write(buffer, 0, len);
+            downloaded += len;
+            if ((int)((System.currentTimeMillis() - start) / 500) > msgs) {
+                log.info((int)((double)downloaded / (double)size * 100d) + "%");
+                msgs++;
+            }
+        }
+        in.close();
+        out.close();
+        log.info("Download finished");
     }
 
 }

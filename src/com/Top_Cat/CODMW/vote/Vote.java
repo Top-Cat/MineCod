@@ -44,7 +44,7 @@ public class Vote {
 
         @Override
         public void run() {
-            onComplete(y > n);
+            onComplete(y >= Math.ceil(plugin.tot / 2));
         }
         
     }

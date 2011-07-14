@@ -148,7 +148,8 @@ public class CTF extends team_gm {
                 } else {
                     gold++;
                 }
-                scores.put(plugin.p(event.getPlayer()), ((int) scores.get(plugin.p(event.getPlayer()))) + 1);
+                int score = scores.containsKey(plugin.p(event.getPlayer())) ? scores.get(plugin.p(event.getPlayer())) : 0;
+                scores.put(plugin.p(event.getPlayer()), score + 1);
             }
         } else if (event.getTo().distance(f2.l) < 2) {
             if (plugin.p(event.getPlayer()).getTeam() != f2.t) {
@@ -160,7 +161,8 @@ public class CTF extends team_gm {
                 } else {
                     diam++;
                 }
-                scores.put(plugin.p(event.getPlayer()), ((int) scores.get(plugin.p(event.getPlayer()))) + 1);
+                int score = scores.containsKey(plugin.p(event.getPlayer())) ? scores.get(plugin.p(event.getPlayer())) : 0;
+                scores.put(plugin.p(event.getPlayer()), score + 1);
             }
         }
     }
@@ -232,7 +234,7 @@ public class CTF extends team_gm {
     	int mcaps = -1;
     	for (player i : plugin.players.values()) {
     		if (i.getTeam() == t) {
-	    		if (scores.get(i) > mcaps) {
+	    		if (scores.containsKey(i) && scores.get(i) > mcaps) {
 	    			out = i;
 	    			mcaps = scores.get(i);
 	    		}

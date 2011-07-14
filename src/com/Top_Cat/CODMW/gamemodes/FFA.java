@@ -49,9 +49,9 @@ public class FFA extends gamemode {
         } else {
             winner.p.sendMessage(winmesssages.get(generator.nextInt(winmesssages.size())));
             sendMessage(team.BOTH, lossmesssages.get(generator.nextInt(lossmesssages.size())), winner.p);
+            winner.s.incStat(Stat.WINS);
         }
         
-        winner.s.incStat(Stat.WINS);
         for (player i : plugin.players.values()) {
             if (winner != i) {
                 i.s.incStat(Stat.LOSSES);
