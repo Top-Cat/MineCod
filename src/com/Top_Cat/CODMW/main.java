@@ -254,13 +254,13 @@ public class main extends JavaPlugin {
                     return true;
                 }
             } else if (command.getName().equalsIgnoreCase("team")) {
-            	if (args[0].equalsIgnoreCase("switch")) {
-	                switchplayer(p);
-	                return true;
-            	} else if (args[0].equalsIgnoreCase("noswitch")) {
-            		p.sendMessage("Your team was not switched!");
-            		return true;
-            	}
+                if (args[0].equalsIgnoreCase("switch")) {
+                    switchplayer(p);
+                    return true;
+                } else if (args[0].equalsIgnoreCase("noswitch")) {
+                    p.sendMessage("Your team was not switched!");
+                    return true;
+                }
             } else if (command.getName().equalsIgnoreCase("vote") && players.containsKey(sender)) {
                 if (v == null) {
                     if (args.length > 1) {

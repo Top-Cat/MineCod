@@ -141,7 +141,7 @@ public class CODPlayerListener extends PlayerListener {
                 }
             }
         }
-    	
+        
         plugin.game.playermove(event);
         Location t = event.getTo();
         team e;
@@ -279,11 +279,11 @@ public class CODPlayerListener extends PlayerListener {
                         double theta = (generator.nextFloat() * Math.PI * 2);
                         Location l = i.getLocation().clone(); 
                         for (int j = 1; j <= 15; j++) {
-                        	if (i.getLocation().add(j * Math.cos(theta), 0, j * Math.sin(theta)).getBlock().getType() == Material.AIR) {
-                        		l = i.getLocation().add(j * Math.cos(theta), 0, j * Math.sin(theta));
-                        	} else {
-                        		break;
-                        	}
+                            if (i.getLocation().add(j * Math.cos(theta), 0, j * Math.sin(theta)).getBlock().getType() == Material.AIR) {
+                                l = i.getLocation().add(j * Math.cos(theta), 0, j * Math.sin(theta));
+                            } else {
+                                break;
+                            }
                         }
                         Wolf w = (Wolf) plugin.currentWorld.spawnCreature(l, CreatureType.WOLF);
                         w.setTarget(i);

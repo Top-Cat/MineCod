@@ -55,7 +55,7 @@ public class claymore extends ownable {
 
     public void detect(Player p) {
         if (plugin.game.canHit(getOwner(), p) && (p.getLocation().getBlock() == b || p.getLocation().getBlock() == d1 || p.getLocation().getBlock() == d2)) {
-        	System.out.println("Explode?");
+            System.out.println("Explode?");
             if (!exploded) {
                 plugin.currentWorld.playEffect(p.getLocation(), Effect.CLICK2, 0);
             }

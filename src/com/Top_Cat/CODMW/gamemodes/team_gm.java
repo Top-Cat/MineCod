@@ -75,20 +75,20 @@ public class team_gm extends gamemode {
         if (a instanceof Player) {
             t1 = plugin.p((Player) a).getTeam();
         } else if (a instanceof Wolf) {
-        	for (CWolfPack i : plugin.wolves) {
-        		if (i.wolf.contains(a)) {
-        			t1 = i.getOwnerplayer().getTeam();
-        		}
-        	}
+            for (CWolfPack i : plugin.wolves) {
+                if (i.wolf.contains(a)) {
+                    t1 = i.getOwnerplayer().getTeam();
+                }
+            }
         }
         if (d instanceof Player) {
             t2 = plugin.p((Player) d).getTeam();
         } else if (d instanceof Wolf) {
-        	for (CWolfPack i : plugin.wolves) {
-        		if (i.wolf.contains(d)) {
-        			t2 = i.getOwnerplayer().getTeam();
-        		}
-        	}
+            for (CWolfPack i : plugin.wolves) {
+                if (i.wolf.contains(d)) {
+                    t2 = i.getOwnerplayer().getTeam();
+                }
+            }
         }
         return (t1 != t2);
     }

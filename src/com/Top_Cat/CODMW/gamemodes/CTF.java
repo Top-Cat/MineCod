@@ -102,7 +102,7 @@ public class CTF extends team_gm {
             f2 = new flag(plugin, temp, Material.GOLD_BLOCK, Material.DIAMOND_BLOCK, Material.FENCE, team.GOLD, team.DIAMOND);
             swap = true;
             for (Player i : plugin.players.keySet()) {
-            	plugin.p(i).setStreaks();
+                plugin.p(i).setStreaks();
                 spawnPlayer(i, true);
             }
         } else if (time > 600) {
@@ -231,17 +231,17 @@ public class CTF extends team_gm {
     
     @Override
     public player getTopPlayer(team t) {
-    	player out = null;
-    	int mcaps = -1;
-    	for (player i : plugin.players.values()) {
-    		if (i.getTeam() == t) {
-	    		if (scores.containsKey(i) && scores.get(i) > mcaps) {
-	    			out = i;
-	    			mcaps = scores.get(i);
-	    		}
-    		}
-    	}
-    	return out;
+        player out = null;
+        int mcaps = -1;
+        for (player i : plugin.players.values()) {
+            if (i.getTeam() == t) {
+                if (scores.containsKey(i) && scores.get(i) > mcaps) {
+                    out = i;
+                    mcaps = scores.get(i);
+                }
+            }
+        }
+        return out;
     }
 
 }

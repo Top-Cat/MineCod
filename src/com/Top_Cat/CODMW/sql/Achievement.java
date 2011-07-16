@@ -84,7 +84,7 @@ public enum Achievement {
     CLOSE_CHOPPER(76, Stat.OTHER, -1, "So close, but so far", "Kill an enemy who is one kill away from a helicopter", Material.FIRE),
     NEMESIS(77, Stat.OTHER, -1, "My Arch Nemesis", "Kill an enemy team member 3 times in a row", Material.PUMPKIN),
     FALL_HARD(78, Stat.OTHER, -1, "The harder they fall", "Kill the enemy top player 3 times in a row", Material.JACK_O_LANTERN),
-    WARGASM(79, Stat.OTHER, -1, "Wargam", "Get 2 different killstreaks within 20 seconds", Material.SUGAR),
+    WARGASM(79, Stat.OTHER, -1, "Wargasm", "Get 2 different killstreaks within 20 seconds", Material.SUGAR),
     HOTSHOT(80, Stat.OTHER, -1, "Hotshot", "Get 3 headshots in a row", Material.IRON_HELMET),
     COMMANDO(81, Stat.OTHER, -1, "Commando", "Get 3 melee kills in a row without dying", Material.IRON_SWORD),
     HIDING(82, Stat.OTHER, -1, "Hiding", "Survive for 2 minutes", Material.SLIME_BALL),
