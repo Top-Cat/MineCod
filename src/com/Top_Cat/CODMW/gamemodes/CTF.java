@@ -102,6 +102,7 @@ public class CTF extends team_gm {
             f2 = new flag(plugin, temp, Material.GOLD_BLOCK, Material.DIAMOND_BLOCK, Material.FENCE, team.GOLD, team.DIAMOND);
             swap = true;
             for (Player i : plugin.players.keySet()) {
+            	plugin.p(i).setStreaks();
                 spawnPlayer(i, true);
             }
         } else if (time > 600) {

@@ -102,9 +102,9 @@ public class CODEntityListener extends EntityListener {
                     }
                 } else if (((EntityDamageByEntityEvent) event).getDamager() instanceof Wolf && ((EntityDamageByEntityEvent) event).getEntity() instanceof Player) {
                     Player defender = (Player) (((EntityDamageByEntityEvent) event).getEntity());
-                    for (CWolfPack i : plugin.wolves.values()) {
+                    for (CWolfPack i : plugin.wolves) {
                         if (i.wolf.contains(((EntityDamageByEntityEvent) event).getDamager())) {
-                            if (plugin.game.canHit(defender, (Wolf) ((EntityDamageByEntityEvent) event).getDamager())) {
+                            if (plugin.game.canHit(i.getOwner(), defender)) {
                                 plugin.p(defender).incHealth(2, i.getOwner(), 4, i);
                             }
                             i.remove((Wolf) ((EntityDamageByEntityEvent) event).getDamager());

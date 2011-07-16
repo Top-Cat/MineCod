@@ -2,6 +2,7 @@ package com.Top_Cat.CODMW.listeners;
 
 import org.bukkitcontrib.event.input.InputListener;
 import org.bukkitcontrib.event.input.KeyPressedEvent;
+import org.bukkitcontrib.event.input.KeyReleasedEvent;
 import org.bukkitcontrib.keyboard.Keyboard;
 
 import com.Top_Cat.CODMW.main;
@@ -12,6 +13,11 @@ public class CODInputListener extends InputListener {
     
     public CODInputListener(main instance) {
         plugin = instance;
+    }
+    
+    @Override
+    public void onKeyReleasedEvent(KeyReleasedEvent event) {
+        
     }
     
     @Override

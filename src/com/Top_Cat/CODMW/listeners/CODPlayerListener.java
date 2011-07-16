@@ -128,6 +128,20 @@ public class CODPlayerListener extends PlayerListener {
 
     @Override
     public void onPlayerMove(PlayerMoveEvent event) {
+        for (claymore i : plugin.clays) {
+            if (i.exploded == false) {
+                i.detect(event.getPlayer());
+            }
+        }
+        if (event.getTo().getBlock().getRelative(0, -1, 0).getType() == Material.DISPENSER) {
+            for (sentry i : plugin.sentries) {
+                if (i.b == event.getTo().getBlock().getRelative(0, -2, 0)) {
+                    event.setTo(plugin.game.spawnTele(plugin.p(event.getPlayer()), event.getPlayer(), false));
+                    event.getPlayer().sendMessage(plugin.d + "bOnly Gigs stand on dispensers, you have been respawned!");
+                }
+            }
+        }
+    	
         plugin.game.playermove(event);
         Location t = event.getTo();
         team e;
@@ -162,19 +176,6 @@ public class CODPlayerListener extends PlayerListener {
         }
         plugin.setDoors();
         event.setTo(plugin.prespawn);
-        for (claymore i : plugin.clays) {
-            if (i.exploded == false) {
-                i.detect(event.getPlayer());
-            }
-        }
-        if (event.getTo().getBlock().getRelative(0, -1, 0).getType() == Material.DISPENSER) {
-            for (sentry i : plugin.sentries) {
-                if (i.b == event.getTo().getBlock().getRelative(0, -2, 0)) {
-                    event.setTo(plugin.game.spawnTele(plugin.p(event.getPlayer()), event.getPlayer(), false));
-                    event.getPlayer().sendMessage(plugin.d + "bOnly Gigs stand on dispensers, you have been respawned!");
-                }
-            }
-        }
     }
     
     public void recount() {
@@ -276,13 +277,21 @@ public class CODPlayerListener extends PlayerListener {
                 for (Player i : plugin.players.keySet()) {
                     if (plugin.game.canHit(event.getPlayer(), i)) {
                         double theta = (generator.nextFloat() * Math.PI * 2);
-                        Wolf w = (Wolf) plugin.currentWorld.spawnCreature(i.getLocation().add(15 * Math.cos(theta), 0, 15 * Math.sin(theta)), CreatureType.WOLF);
+                        Location l = i.getLocation().clone(); 
+                        for (int j = 1; j <= 15; j++) {
+                        	if (i.getLocation().add(j * Math.cos(theta), 0, j * Math.sin(theta)).getBlock().getType() == Material.AIR) {
+                        		l = i.getLocation().add(j * Math.cos(theta), 0, j * Math.sin(theta));
+                        	} else {
+                        		break;
+                        	}
+                        }
+                        Wolf w = (Wolf) plugin.currentWorld.spawnCreature(l, CreatureType.WOLF);
                         w.setTarget(i);
                         w.setAngry(true);
                         wl.add(w);
                     }
                 }
-                new CWolfPack(plugin, wl, event.getPlayer(), new Date().getTime() + 30000);
+                plugin.wolves.add(new CWolfPack(plugin, wl, event.getPlayer(), new Date().getTime() + 30000));
             } else if (um == Material.DIAMOND) {
                 event.getPlayer().getInventory().removeItem(new ItemStack(Material.DIAMOND, 1));
                 plugin.p(event.getPlayer()).s.incStat(Stat.CHOPPERS_USED);

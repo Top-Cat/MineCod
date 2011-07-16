@@ -38,7 +38,7 @@ public class claymore extends ownable {
     public void kill() {
         int kill = 0;
         for (Player p : plugin.players.keySet()) {
-            if ((plugin.game.canHit(p, getOwner()) || p == getOwner()) && (p.getLocation().getBlock() == b || p.getLocation().getBlock() == d1 || p.getLocation().getBlock() == d2)) {
+            if ((plugin.game.canHit(getOwner(), p) || p == getOwner()) && (p.getLocation().getBlock() == b || p.getLocation().getBlock() == d1 || p.getLocation().getBlock() == d2)) {
                 plugin.p(p).incHealth(2, getOwner(), 3, this);
                 kill++;
             }
@@ -54,7 +54,8 @@ public class claymore extends ownable {
     }
 
     public void detect(Player p) {
-        if (plugin.game.canHit(p, getOwner()) && (p.getLocation().getBlock() == b || p.getLocation().getBlock() == d1 || p.getLocation().getBlock() == d2)) {
+        if (plugin.game.canHit(getOwner(), p) && (p.getLocation().getBlock() == b || p.getLocation().getBlock() == d1 || p.getLocation().getBlock() == d2)) {
+        	System.out.println("Explode?");
             if (!exploded) {
                 plugin.currentWorld.playEffect(p.getLocation(), Effect.CLICK2, 0);
             }

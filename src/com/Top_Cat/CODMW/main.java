@@ -71,14 +71,14 @@ public class main extends JavaPlugin {
     public HashMap<String, Integer> maps = new HashMap<String, Integer>();
     public HashMap<Player, player> players = new HashMap<Player, player>();
     public int gold, diam, tot, minplayers = 0;
-    public final CODPlayerListener playerListener = new CODPlayerListener(this);
-    public final CODBlockListener blockListener = new CODBlockListener(this);
-    public final CODEntityListener entityListener = new CODEntityListener(this);
-    public final CODInventoryListener inventoryListener = new CODInventoryListener(this);
-    public final CODWeatherListener weatherListener = new CODWeatherListener(this);
-    public final CODInputListener inputListener = new CODInputListener(this);
+    public CODPlayerListener playerListener;
+    public CODBlockListener blockListener;
+    public CODEntityListener entityListener;
+    public CODInventoryListener inventoryListener;
+    public CODWeatherListener weatherListener;
+    public CODInputListener inputListener;
     public ArrayList<claymore> clays = new ArrayList<claymore>();
-    public HashMap<Wolf, CWolfPack> wolves = new HashMap<Wolf, CWolfPack>();
+    public ArrayList<CWolfPack> wolves = new ArrayList<CWolfPack>();
     public ArrayList<sentry> sentries = new ArrayList<sentry>();
     public ArrayList<Player> totele = new ArrayList<Player>();
     public ArrayList<chopper> choppers = new ArrayList<chopper>();
@@ -94,7 +94,7 @@ public class main extends JavaPlugin {
     Random gen = new Random();
     public GameModes gm = GameModes.FFA;
     public String ip;
-
+    
     public void clearinv(Player p) {
         PlayerInventory i = p.getInventory();
         i.clear();
@@ -174,6 +174,7 @@ public class main extends JavaPlugin {
         diam = 0;
         gold = 0;
         tot = 0;
+        setDoors();
         for (Player i : getServer().getOnlinePlayers()) {
             clearinv(i);
             game.jointele(i);
@@ -227,8 +228,8 @@ public class main extends JavaPlugin {
                         }
                     }
                 }
-                int togive = ammo < 15 ? ammo : 15;
-                togive -= arrows;
+                int togive = ammo < 15 - arrows ? ammo : 15 - arrows;
+                
                 if (togive > 0) {
                     if (arrows == 0) {
                         p.getInventory().setItem(8,
@@ -252,9 +253,14 @@ public class main extends JavaPlugin {
                     game.printScore(p, team.GOLD);
                     return true;
                 }
-            } else if (command.getName().equalsIgnoreCase("team") && args[0].equalsIgnoreCase("switch")) {
-                switchplayer(p);
-                return true;
+            } else if (command.getName().equalsIgnoreCase("team")) {
+            	if (args[0].equalsIgnoreCase("switch")) {
+	                switchplayer(p);
+	                return true;
+            	} else if (args[0].equalsIgnoreCase("noswitch")) {
+            		p.sendMessage("Your team was not switched!");
+            		return true;
+            	}
             } else if (command.getName().equalsIgnoreCase("vote") && players.containsKey(sender)) {
                 if (v == null) {
                     if (args.length > 1) {
@@ -306,16 +312,18 @@ public class main extends JavaPlugin {
                 return;
             }
             player _p = p(p);
-            for (CWolfPack i : wolves.values()) {
+            for (CWolfPack i : wolves) {
                 if (i.getOwner() == p) {
                     i.removeAll();
                 }
             }
-            game.sendMessage(team.BOTH, d + _p.getTeam().getColour() + _p.nick
-                    + " switched to " + _p.getTeam().toString() + " team!");
+            game.sendMessage(team.BOTH, d + _p.getTeam().getColour() + _p.nick + " switched to " + _p.getTeam().toString() + " team!");
             _p.resetScore();
+            _p.clearinv();
+            _p.setinv();
             p.teleport(prespawn);
             _p.dead = true;
+            setDoors();
         } else {
             p.sendMessage("Not possible in this game type");
         }
@@ -350,6 +358,13 @@ public class main extends JavaPlugin {
                 log.warning("[LogBlock] Failed to install BukkitContrib, you may have to restart your server or install it manually.");
             }
         }
+        
+        playerListener = new CODPlayerListener(this);
+        blockListener = new CODBlockListener(this);
+        entityListener = new CODEntityListener(this);
+        inventoryListener = new CODInventoryListener(this);
+        weatherListener = new CODWeatherListener(this);
+        inputListener = new CODInputListener(this);
         
         try {
             URL whatismyip = new URL("http://automation.whatismyip.com/n09230945.asp");
@@ -393,7 +408,7 @@ public class main extends JavaPlugin {
         PluginDescriptionFile pdfFile = this.getDescription();
         System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
 
-        t.schedule(new sun(), 0, 60000);
+        t.schedule(new sun(), 0, 20000);
 
         BukkitContrib.getItemManager().setItemName(Material.FEATHER, "Ammo");
         BukkitContrib.getItemManager().setItemName(Material.WALL_SIGN, "Wall Sign");

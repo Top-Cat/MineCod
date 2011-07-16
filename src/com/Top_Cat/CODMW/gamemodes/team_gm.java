@@ -6,11 +6,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkitcontrib.BukkitContrib;
-import org.bukkitcontrib.player.ContribPlayer;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
+import com.Top_Cat.CODMW.objects.CWolfPack;
 import com.Top_Cat.CODMW.objects.player;
 import com.Top_Cat.CODMW.sql.Stat;
 
@@ -23,13 +22,13 @@ public class team_gm extends gamemode {
     @Override
     public void startGame() {
         super.startGame();
-        for (player i : plugin.players.values()) {
+        /*for (player i : plugin.players.values()) {
             for (player j : plugin.players.values()) {
                 if (i.getTeam() != j.getTeam() || i.getTeam() == team.BOTH) {
                     BukkitContrib.getAppearanceManager().hidePlayerTitle((ContribPlayer) i.p, j.p);
                 }
             }
-        }
+        }*/
     }
     
     @Override
@@ -76,12 +75,20 @@ public class team_gm extends gamemode {
         if (a instanceof Player) {
             t1 = plugin.p((Player) a).getTeam();
         } else if (a instanceof Wolf) {
-            t1 = plugin.p(plugin.wolves.get(a).getOwner()).getTeam();
+        	for (CWolfPack i : plugin.wolves) {
+        		if (i.wolf.contains(a)) {
+        			t1 = i.getOwnerplayer().getTeam();
+        		}
+        	}
         }
         if (d instanceof Player) {
             t2 = plugin.p((Player) d).getTeam();
         } else if (d instanceof Wolf) {
-            t2 = plugin.p(plugin.wolves.get(d).getOwner()).getTeam();
+        	for (CWolfPack i : plugin.wolves) {
+        		if (i.wolf.contains(d)) {
+        			t2 = i.getOwnerplayer().getTeam();
+        		}
+        	}
         }
         return (t1 != t2);
     }

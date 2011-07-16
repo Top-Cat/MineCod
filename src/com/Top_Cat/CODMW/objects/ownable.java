@@ -26,4 +26,8 @@ public class ownable {
         return owner;
     }
     
+    public player getOwnerplayer() {
+        return owner_p;
+    }
+    
 }

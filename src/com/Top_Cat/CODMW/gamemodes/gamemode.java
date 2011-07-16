@@ -32,6 +32,7 @@ import org.bukkitcontrib.BukkitContrib;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
+import com.Top_Cat.CODMW.objects.CWolfPack;
 import com.Top_Cat.CODMW.objects.chopper;
 import com.Top_Cat.CODMW.objects.claymore;
 import com.Top_Cat.CODMW.objects.player;
@@ -196,8 +197,8 @@ public class gamemode {
         for (claymore i : plugin.clays) {
             i.b.setType(Material.AIR);
         }
-        for (Wolf i : plugin.wolves.keySet()) {
-            i.remove();
+        for (CWolfPack i : plugin.wolves) {
+            i.removeAll();
         }
         for (sentry i : plugin.sentries) {
             i.destroy();
@@ -244,17 +245,17 @@ public class gamemode {
             }
             p.p.setHealth(p.h * 10);
         }
-        List<Wolf> r = new ArrayList<Wolf>();
-        for (Wolf i : plugin.wolves.keySet()) {
-            if (((CraftWolf) i).getHandle().pathEntity.b()) {
+        List<CWolfPack> r = new ArrayList<CWolfPack>();
+        for (CWolfPack i : plugin.wolves) {
+            /*if (((CraftWolf) i).getHandle().pathEntity.b()) {
                 System.out.println("Wolf b");
-            }
-            if (plugin.wolves.get(i).expire < new Date().getTime()) {
-                i.remove();
+            }*/
+            if (i.wolf.size() == 0 || i.expire < new Date().getTime()) {
+                i.removeAll();
                 r.add(i);
             }
         }
-        for (Wolf j : r) {
+        for (CWolfPack j : r) {
             plugin.wolves.remove(j);
         }
     }
@@ -352,7 +353,7 @@ public class gamemode {
         String nick = event.getPlayer().getDisplayName();
         ResultSet r = plugin.sql.query("SELECT * FROM cod_players WHERE username = '" + event.getPlayer().getDisplayName() + "'");
         try {
-            if (r.next()) {
+            if (r.first()) {
                 nick = r.getString("nick");
             } else {
                 int id = plugin.sql.update("INSERT INTO cod_players VALUES (NULL, '" + event.getPlayer().getDisplayName() + "', '" + event.getPlayer().getDisplayName() + "')");

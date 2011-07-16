@@ -274,25 +274,15 @@ public class player {
                 h = 2;
                 
                 int ammo = 0;
-                last = new streaks();
                 for (ItemStack i : p.getInventory().getContents()) {
                     if (i != null) {
                         if (i.getType() == Material.FEATHER || i.getType() == Material.ARROW) {
                             ammo += i.getAmount();
-                        } else if (i.getType() == Material.WALL_SIGN) {
-                            last.clays += i.getAmount();
-                        } else if (i.getType() == Material.APPLE) {
-                            last.apples += i.getAmount();
-                        } else if (i.getType() == Material.BONE) {
-                            last.dogs += i.getAmount();
-                        } else if (i.getType() == Material.DISPENSER) {
-                            last.sentry += i.getAmount();
-                        } else if (i.getType() == Material.DIAMOND) {
-                            last.chop += i.getAmount();
                         }
                     }
                 }
                 ammo = (int) (ammo / 15);
+                setStreaks();
                 
                 String desc = "";
                 switch (reason) {
@@ -328,10 +318,29 @@ public class player {
         p.setHealth(h * 10);
     }
     
+    public void setStreaks() {
+        last = new streaks();
+        for (ItemStack i : p.getInventory().getContents()) {
+            if (i != null) {
+                if (i.getType() == Material.WALL_SIGN) {
+                    last.clays += i.getAmount();
+                } else if (i.getType() == Material.APPLE) {
+                    last.apples += i.getAmount();
+                } else if (i.getType() == Material.BONE) {
+                    last.dogs += i.getAmount();
+                } else if (i.getType() == Material.DISPENSER) {
+                    last.sentry += i.getAmount();
+                } else if (i.getType() == Material.DIAMOND) {
+                    last.chop += i.getAmount();
+                }
+            }
+        }
+    }
+    
     public void setinv() {
         switch(t) {
-            case GOLD: p.getInventory().setHelmet(new ItemStack(Material.GOLD_HELMET, 1)); break;
-            case DIAMOND: p.getInventory().setHelmet(new ItemStack(Material.DIAMOND_HELMET, 1)); break;
+            case GOLD: p.getInventory().setHelmet(new ItemStack(Material.GOLD_HELMET, 1)); BukkitContrib.getAppearanceManager().setGlobalCloak(p, "http://www.thorgaming.com/minecraft/redteamcape.png"); break;
+            case DIAMOND: p.getInventory().setHelmet(new ItemStack(Material.DIAMOND_HELMET, 1)); BukkitContrib.getAppearanceManager().setGlobalCloak(p, "http://www.thorgaming.com/minecraft/blueteamcape.png"); break;
         }
         p.getInventory().setItem(0, new ItemStack(Material.BOW, 1));
         p.getInventory().setItem(1, new ItemStack(Material.IRON_SWORD, 1));

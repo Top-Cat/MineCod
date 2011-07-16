@@ -56,6 +56,7 @@ public class CODBlockListener extends BlockListener {
                 s.setLine(2, "towards enemy");
                 s.update();
                 plugin.clays.add(new claymore(plugin, event.getBlockPlaced(), r, event.getPlayer()));
+                System.out.println("OK");
                 plugin.p(event.getPlayer()).s.incStat(Stat.CLAYMORES_USED);
             } else {
                 event.setCancelled(true);

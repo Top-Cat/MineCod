@@ -24,9 +24,6 @@ public class CWolfPack extends ownable {
     public void remove(Wolf r) {
         wolf.remove(r);
         r.remove();
-        if (wolf.size() == 0) {
-            plugin.wolves.remove(this);
-        }
     }
     
     public void removeAll() {
@@ -34,7 +31,6 @@ public class CWolfPack extends ownable {
             i.remove();
         }
         wolf.clear();
-        plugin.wolves.remove(this);
     }
     
 }
