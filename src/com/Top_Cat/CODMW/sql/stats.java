@@ -74,7 +74,7 @@ public class stats {
     }
     
     public void maxStat(Stat s, int c) {
-    	boolean r = false;
+        boolean r = false;
         if (stats.containsKey(s) && stats.get(s) < c) {
             updated.add(s);
         } else if (!stats.containsKey(s)) {
@@ -106,7 +106,7 @@ public class stats {
         if (!achs.contains(a)) {
             Player ex = p.p;
             ContribPlayer cp = (ContribPlayer) p.p;
-            if (cp.isEnabledBukkitContribSinglePlayerMod()) {
+            if (cp.isBukkitContribEnabled()) {
                 ex = null;
                 cp.sendNotification("Achievement Get!", a.getName(), a.getMat());
             } else {

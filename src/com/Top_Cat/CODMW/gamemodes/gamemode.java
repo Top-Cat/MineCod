@@ -16,7 +16,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.craftbukkit.entity.CraftWolf;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
@@ -191,8 +190,10 @@ public class gamemode {
     
     public void destroy() {
         plugin.getServer().getScheduler().cancelTasks(plugin);
-        if (plugin.getServer().getPluginManager().getPlugin("BukkitContrib") != null) {
+        try {
             BukkitContrib.getAppearanceManager().resetAllCloaks();
+        } catch (NoClassDefFoundError e) {
+            //This happens on server stop
         }
         for (claymore i : plugin.clays) {
             i.b.setType(Material.AIR);

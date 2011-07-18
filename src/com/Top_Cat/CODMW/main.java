@@ -3,6 +3,8 @@ package com.Top_Cat.CODMW;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,13 +12,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.Location;
@@ -28,7 +30,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Wolf;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.inventory.ItemStack;
@@ -37,6 +38,8 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkitcontrib.BukkitContrib;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 import com.Top_Cat.CODMW.gamemodes.CTF;
 import com.Top_Cat.CODMW.gamemodes.FFA;
@@ -50,6 +53,7 @@ import com.Top_Cat.CODMW.listeners.CODInventoryListener;
 import com.Top_Cat.CODMW.listeners.CODPlayerListener;
 import com.Top_Cat.CODMW.listeners.CODWeatherListener;
 import com.Top_Cat.CODMW.objects.CWolfPack;
+import com.Top_Cat.CODMW.objects.Rotation;
 import com.Top_Cat.CODMW.objects.chopper;
 import com.Top_Cat.CODMW.objects.claymore;
 import com.Top_Cat.CODMW.objects.door;
@@ -68,8 +72,11 @@ public class main extends JavaPlugin {
     public World currentWorld;
     public Location teamselect;
     public Location prespawn;
-    public HashMap<String, Integer> maps = new HashMap<String, Integer>();
+    public HashMap<String, map> maps = new HashMap<String, map>();
     public HashMap<Player, player> players = new HashMap<Player, player>();
+    public ArrayList<Rotation> map_rot =  new ArrayList<Rotation>();
+    public int rot = 0;
+    private static final Yaml yaml = new Yaml(new SafeConstructor());
     public int gold, diam, tot, minplayers = 0;
     public CODPlayerListener playerListener;
     public CODBlockListener blockListener;
@@ -94,6 +101,7 @@ public class main extends JavaPlugin {
     Random gen = new Random();
     public GameModes gm = GameModes.FFA;
     public String ip;
+    public String name = "MineCod Server";
     
     public void clearinv(Player p) {
         PlayerInventory i = p.getInventory();
@@ -145,7 +153,7 @@ public class main extends JavaPlugin {
 
     public void preparemap() {
         if (activeGame) { game.destroy(); }
-        currentWorld = getServer().createWorld(currentMap.folder, Environment.NORMAL);
+        currentWorld = getServer().createWorld(currentMap.name, Environment.NORMAL);
         currentWorld.setPVP(true);
         currentWorld.setSpawnFlags(true, true);
         for (Entity i : currentWorld.getEntities()) {
@@ -182,30 +190,19 @@ public class main extends JavaPlugin {
         updateServerStatus(false);
     }
     
-    public void loadmap(Integer mapid) {
-        ResultSet _r = sql.query("SELECT * FROM cod_maps WHERE `Id` = '" + mapid + "'");
-        try {
-            _r.next();
-            currentMap = new map(sql, this, _r);
-            preparemap();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void loadmap(map m) {
+        currentMap = m;
+        preparemap();
     }
     
     public void loadmap() {
-        String w = "";
-        if (currentMap != null) {
-            w = " WHERE `Id` != '" + currentMap.id + "'";
-        }
-        ResultSet _r = sql.query("SELECT * FROM cod_maps" + w + " ORDER BY RAND()");
-        try {
-            _r.next();
-            currentMap = new map(sql, this, _r);
-            preparemap();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    	gm = map_rot.get(rot).gm;
+    	currentMap = map_rot.get(rot).m;
+    	rot++;
+    	while (rot >= map_rot.size()) {
+    		rot -= map_rot.size();
+    	}
+        preparemap();
     }
 
     
@@ -266,7 +263,7 @@ public class main extends JavaPlugin {
                     if (args.length > 1) {
                         if (args[0].equalsIgnoreCase("map")) {
                             if (maps.containsKey(args[1])) {
-                                v = new MapVote(this, args[1], maps.get(args[1]), p((Player) sender));
+                                v = new MapVote(this, maps.get(args[1]), p((Player) sender));
                             } else {
                                 ((Player) sender).sendMessage("Could not find map!");
                             }
@@ -330,32 +327,49 @@ public class main extends JavaPlugin {
     }
     
     public void updateServerStatus(boolean start) {
-        int mid = 0;
-        if (currentMap != null) { mid = currentMap.id; }
-        String s = "";
-        if (start) {
-            s = "INSERT INTO cod_servers VALUES('" + ip + "', '" + getServer().getPort() + "', NOW(), " + players.size() + ", " + mid + ", '" + gm.toString() + "') ON DUPLICATE KEY UPDATE ";
-        } else {
-            s = "UPDATE cod_servers SET ";
-        }
-        s += "`lastup`=NOW(), `players`='" + players.size() + "', `map`='" + mid + "', `mode`='" + gm.toString() + "'";
-        if (!start) {
-            s += " WHERE ip='" + ip + "' and port='" + getServer().getPort() + "'";
-        }
-        sql.update(s);
+	    if (ip == null) {
+	    	updateIP();
+	    }
+	    if (ip != null) {
+	        String mid = "unknown";
+	        if (currentMap != null) { mid = currentMap.name; }
+	        String s = "";
+	        if (start) {
+	            s = "INSERT INTO cod_servers VALUES('" + ip + "', '" + getServer().getPort() + "', '" + name + "', NOW(), " + players.size() + ", '" + mid + "', '" + gm.toString() + "') ON DUPLICATE KEY UPDATE ";
+	        } else {
+	            s = "UPDATE cod_servers SET ";
+	        }
+	        s += "`name`='" + name + "', `lastup`=NOW(), `players`='" + players.size() + "', `map`='" + mid + "', `mode`='" + gm.toString() + "'";
+	        if (!start) {
+	            s += " WHERE ip='" + ip + "' and port='" + getServer().getPort() + "'";
+	        }
+	        sql.update(s);
+	    }
     }
-
-    @Override
-    public void onEnable() {
-        Logger log = getServer().getLogger();
+    
+    private void updateIP() {
+    try {
+            URL whatismyip = new URL("http://automation.whatismyip.com/n09230945.asp");
+            BufferedReader in = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
+            ip = in.readLine();
+        } catch (MalformedURLException e1) {
+            e1.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void setup() throws Exception {
+    	Logger log = getServer().getLogger();
         final PluginManager pm = getServer().getPluginManager();
         if (pm.getPlugin("BukkitContrib") == null) {
             try {
                 download(log, new URL("http://bit.ly/autoupdateBukkitContrib"), new File("plugins/BukkitContrib.jar"));
                 pm.loadPlugin(new File("plugins" + File.separator + "BukkitContrib.jar"));
                 pm.enablePlugin(pm.getPlugin("BukkitContrib"));
-            } catch (final Exception ex) {
-                log.warning("[LogBlock] Failed to install BukkitContrib, you may have to restart your server or install it manually.");
+            } catch (Exception ex) {
+            	throw new Exception("[MineCod] Failed to install BukkitContrib, you may have to restart your server or install it manually.");
             }
         }
         
@@ -367,13 +381,42 @@ public class main extends JavaPlugin {
         inputListener = new CODInputListener(this);
         
         try {
-            URL whatismyip = new URL("http://automation.whatismyip.com/n09230945.asp");
-            BufferedReader in = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
-            ip = in.readLine();
-        } catch (MalformedURLException e1) {
-            e1.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            Map<String, Object> map = (Map<String, Object>) yaml.load(new FileInputStream("./minecod.yml"));
+        	try {
+	            name = map.get("server-name").toString();
+	        	if (!name.matches("^[A-Za-z0-9 _.-]+$")) {
+	                name = "MineCod Server";
+	            }
+        	} catch (NullPointerException ex) {
+                throw new Exception("server-name is not defined");
+            } catch (ClassCastException ex) {
+                throw new Exception("server-name is of wrong type");
+            }
+            try {
+            	ArrayList<String> rotation = (ArrayList<String>) map.get("map-rotation");
+            	for (String i : rotation) {
+            		String[] mi = i.split("_");
+            		if (!maps.containsKey(mi[1])) {
+            			try {
+            				map nm = new map(sql, this, mi[1]);
+                			maps.put(mi[1], nm);
+            			} catch (Exception e) {
+            				log.log(Level.WARNING, "Failed to load map " + mi[1]);
+            			}
+            		}
+            		if (maps.containsKey(mi[1])) {
+            			map_rot.add(new Rotation(maps.get(mi[1]), GameModes.getGMFromId(mi[0].toUpperCase())));
+            		}
+            	}
+            	
+            	if (map_rot.size() == 0) {
+            		throw new Exception("map-rotation has no maps or no maps could be loaded");
+            	}
+            } catch (ClassCastException ex) {
+            	throw new Exception("map-rotation is of wrong type");
+            }
+        } catch (FileNotFoundException e2) {
+        	throw new Exception("Missing minecod.yml! Please redownload the default or make your own");
         }
         
         updateServerStatus(true);
@@ -428,15 +471,16 @@ public class main extends JavaPlugin {
             p.sendMessage(d + "9Please choose your team!");
             p.setHealth(20);
         }
-        
-        ResultSet _r = sql.query("SELECT * FROM cod_maps");
-        try {
-            while (_r.next()) {
-                maps.put(_r.getString("name"), _r.getInt("Id"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    }
+
+    @Override
+    public void onEnable() {
+    	try {
+    		setup();
+    	} catch (Exception e) {
+    		getServer().getLogger().log(Level.SEVERE, "Error loading minecod: " + e.getMessage());
+    		getServer().getPluginManager().disablePlugin(this);
+    	}
     }
     
     public static void download(Logger log, URL url, File file) throws IOException {

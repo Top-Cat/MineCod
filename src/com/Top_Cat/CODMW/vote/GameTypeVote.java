@@ -5,9 +5,6 @@ import java.util.Date;
 import org.bukkit.entity.Player;
 
 import com.Top_Cat.CODMW.main;
-import com.Top_Cat.CODMW.gamemodes.CTF;
-import com.Top_Cat.CODMW.gamemodes.FFA;
-import com.Top_Cat.CODMW.gamemodes.TDM;
 import com.Top_Cat.CODMW.objects.player;
 
 public class GameTypeVote extends Vote {

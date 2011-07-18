@@ -5,23 +5,22 @@ import java.util.Date;
 import org.bukkit.entity.Player;
 
 import com.Top_Cat.CODMW.main;
+import com.Top_Cat.CODMW.objects.map;
 import com.Top_Cat.CODMW.objects.player;
 
 public class MapVote extends Vote {
 
-    String mapname;
-    Integer mapid;
+    map m;
     
-    public MapVote(main instance, String map, Integer mid, player player) {
+    public MapVote(main instance, map _m, player player) {
         super(instance, player);
-        mapname = map;
-        mapid = mid;
+        m = _m;
     }
     
     @Override
     public void onCreate() {
         for (Player i : plugin.getServer().getOnlinePlayers()) {
-            i.sendMessage(s.nick + " called a vote to change map to " + mapname);
+            i.sendMessage(s.nick + " called a vote to change map to " + m.name);
         }
         super.onCreate();
     }
@@ -30,7 +29,7 @@ public class MapVote extends Vote {
     public void onComplete(boolean result) {
         super.onComplete(result);
         if (result) {
-            plugin.loadmap(mapid);
+            plugin.loadmap(m);
         }
     }
     
