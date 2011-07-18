@@ -4,9 +4,9 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -35,7 +35,7 @@ public class map {
     Object spawns;
     int BUFFER = 2048;
     
-    public map(conn _c, main instance, String mapname) throws MalformedURLException, IOException {
+    public map(conn _c, main instance, String mapname) throws Exception {
         sql = _c;
         plugin = instance;
         
@@ -54,7 +54,6 @@ public class map {
                 
                 log.info("Extracting '" + currentEntry + "' from '" + mapname + ".zip'");
                 File destFile = new File(unzipDestinationDirectory, currentEntry);
-                //destFile = new File(unzipDestinationDirectory, destFile.getName());
                 File destinationParent = destFile.getParentFile();
                 destinationParent.mkdirs();
                 
@@ -81,11 +80,29 @@ public class map {
             zipFile.close();
             ZipFile.delete();
         }
-        Map<String, Object> map = (Map<String, Object>) yaml.load(new FileInputStream("./" + mapname + "/minecod_data.yml"));
-        name = mapname;
-        time = Integer.parseInt(map.get("time").toString());
-        storm = (Boolean) map.get("storm");
-        spawns = map.get("spawns");
+        try {
+        	Map<String, Object> map = (Map<String, Object>) yaml.load(new FileInputStream("./" + mapname + "/minecod_data.yml"));
+        	
+            name = mapname;
+            try {
+            	time = Integer.parseInt(map.get("time").toString());
+            } catch (NullPointerException ex) {
+                throw new Exception("world time for '" + mapname + "' is not defined");
+            }
+            try {
+            	storm = (Boolean) map.get("storm");
+            } catch (NullPointerException ex) {
+                throw new Exception("storm for '" + mapname + "' is not defined");
+            }
+            try {
+            	spawns = map.get("spawns");
+            } catch (NullPointerException ex) {
+                throw new Exception("no spawns for '" + mapname + "' defined");
+            }
+        	
+        } catch (FileNotFoundException e) {
+        	throw new Exception("Missing minecod_data.yml for '" + mapname + "'! Please redownload the map");
+        }
     }
     
     public ArrayList<Location> getSpawns(int type) {
