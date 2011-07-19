@@ -51,7 +51,8 @@ public enum Stat {
     FLAG_CAPTURES(44),
     FURTHEST_KILL(45),
     FURTHEST_HEADSHOT(46),
-    LIFE_REGENS(47);
+    LIFE_REGENS(47),
+    BLOCKS_MOVED(48);
     
     private final int id;
 

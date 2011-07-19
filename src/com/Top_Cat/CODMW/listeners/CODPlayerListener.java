@@ -10,6 +10,7 @@ import net.minecraft.server.EntityItem;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Player;
@@ -125,6 +126,8 @@ public class CODPlayerListener extends PlayerListener {
         }
         
     }
+    
+    Block lastB;
 
     @Override
     public void onPlayerMove(PlayerMoveEvent event) {
@@ -144,38 +147,48 @@ public class CODPlayerListener extends PlayerListener {
         
         plugin.game.playermove(event);
         Location t = event.getTo();
-        team e;
-        if (t.getX() > -10 && t.getX() < -8 && t.getZ() > 14 && t.getZ() < 16 && t.getBlockY() == 64) {
-            e = team.GOLD;
-        } else if (t.getX() > -10 && t.getX() < -8 && t.getZ() > 10 && t.getZ() < 12 && t.getBlockY() == 64) {
-            e = team.DIAMOND;
-        } else if (t.getX() > -8 && t.getX() < -6 && t.getZ() > 12 && t.getZ() < 14 && t.getBlockY() == 64) {
-            //Random team
-            if (plugin.diam > plugin.gold) {
-                e = team.GOLD;
-            } else if (plugin.gold > plugin.diam) {
-                e = team.DIAMOND;
-            } else if (generator.nextInt(2) > 0) {
-                e = team.DIAMOND;
-            } else {
-                e = team.GOLD;
-            }
-        } else {
-            return;
+        if (t.getBlock() != lastB) {
+        	lastB = t.getBlock();
+	        team e;
+	        
+	        player p = plugin.p(event.getPlayer());
+	        if (p != null) {
+	        	p.s.incStat(Stat.BLOCKS_MOVED);
+	        }
+	        
+	        if (t.getX() > -10 && t.getX() < -8 && t.getZ() > 14 && t.getZ() < 16 && t.getBlockY() == 64) {
+	            e = team.GOLD;
+	        } else if (t.getX() > -10 && t.getX() < -8 && t.getZ() > 10 && t.getZ() < 12 && t.getBlockY() == 64) {
+	            e = team.DIAMOND;
+	        } else if (t.getX() > -8 && t.getX() < -6 && t.getZ() > 12 && t.getZ() < 14 && t.getBlockY() == 64) {
+	            //Random team
+	            if (plugin.diam > plugin.gold) {
+	                e = team.GOLD;
+	            } else if (plugin.gold > plugin.diam) {
+	                e = team.DIAMOND;
+	            } else if (generator.nextInt(2) > 0) {
+	                e = team.DIAMOND;
+	            } else {
+	                e = team.GOLD;
+	            }
+	        } else {
+	            return;
+	        }
+	        //Location l = plugin.prespawn;
+	        if (!plugin.players.containsKey(event.getPlayer())) {
+	            new player(plugin, event.getPlayer(), e);
+	        } else {
+	            plugin.players.get(event.getPlayer()).setTeam(e);
+	            if (plugin.activeGame) {
+	                /*l = */plugin.game.spawnTele(plugin.p(event.getPlayer()), event.getPlayer(), false);
+	            } else {
+	                plugin.players.get(event.getPlayer()).dead = false;
+	            }
+	            recount();
+	        }
+	        plugin.setDoors();
+	        //event.setTo(l);
         }
-        if (!plugin.players.containsKey(event.getPlayer())) {
-            new player(plugin, event.getPlayer(), e);
-        } else {
-            plugin.players.get(event.getPlayer()).setTeam(e);
-            if (plugin.activeGame) {
-                plugin.game.spawnTele(plugin.p(event.getPlayer()), event.getPlayer(), false);
-            } else {
-                plugin.players.get(event.getPlayer()).dead = false;
-            }
-            recount();
-        }
-        plugin.setDoors();
-        event.setTo(plugin.prespawn);
     }
     
     public void recount() {

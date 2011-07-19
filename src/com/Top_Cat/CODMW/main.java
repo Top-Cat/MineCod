@@ -37,6 +37,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.FileUtil;
 import org.bukkitcontrib.BukkitContrib;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
@@ -69,6 +70,8 @@ import com.Top_Cat.CODMW.vote.Vote;
 
 public class main extends JavaPlugin {
 
+	int minecod_version = 1;
+	
     public World currentWorld;
     public Location teamselect;
     public Location prespawn;
@@ -102,6 +105,8 @@ public class main extends JavaPlugin {
     public GameModes gm = GameModes.FFA;
     public String ip;
     public String name = "MineCod Server";
+    public String welcome_msg = "Welcome to the MineCod Server!";
+    public String join_msg = "$nick has joined the fray";
     
     public void clearinv(Player p) {
         PlayerInventory i = p.getInventory();
@@ -121,6 +126,19 @@ public class main extends JavaPlugin {
         if (game != null) {
             game.destroy();
         }
+        
+        try {
+            File directory = new File(getServer().getUpdateFolder());
+            if (directory.exists()) {
+                File plugin = new File(directory.getPath(), "MineCod.jar");
+                if (plugin.exists()) {
+                    FileUtil.copy(plugin, this.getFile());
+                    plugin.delete();
+                }
+            }
+        }
+        catch (Exception e) {}
+        
         System.out.println("Minecod disabled!");
     }
 
@@ -196,12 +214,12 @@ public class main extends JavaPlugin {
     }
     
     public void loadmap() {
-    	gm = map_rot.get(rot).gm;
-    	currentMap = map_rot.get(rot).m;
-    	rot++;
-    	while (rot >= map_rot.size()) {
-    		rot -= map_rot.size();
-    	}
+        gm = map_rot.get(rot).gm;
+        currentMap = map_rot.get(rot).m;
+        rot++;
+        while (rot >= map_rot.size()) {
+            rot -= map_rot.size();
+        }
         preparemap();
     }
 
@@ -327,28 +345,28 @@ public class main extends JavaPlugin {
     }
     
     public void updateServerStatus(boolean start) {
-	    if (ip == null) {
-	    	updateIP();
-	    }
-	    if (ip != null) {
-	        String mid = "unknown";
-	        if (currentMap != null) { mid = currentMap.name; }
-	        String s = "";
-	        if (start) {
-	            s = "INSERT INTO cod_servers VALUES('" + ip + "', '" + getServer().getPort() + "', '" + name + "', NOW(), " + players.size() + ", '" + mid + "', '" + gm.toString() + "') ON DUPLICATE KEY UPDATE ";
-	        } else {
-	            s = "UPDATE cod_servers SET ";
-	        }
-	        s += "`name`='" + name + "', `lastup`=NOW(), `players`='" + players.size() + "', `map`='" + mid + "', `mode`='" + gm.toString() + "'";
-	        if (!start) {
-	            s += " WHERE ip='" + ip + "' and port='" + getServer().getPort() + "'";
-	        }
-	        sql.update(s);
-	    }
+        if (ip == null) {
+            updateIP();
+        }
+        if (ip != null) {
+            String mid = "unknown";
+            if (currentMap != null) { mid = currentMap.name; }
+            String s = "";
+            if (start) {
+                s = "INSERT INTO cod_servers VALUES('" + ip + "', '" + getServer().getPort() + "', '" + name + "', NOW(), " + players.size() + ", '" + mid + "', '" + gm.toString() + "') ON DUPLICATE KEY UPDATE ";
+            } else {
+                s = "UPDATE cod_servers SET ";
+            }
+            s += "`name`='" + name + "', `lastup`=NOW(), `players`='" + players.size() + "', `map`='" + mid + "', `mode`='" + gm.toString() + "'";
+            if (!start) {
+                s += " WHERE ip='" + ip + "' and port='" + getServer().getPort() + "'";
+            }
+            sql.update(s);
+        }
     }
     
     private void updateIP() {
-    try {
+        try {
             URL whatismyip = new URL("http://automation.whatismyip.com/n09230945.asp");
             BufferedReader in = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
             ip = in.readLine();
@@ -361,7 +379,7 @@ public class main extends JavaPlugin {
     
     @SuppressWarnings("unchecked")
     private void setup() throws Exception {
-    	Logger log = getServer().getLogger();
+        Logger log = getServer().getLogger();
         final PluginManager pm = getServer().getPluginManager();
         if (pm.getPlugin("BukkitContrib") == null) {
             try {
@@ -369,7 +387,7 @@ public class main extends JavaPlugin {
                 pm.loadPlugin(new File("plugins" + File.separator + "BukkitContrib.jar"));
                 pm.enablePlugin(pm.getPlugin("BukkitContrib"));
             } catch (Exception ex) {
-            	throw new Exception("[MineCod] Failed to install BukkitContrib, you may have to restart your server or install it manually.");
+                throw new Exception("[MineCod] Failed to install BukkitContrib, you may have to restart your server or install it manually.");
             }
         }
         
@@ -382,41 +400,55 @@ public class main extends JavaPlugin {
         
         try {
             Map<String, Object> map = (Map<String, Object>) yaml.load(new FileInputStream("./minecod.yml"));
-        	try {
-	            name = map.get("server-name").toString();
-	        	if (!name.matches("^[A-Za-z0-9 _.-]+$")) {
-	                name = "MineCod Server";
-	            }
-        	} catch (NullPointerException ex) {
+            try {
+                name = map.get("server-name").toString();
+                if (!name.matches("^[A-Za-z0-9 _.-]+$")) {
+                    name = "MineCod Server";
+                }
+            } catch (NullPointerException ex) {
                 throw new Exception("server-name is not defined");
             } catch (ClassCastException ex) {
                 throw new Exception("server-name is of wrong type");
             }
+            if (map.containsKey("welcome-message")) {
+	            try {
+	                welcome_msg = (String) map.get("welcome-message");
+	            } catch (ClassCastException ex) {
+	                throw new Exception("welcome-message is of wrong type");
+	            }
+            }
+            if (map.containsKey("join-message")) {
+	            try {
+	                join_msg = (String) map.get("join-message");
+	            } catch (ClassCastException ex) {
+	                throw new Exception("join-message is of wrong type");
+	            }
+            }
             try {
-            	ArrayList<String> rotation = (ArrayList<String>) map.get("map-rotation");
-            	for (String i : rotation) {
-            		String[] mi = i.split("_");
-            		if (!maps.containsKey(mi[1])) {
-            			try {
-            				map nm = new map(sql, this, mi[1]);
-                			maps.put(mi[1], nm);
-            			} catch (Exception e) {
-            				log.log(Level.WARNING, "Failed to load map " + mi[1]);
-            			}
-            		}
-            		if (maps.containsKey(mi[1])) {
-            			map_rot.add(new Rotation(maps.get(mi[1]), GameModes.getGMFromId(mi[0].toUpperCase())));
-            		}
-            	}
-            	
-            	if (map_rot.size() == 0) {
-            		throw new Exception("map-rotation has no maps or no maps could be loaded");
-            	}
+                ArrayList<String> rotation = (ArrayList<String>) map.get("map-rotation");
+                for (String i : rotation) {
+                    String[] mi = i.split("_");
+                    if (!maps.containsKey(mi[1])) {
+                        try {
+                            map nm = new map(sql, this, mi[1]);
+                            maps.put(mi[1], nm);
+                        } catch (Exception e) {
+                            log.log(Level.WARNING, "Failed to load map " + mi[1]);
+                        }
+                    }
+                    if (maps.containsKey(mi[1])) {
+                        map_rot.add(new Rotation(maps.get(mi[1]), GameModes.getGMFromId(mi[0].toUpperCase())));
+                    }
+                }
+                
+                if (map_rot.size() == 0) {
+                    throw new Exception("map-rotation has no maps or no maps could be loaded");
+                }
             } catch (ClassCastException ex) {
-            	throw new Exception("map-rotation is of wrong type");
+                throw new Exception("map-rotation is of wrong type");
             }
         } catch (FileNotFoundException e2) {
-        	throw new Exception("Missing minecod.yml! Please redownload the default or make your own");
+            throw new Exception("Missing minecod.yml! Please redownload the default or make your own");
         }
         
         updateServerStatus(true);
@@ -475,19 +507,39 @@ public class main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-    	try {
-    		setup();
-    	} catch (Exception e) {
-    		getServer().getLogger().log(Level.SEVERE, "Error loading minecod: " + e.getMessage());
-    		getServer().getPluginManager().disablePlugin(this);
-    	}
+        try {
+            try {
+                URL url = new URL("http://www.thegigcast.net/minecod/version.txt");
+                BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+                String str;
+                while ((str = in.readLine()) != null) {
+                    int version = Integer.parseInt(str);
+                    if (version > minecod_version){
+                        in.close();
+                        File directory = new File(getServer().getUpdateFolder());
+                        File plugin = new File(directory.getPath(), "MineCod.jar");
+                        download(getServer().getLogger(), new URL("http://www.thegigcast.net/minecod/MineCod.jar"), plugin);
+                        break;
+                    }
+                }
+                in.close();
+            }
+            catch (Exception e) { e.printStackTrace(); }
+            
+            setup();
+        } catch (Exception e) {
+            getServer().getLogger().log(Level.SEVERE, "Error loading minecod: " + e.getMessage());
+            getServer().getPluginManager().disablePlugin(this);
+        }
     }
     
     public static void download(Logger log, URL url, File file) throws IOException {
-        if (!file.getParentFile().exists())
+        if (!file.getParentFile().exists()) {
             file.getParentFile().mkdir();
-        if (file.exists())
+        }
+        if (file.exists()) {
             file.delete();
+        }
         file.createNewFile();
         final int size = url.openConnection().getContentLength();
         log.info("Downloading " + file.getName() + " (" + size / 1024 + "kb) ...");

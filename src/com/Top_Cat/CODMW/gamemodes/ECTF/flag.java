@@ -63,7 +63,9 @@ public class flag {
             } else {
                 plugin.p(p).s.incStat(Stat.FLAG_RETURNS);
             }
-            p.getInventory().setHelmet(new ItemStack(a, 1));
+            if (a != null) {
+            	p.getInventory().setHelmet(new ItemStack(a, 1));
+            }
             p = null;
         }
         setBlocks(l.getBlock(), b, c, d);

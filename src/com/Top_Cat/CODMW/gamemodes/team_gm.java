@@ -73,7 +73,10 @@ public class team_gm extends gamemode {
         team t1 = team.BOTH;
         team t2 = team.BOTH;
         if (a instanceof Player) {
-            t1 = plugin.p((Player) a).getTeam();
+        	player p = plugin.p((Player) a);
+        	if (p != null) {
+        		t1 = p.getTeam();
+        	}
         } else if (a instanceof Wolf) {
             for (CWolfPack i : plugin.wolves) {
                 if (i.wolf.contains(a)) {
@@ -82,7 +85,10 @@ public class team_gm extends gamemode {
             }
         }
         if (d instanceof Player) {
-            t2 = plugin.p((Player) d).getTeam();
+        	player p = plugin.p((Player) d);
+        	if (p != null) {
+        		t2 = p.getTeam();
+        	}
         } else if (d instanceof Wolf) {
             for (CWolfPack i : plugin.wolves) {
                 if (i.wolf.contains(d)) {

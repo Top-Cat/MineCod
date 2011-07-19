@@ -163,7 +163,6 @@ public class gamemode {
         
         for (player i : plugin.players.values()) {
             i.dead = false;
-            i.clearinv();
         }
         
         if (lastdeath != null) {
@@ -350,7 +349,7 @@ public class gamemode {
         plugin.setDoors();
         plugin.totele.add(event.getPlayer());
         t.schedule(new tele(), 200);
-        plugin.clearinv(event.getPlayer());    
+        plugin.clearinv(event.getPlayer());
         String nick = event.getPlayer().getDisplayName();
         ResultSet r = plugin.sql.query("SELECT * FROM cod_players WHERE username = '" + event.getPlayer().getDisplayName() + "'");
         try {
@@ -364,8 +363,8 @@ public class gamemode {
             e.printStackTrace();
         }
         
-        event.setJoinMessage(plugin.d + "9" + nick + " has joined the fray");
-        event.getPlayer().sendMessage(plugin.d + "9Welcome to The Gigcast's MineCod Server!");
+        event.setJoinMessage(plugin.d + "9" + plugin.join_msg.replaceAll("\\$nick", nick));
+        event.getPlayer().sendMessage(plugin.d + "9" + plugin.welcome_msg);
         event.getPlayer().setHealth(20);
     }
     

@@ -44,7 +44,7 @@ public class map {
         if (!f.isDirectory()) {
             File ZipFile = new File("./" + mapname + ".zip");
             File unzipDestinationDirectory = new File("./");
-            main.download(log, new URL("http://www.thegigcast.net/minecod/" + mapname + ".zip"), ZipFile);
+            main.download(log, new URL("http://www.thegigcast.net/minecod/maps/" + mapname + ".zip"), ZipFile);
             ZipFile zipFile = new ZipFile(ZipFile);
             Enumeration<? extends ZipEntry> zipFileEntries = zipFile.entries();
             
