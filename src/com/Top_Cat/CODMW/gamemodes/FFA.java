@@ -72,7 +72,7 @@ public class FFA extends gamemode {
         
         scores.put(attacker, s);
         
-        if (scores.get(attacker) >= 20) {// TODO : Change me to 20
+        if (scores.get(attacker) >= 20) {
             onWin(attacker, attacker, defender);
         }
     }

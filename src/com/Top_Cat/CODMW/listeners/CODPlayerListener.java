@@ -246,11 +246,7 @@ public class CODPlayerListener extends PlayerListener {
     @Override
     public void onPlayerChat(PlayerChatEvent event) {
         if (plugin.players.containsKey(event.getPlayer())) {
-            String p = "b";
-            if (plugin.p(event.getPlayer()).getTeam() == team.GOLD) {
-                p = "6";
-            }
-            event.setMessage(plugin.d + p + event.getMessage());
+            event.setMessage(plugin.d + plugin.p(event.getPlayer()).getTeam().getColour() + event.getMessage());
         }
     }
     

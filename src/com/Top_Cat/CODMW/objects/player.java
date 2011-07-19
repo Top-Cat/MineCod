@@ -55,8 +55,8 @@ public class player {
         ResultSet r = plugin.sql.query("SELECT * FROM cod_players WHERE username = '" + _p.getDisplayName() + "'");
         try {
             r.next();
-	        nick = r.getString("nick");
-	        dbid = r.getInt("Id");
+            nick = r.getString("nick");
+            dbid = r.getInt("Id");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -65,17 +65,10 @@ public class player {
         s.incStat(Stat.LOGIN);
         
         switch(t) {
-            case GOLD:
-                p.getInventory().setHelmet(new ItemStack(Material.GOLD_HELMET, 1));
-                BukkitContrib.getAppearanceManager().setGlobalCloak(p, "http://www.thorgaming.com/minecraft/redteamcape.png");
-                plugin.gold++;
-                break;
-            case DIAMOND:
-                p.getInventory().setHelmet(new ItemStack(Material.DIAMOND_HELMET, 1));
-                BukkitContrib.getAppearanceManager().setGlobalCloak(p, "http://www.thorgaming.com/minecraft/blueteamcape.png");
-                plugin.diam++;
-                break;
+            case GOLD: plugin.gold++; break;
+            case DIAMOND: plugin.diam++; break;
         }
+        setinv(false);
         plugin.tot++;
         plugin.players.put(_p, this);
         
@@ -105,7 +98,7 @@ public class player {
     }
     
     public void setTeam(team _t) {
-    	System.out.println(_t.toString());
+        System.out.println(_t.toString());
         t = _t;
     }
     
@@ -159,12 +152,12 @@ public class player {
     }
     
     private int getDistance(player p, Arrow l) {
-    	int out = 0;
-    	try {
-    		out = (int) p.p.getLocation().distance(plugin.game.floc.get(l));
-    	} catch (Exception e) { e.printStackTrace(); }
-    	System.out.println(out);
-    	return out;
+        int out = 0;
+        try {
+            out = (int) p.p.getLocation().distance(plugin.game.floc.get(l));
+        } catch (Exception e) { e.printStackTrace(); }
+        System.out.println(out);
+        return out;
     }
     
     public void onKill(player killed, int reason, Object l) {
@@ -178,7 +171,7 @@ public class player {
             s.maxStat(Stat.FURTHEST_HEADSHOT, getDistance(killed, (Arrow) l));
         }
         if (plugin.game.floc.containsKey(l)) {
-        	plugin.game.floc.remove(l);
+            plugin.game.floc.remove(l);
         }
         if (inv) {
             s.incStat(Stat.INVULNERABLE_KILLS);
@@ -353,14 +346,26 @@ public class player {
     }
     
     public void setinv() {
+    	setinv(true);
+    }
+    
+    public void setinv(boolean weapons) {
         switch(t) {
-            case GOLD: p.getInventory().setHelmet(new ItemStack(Material.GOLD_HELMET, 1)); BukkitContrib.getAppearanceManager().setGlobalCloak(p, "http://www.thorgaming.com/minecraft/redteamcape.png"); break;
-            case DIAMOND: p.getInventory().setHelmet(new ItemStack(Material.DIAMOND_HELMET, 1)); BukkitContrib.getAppearanceManager().setGlobalCloak(p, "http://www.thorgaming.com/minecraft/blueteamcape.png"); break;
+            case GOLD:    p.getInventory().setHelmet(new ItemStack(Material.GOLD_HELMET, 1));
+                          BukkitContrib.getAppearanceManager().setGlobalTitle(p, plugin.d + "6" + nick);
+                          BukkitContrib.getAppearanceManager().setGlobalCloak(p, "http://www.thorgaming.com/minecraft/redteamcape.png");
+                          break;
+            case DIAMOND: p.getInventory().setHelmet(new ItemStack(Material.DIAMOND_HELMET, 1));
+                          BukkitContrib.getAppearanceManager().setGlobalTitle(p, plugin.d + "b" + nick);
+                          BukkitContrib.getAppearanceManager().setGlobalCloak(p, "http://www.thorgaming.com/minecraft/blueteamcape.png");
+                          break;
         }
-        p.getInventory().setItem(0, new ItemStack(Material.BOW, 1));
-        p.getInventory().setItem(1, new ItemStack(Material.IRON_SWORD, 1));
-        p.getInventory().setItem(8, new ItemStack(Material.ARROW, 15));
-        p.getInventory().setItem(7, new ItemStack(Material.FEATHER, 75));
+        if (weapons) {
+	        p.getInventory().setItem(0, new ItemStack(Material.BOW, 1));
+	        p.getInventory().setItem(1, new ItemStack(Material.IRON_SWORD, 1));
+	        p.getInventory().setItem(8, new ItemStack(Material.ARROW, 15));
+	        p.getInventory().setItem(7, new ItemStack(Material.FEATHER, 75));
+        }
     }
     
     public void clearinv() {
