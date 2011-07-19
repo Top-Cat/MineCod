@@ -6,6 +6,7 @@ import java.util.Date;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -157,15 +158,27 @@ public class player {
         p.updateInventory();
     }
     
-    public void onKill(player killed, int reason) {
+    private int getDistance(player p, Arrow l) {
+    	int out = 0;
+    	try {
+    		out = (int) p.p.getLocation().distance(plugin.game.floc.get(l));
+    	} catch (Exception e) { e.printStackTrace(); }
+    	System.out.println(out);
+    	return out;
+    }
+    
+    public void onKill(player killed, int reason, Object l) {
         s.incStat(Stat.KILLS);
         kill++;
         s.maxStat(Stat.MAX_KILLS, kill);
         if (reason == 2 || reason == 7) {
-            s.maxStat(Stat.FURTHEST_KILL, (int) killed.p.getLocation().distance(p.getLocation()));
+            s.maxStat(Stat.FURTHEST_KILL, getDistance(killed, (Arrow) l));
         }
         if (reason == 7) {
-            s.maxStat(Stat.FURTHEST_HEADSHOT, (int) killed.p.getLocation().distance(p.getLocation()));
+            s.maxStat(Stat.FURTHEST_HEADSHOT, getDistance(killed, (Arrow) l));
+        }
+        if (plugin.game.floc.containsKey(l)) {
+        	plugin.game.floc.remove(l);
         }
         if (inv) {
             s.incStat(Stat.INVULNERABLE_KILLS);
@@ -236,7 +249,7 @@ public class player {
         }
     }
     
-    public void incHealth(int _h, Player attacker, int reason, ownable ks) {
+    public void incHealth(int _h, Player attacker, int reason, Object ks) {
         if (_h < 0 && h < 2) {
             regens++;
             s.maxStat(Stat.LIFE_REGENS, regens);
@@ -256,7 +269,7 @@ public class player {
                 melee_streak = 0;
                 player a = plugin.p(attacker);
                 if (a != this) {
-                    a.onKill(this, reason);
+                    a.onKill(this, reason, ks);
                 } else {
                     kill--;
                 }
@@ -300,8 +313,8 @@ public class player {
                 if (reason > 0) {
                     plugin.game.sendMessage(team.BOTH, plugin.d + plugin.p(attacker).getTeam().getColour() + plugin.p(attacker).nick + as + plugin.d + "c" + desc + " " + plugin.d + t.getColour() + nick + assist_txt);
                 }
-                if (ks != null) {
-                    ks.incKills();
+                if (ks != null && ks instanceof ownable) {
+                    ((ownable) ks).incKills();
                 }
                 clearinv();
                 todrop += ammo;

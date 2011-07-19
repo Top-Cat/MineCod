@@ -44,10 +44,12 @@ public class gamemode {
     main plugin;
     ArrayList<ArrayList<Location>> spawns = new ArrayList<ArrayList<Location>>();
     HashMap<Arrow, Location> ploc = new HashMap<Arrow, Location>();
+    public HashMap<Arrow, Location> floc = new HashMap<Arrow, Location>();
     ArrayList<String> lossmesssages = new ArrayList<String>();
     ArrayList<String> winmesssages = new ArrayList<String>();
     public Random generator = new Random();
     Location d1, d2, d3, d4;
+    private int t1, t2, t3, t4;
     boolean dl = false;
     int time = 0;
     Timer t = new Timer();
@@ -56,6 +58,7 @@ public class gamemode {
         plugin = instance;
         
         setup();
+        t4 = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new tele(), 4L, 4L);
         
         lossmesssages.add("They have won the battle but not the war!");
         lossmesssages.add("We have made a lot of mistakes you are going to regret");
@@ -152,9 +155,9 @@ public class gamemode {
             plugin.p(p).resetScore();
             spawnPlayer(p, true);
         }
-        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new tick(), 40L, 40L);
-        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new tickone(), 20L, 20L);
-        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new tickfast(), 2L, 2L);
+        t1 = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new tick(), 40L, 40L);
+        t2 = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new tickone(), 20L, 20L);
+        t3 = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new tickfast(), 2L, 2L);
     }
     
     public void onWin(team winners, player lastkill, player lastdeath) {
@@ -188,7 +191,10 @@ public class gamemode {
     }
     
     public void destroy() {
-        plugin.getServer().getScheduler().cancelTasks(plugin);
+        plugin.getServer().getScheduler().cancelTask(t1);
+        plugin.getServer().getScheduler().cancelTask(t2);
+        plugin.getServer().getScheduler().cancelTask(t3);
+        plugin.getServer().getScheduler().cancelTask(t4);
         try {
             BukkitContrib.getAppearanceManager().resetAllCloaks();
         } catch (NoClassDefFoundError e) {
@@ -273,9 +279,13 @@ public class gamemode {
                         r.add(j);
                     }
                 }
+                if (!floc.containsKey(i)) {
+                	floc.put((Arrow) i, i.getLocation());
+                }
                 if (ploc.containsKey(i)) {
                     if (l.distance(ploc.get(i)) < 0.1) {
                         r2.add(i);
+                        floc.remove(i);
                         
                         for (chopper j : plugin.choppers) {
                             if (j.l.distance(l) < 1.5) {
@@ -348,7 +358,6 @@ public class gamemode {
     public void playerjoin(PlayerJoinEvent event) {
         plugin.setDoors();
         plugin.totele.add(event.getPlayer());
-        t.schedule(new tele(), 200);
         plugin.clearinv(event.getPlayer());
         String nick = event.getPlayer().getDisplayName();
         ResultSet r = plugin.sql.query("SELECT * FROM cod_players WHERE username = '" + event.getPlayer().getDisplayName() + "'");
@@ -357,7 +366,7 @@ public class gamemode {
                 nick = r.getString("nick");
             } else {
                 int id = plugin.sql.update("INSERT INTO cod_players VALUES (NULL, '" + event.getPlayer().getDisplayName() + "', '" + event.getPlayer().getDisplayName() + "')");
-                plugin.sql.update("INSERT INTO cod_stats VALUES (NULL, '" + id + "', '0', '1000')");
+                plugin.sql.update("INSERT INTO cod_stats VALUES ('" + id + "', '0', '1000')");
             }
         } catch (SQLException e) {
             e.printStackTrace();

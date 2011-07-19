@@ -91,6 +91,8 @@ public enum Achievement {
     CAMPER(83, Stat.OTHER, -1, "Camper", "Survive for 3 minutes", Material.SLIME_BALL),
     BEAR_GRYLLS(84, Stat.OTHER, -1, "Bear Grylls", "Survive for 5 minutes", Material.SLIME_BALL),
     EXTERMINATION(85, Stat.OTHER, -1, "Extermination", "Kill 10 enemies with a single killstreak", Material.LAVA_BUCKET),
+    OVER_9000(86, Stat.BLOCKS_MOVED, 9000, "Over 9000!", "Walk 9000 blocks in MineCod", Material.MINECART),
+    MILES_500(87, Stat.BLOCKS_MOVED, 804672, "500 Miles", "Walk 500 miles in MineCod", Material.MINECART),
     ;
     
     private final int id;

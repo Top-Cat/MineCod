@@ -479,7 +479,7 @@ public class main extends JavaPlugin {
         pm.registerEvent(Event.Type.CUSTOM_EVENT, inputListener, Priority.Normal, this);
 
         pm.registerEvent(Event.Type.WEATHER_CHANGE, weatherListener, Priority.Normal, this);
-
+        
         PluginDescriptionFile pdfFile = this.getDescription();
         System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
 

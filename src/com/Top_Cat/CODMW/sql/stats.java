@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Timer;
 import java.util.TimerTask;
 
 import org.bukkit.entity.Player;
@@ -18,7 +17,6 @@ import com.Top_Cat.CODMW.objects.player;
 
 public class stats {
     
-    Timer t = new Timer();
     player p;
     HashMap<Stat, Integer> stats = new HashMap<Stat, Integer>();
     List<Achievement> achs = new ArrayList<Achievement>();
@@ -27,6 +25,7 @@ public class stats {
     List<Stat> newv = new ArrayList<Stat>();
     List<Achievement> newa = new ArrayList<Achievement>();
     main plugin;
+    int tid;
     
     public stats(main instance, player _p) {
         plugin = instance;
@@ -44,7 +43,7 @@ public class stats {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        t.schedule(new updatestats(), 30000, 30000);
+        tid = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new updatestats(), 600L, 600L);
     }
     
     public void incStat(Stat s) {
@@ -52,25 +51,23 @@ public class stats {
     }
     
     public void incStat(Stat s, int c) {
-        synchronized (this) {
-            if (stats.containsKey(s)) {
-                updated.add(s);
-            } else {
-                newv.add(s);
-            }
-            int out = getStat(s) + c;
-            if (out < 0) { out = 0; }
-            ArrayList<Achievement> tmp = new ArrayList<Achievement>();
-            for (Achievement a : toach) {
-                if (a.getStat() == s && a.getCount() <= out) {
-                    tmp.add(a);
-                }
-            }
-            for (Achievement a : tmp) {
-                awardAchievement(a);
-            }
-            stats.put(s, out);
+        if (stats.containsKey(s) && !updated.contains(s)) {
+            updated.add(s);
+        } else if (!stats.containsKey(s) && !newv.contains(s)) {
+            newv.add(s);
         }
+        int out = getStat(s) + c;
+        if (out < 0) { out = 0; }
+        ArrayList<Achievement> tmp = new ArrayList<Achievement>();
+        for (Achievement a : toach) {
+            if (a.getStat() == s && a.getCount() <= out) {
+                tmp.add(a);
+            }
+        }
+        for (Achievement a : tmp) {
+            awardAchievement(a);
+        }
+        stats.put(s, out);
     }
     
     public void maxStat(Stat s, int c) {
@@ -120,7 +117,7 @@ public class stats {
     }
     
     public void destroy() {
-        t.cancel();
+        plugin.getServer().getScheduler().cancelTask(tid);
         update();
     }
     
@@ -137,7 +134,7 @@ public class stats {
         synchronized (this) {
             List<Stat> r = new ArrayList<Stat>();
             for (Stat i : newv) {
-                plugin.sql.update("INSERT INTO cod_stats VALUES(NULL, '" + p.dbid + "', '" + i.getId() + "', '" + stats.get(i) + "')");
+                plugin.sql.update("INSERT INTO cod_stats VALUES('" + p.dbid + "', '" + i.getId() + "', '" + stats.get(i) + "')");
                 r.add(i);
             }
             newv.removeAll(r);

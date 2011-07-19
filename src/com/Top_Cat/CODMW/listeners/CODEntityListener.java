@@ -63,10 +63,12 @@ public class CODEntityListener extends EntityListener {
                     return;
                 } else {
                     int reason = 2;
-                    ownable ks = null;
+                    Object ks = null;
                     if (((CraftArrow) ((EntityDamageByProjectileEvent) event).getProjectile()).getHandle() instanceof CArrow) {
                         reason = ((CArrow) ((CraftArrow) ((EntityDamageByProjectileEvent) event).getProjectile()).getHandle()).reason;
                         ks = ((CArrow) ((CraftArrow) ((EntityDamageByProjectileEvent) event).getProjectile()).getHandle()).killstreak;
+                    } else {
+                    	ks = ((EntityDamageByProjectileEvent) event).getProjectile();
                     }
                     Player attacker = (Player) (((EntityDamageByProjectileEvent) event).getDamager());
                     Player defender = (Player) (((EntityDamageByProjectileEvent) event).getEntity());
