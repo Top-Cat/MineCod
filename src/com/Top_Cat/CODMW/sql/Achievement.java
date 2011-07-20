@@ -91,8 +91,18 @@ public enum Achievement {
     CAMPER(83, Stat.OTHER, -1, "Camper", "Survive for 3 minutes", Material.SLIME_BALL),
     BEAR_GRYLLS(84, Stat.OTHER, -1, "Bear Grylls", "Survive for 5 minutes", Material.SLIME_BALL),
     EXTERMINATION(85, Stat.OTHER, -1, "Extermination", "Kill 10 enemies with a single killstreak", Material.LAVA_BUCKET),
-    OVER_9000(86, Stat.BLOCKS_MOVED, 9000, "Over 9000!", "Walk 9000 blocks in MineCod", Material.MINECART),
+    OVER_9000(86, Stat.BLOCKS_MOVED, 9000000, "Over 9000!", "Walk 9000 kilometers in MineCod", Material.MINECART),
     MILES_500(87, Stat.BLOCKS_MOVED, 804672, "500 Miles", "Walk 500 miles in MineCod", Material.MINECART),
+    MARATHON(88, Stat.BLOCKS_MOVED, 42195, "Marathon", "Run a marathon in MineCod", Material.MINECART),
+    ONTHEGROUND(89, Stat.ITEMS_THROWN, 100, "Threw it on the Ground", "My dad's not a phone!", Material.FEATHER, 50, "A hidden achievement (1/5)"),
+    READINGABOOK(90, Stat.OTHER, -1, "Never interupt me...", "while i'm reading a book!", Material.BOOK, 50, "A hidden achievement (2/5)"),
+    FIREARMS(91, Stat.OTHER, -1, "Firearms", "Kill someone while on fire", Material.FIRE, 50, "A hidden achievement (3/5)"),
+    TEAMNOSWITCH(92, Stat.OTHER, -1, "Noswitch!", "Don't switch teams", Material.LEVER, 50, "A hidden achievement (4/5)"),
+    KONAMI(93, Stat.OTHER, -1, "Konami Code", "Perform the konami code", Material.GREEN_RECORD, 50, "A hidden achievement (5/5)"),
+    GIGLOCK_HOLMES(94, Stat.OTHER, -1, "Giglock Holmes", "Get the 5 hidden achievements", Material.MAP),
+    FISH_KILLS_10(95, Stat.FISH_KILLS, 10, "Out of plaice", "Get 10 fish kills", Material.RAW_FISH),
+    FISH_KILLS_50(96, Stat.FISH_KILLS, 50, "Oh my cod!", "Get 50 fish kills", Material.RAW_FISH),
+    FISH_KILLS_100(97, Stat.FISH_KILLS, 100, "MineCOD", "Get 100 fish kills", Material.RAW_FISH),
     ;
     
     private final int id;
@@ -102,8 +112,10 @@ public enum Achievement {
     private final String name;
     private final String desc;
     private final Material mat;
+    private final boolean hidden;
+    private final String hidden_txt;
     
-    Achievement(int id, Stat s, int c, String name, String desc, Material m, int points) {
+    Achievement(int id, Stat s, int c, String name, String desc, Material m, int points, String hidden) {
         this.id = id;
         this.s = s;
         this.c = c;
@@ -111,6 +123,12 @@ public enum Achievement {
         this.name = name;
         this.desc = desc;
         this.mat = m;
+        this.hidden = !hidden.isEmpty();
+        this.hidden_txt = hidden;
+    }
+    
+    Achievement(int id, Stat s, int c, String name, String desc, Material m, int points) {
+    	this(id, s, c, name, desc, m, points, "");
     }
     
     Achievement(int id, Stat s, int c, String name, String desc, Material m) {
@@ -142,15 +160,23 @@ public enum Achievement {
     }
     
     public String getDesc() {
-        return this.name;
+        return this.desc;
     }
     
     public Material getMat() {
         return this.mat;
     }
     
+    public boolean getHidden() {
+        return this.hidden;
+    }
+    
     public String getText() {
-        return this.name + " (" + this.desc + ")";
+    	if (hidden) {
+    		return hidden_txt;
+    	} else {
+    		return "'" + this.name + "' (" + this.desc + ")";
+    	}
     }
     
     public static ArrayList<Achievement> table = new ArrayList<Achievement>(); 

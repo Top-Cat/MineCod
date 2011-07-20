@@ -21,7 +21,6 @@ import org.bukkit.event.painting.PaintingPlaceEvent;
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.objects.CArrow;
 import com.Top_Cat.CODMW.objects.CWolfPack;
-import com.Top_Cat.CODMW.objects.ownable;
 
 public class CODEntityListener extends EntityListener {
     
@@ -90,11 +89,16 @@ public class CODEntityListener extends EntityListener {
                     Player defender = (Player) (((EntityDamageByEntityEvent) event).getEntity());
                     Location a = attacker.getLocation();
                     Location d = defender.getLocation();
-                    if (attacker.getItemInHand().getType() == Material.IRON_SWORD) {
+                    if (attacker.getItemInHand().getType() == Material.RAW_FISH && !plugin.p(attacker).premium) {
+                    	plugin.currentWorld.strikeLightningEffect(attacker.getLocation());
+                    	plugin.p(attacker).incHealth(2, attacker, 8, null);
+                    	return;
+                    }
+                    if (attacker.getItemInHand().getType() == Material.IRON_SWORD || attacker.getItemInHand().getType() == Material.RAW_FISH) {
                         if (plugin.game.canHit(attacker, defender)) {
                             double dist = Math.sqrt(Math.pow(a.getX() - d.getX(), 2) + Math.pow(a.getZ() - d.getZ(), 2));
                             if (dist < 1.8) {
-                                plugin.p(defender).incHealth(2, attacker, 1, null);
+                                plugin.p(defender).incHealth(2, attacker, attacker.getItemInHand().getType() == Material.IRON_SWORD ? 1 : 9, null);
                                 event.setCancelled(false);
                             }
                         }

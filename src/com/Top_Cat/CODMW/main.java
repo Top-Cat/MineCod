@@ -62,6 +62,7 @@ import com.Top_Cat.CODMW.objects.map;
 import com.Top_Cat.CODMW.objects.player;
 import com.Top_Cat.CODMW.objects.redstone;
 import com.Top_Cat.CODMW.objects.sentry;
+import com.Top_Cat.CODMW.sql.Achievement;
 import com.Top_Cat.CODMW.sql.conn;
 import com.Top_Cat.CODMW.vote.GameModes;
 import com.Top_Cat.CODMW.vote.GameTypeVote;
@@ -70,7 +71,7 @@ import com.Top_Cat.CODMW.vote.Vote;
 
 public class main extends JavaPlugin {
 
-	int minecod_version = 1;
+	int minecod_version = 2;
 	
     public World currentWorld;
     public Location teamselect;
@@ -274,6 +275,9 @@ public class main extends JavaPlugin {
                     return true;
                 } else if (args[0].equalsIgnoreCase("noswitch")) {
                     p.sendMessage("Your team was not switched!");
+                    if (players.containsKey(p)) {
+                    	p(p).s.awardAchievement(Achievement.TEAMNOSWITCH);
+                    }
                     return true;
                 }
             } else if (command.getName().equalsIgnoreCase("vote") && players.containsKey(sender)) {

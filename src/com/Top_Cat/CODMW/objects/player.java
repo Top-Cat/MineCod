@@ -3,9 +3,11 @@ package com.Top_Cat.CODMW.objects;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -20,7 +22,7 @@ import com.Top_Cat.CODMW.sql.stats;
 
 public class player {
     
-    public int kill, streak, arrow, knife, death, assists, points;
+    public int kill, streak, death, assists, points;
     public streaks last = new streaks();
     private final main plugin;
     public Player p;
@@ -44,6 +46,7 @@ public class player {
     long laststreak = 0;
     int hshot_streak = 0;
     int melee_streak = 0;
+    public boolean premium, fish = false;
     
     public boolean dead = false;
     
@@ -57,6 +60,10 @@ public class player {
             r.next();
             nick = r.getString("nick");
             dbid = r.getInt("Id");
+            premium = r.getBoolean("premium");
+            if (premium) {
+            	fish = r.getBoolean("fish");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -104,8 +111,6 @@ public class player {
     
     public void resetScore() {
         kill = 0;
-        arrow = 0;
-        knife = 0;
         death = 0;
         streak = 0;
         assists = 0;
@@ -125,8 +130,8 @@ public class player {
         switch (streak) {
             case 3: giveItem(2, new ItemStack(Material.WALL_SIGN, 2)); s.incStat(Stat.CLAYMORES_ACHIEVED); break;
             case 5: giveItem(3, new ItemStack(Material.APPLE, 1)); s.incStat(Stat.APPLES_ACHIEVED); break;
-            case 7: giveItem(4, new ItemStack(Material.BONE, 1)); s.incStat(Stat.DOGS_ACHIEVED); break;
-            case 9: giveItem(5, new ItemStack(Material.DISPENSER, 1)); s.incStat(Stat.SENTRIES_ACHIEVED); break;
+            case 7: giveItem(5, new ItemStack(Material.DISPENSER, 1)); s.incStat(Stat.SENTRIES_ACHIEVED); break;
+            case 9: giveItem(4, new ItemStack(Material.BONE, 1)); s.incStat(Stat.DOGS_ACHIEVED); break;
             case 11: giveItem(6, new ItemStack(Material.DIAMOND, 1)); s.incStat(Stat.CHOPPERS_ACHIEVED); break;
             default: gstreak = false;
         }
@@ -156,7 +161,6 @@ public class player {
         try {
             out = (int) p.p.getLocation().distance(plugin.game.floc.get(l));
         } catch (Exception e) { e.printStackTrace(); }
-        System.out.println(out);
         return out;
     }
     
@@ -165,6 +169,7 @@ public class player {
         kill++;
         s.maxStat(Stat.MAX_KILLS, kill);
         if (reason == 2 || reason == 7) {
+        	System.out.println(reason);
             s.maxStat(Stat.FURTHEST_KILL, getDistance(killed, (Arrow) l));
         }
         if (reason == 7) {
@@ -200,6 +205,9 @@ public class player {
         if (killed.streak == 10) {
             s.awardAchievement(Achievement.CLOSE_CHOPPER);
         }
+        if (p.getFireTicks() > 0) {
+        	s.awardAchievement(Achievement.FIREARMS);
+        }
         
         if (killed == lastk) {
             lastk_count++;
@@ -234,11 +242,6 @@ public class player {
             }
         } else {
             melee_streak = 0;
-        }
-        
-        switch (reason) {
-            case 1: knife++; break;
-            case 2: arrow++; break;
         }
     }
     
@@ -302,8 +305,10 @@ public class player {
                     case 5: as = "'s"; desc = " sentry shot"; plugin.p(p).s.incStat(Stat.SENTRY_DEATHS); plugin.p(attacker).s.incStat(Stat.SENTRY_KILLS); break;
                     case 6: as = "'s"; desc = " chopper battered"; plugin.p(p).s.incStat(Stat.CHOPPER_DEATHS); plugin.p(attacker).s.incStat(Stat.CHOPPER_KILLS); break;
                     case 7: desc = " headshot"; plugin.p(p).s.incStat(Stat.BOW_DEATHS); plugin.p(attacker).s.incStat(Stat.HEADSHOTS); plugin.p(attacker).s.incStat(Stat.BOW_KILLS); break;
+                    case 8: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(p).nick + " was smited for using a premium fish!" + assist_txt); break;
+                    case 9: desc = " got a FISH KILL on"; plugin.p(p).s.incStat(Stat.FISH_DEATHS); plugin.p(attacker).s.incStat(Stat.FISH_KILLS); break;
                 }
-                if (reason > 0) {
+                if (!(reason == 0 || reason == 8)) {
                     plugin.game.sendMessage(team.BOTH, plugin.d + plugin.p(attacker).getTeam().getColour() + plugin.p(attacker).nick + as + plugin.d + "c" + desc + " " + plugin.d + t.getColour() + nick + assist_txt);
                 }
                 if (ks != null && ks instanceof ownable) {
@@ -313,8 +318,18 @@ public class player {
                 todrop += ammo;
                 dropl = p.getLocation();
                 
-                plugin.game.onKill(plugin.p(attacker), this, p.getLocation());
+                List<Block> bs = p.getLineOfSight(null, 3);
+                for (Block i : bs) {
+                	if (i.getType() != Material.AIR) {
+                		if (i.getType() == Material.BOOKSHELF) {
+                			s.awardAchievement(Achievement.READINGABOOK);
+                		}
+                		break;
+                	}
+                }
+                
                 p.teleport(plugin.prespawn);
+                plugin.game.onKill(plugin.p(attacker), this, p.getLocation());
                 dead = true;
             }
             if (_h > 0) {
@@ -362,7 +377,11 @@ public class player {
         }
         if (weapons) {
 	        p.getInventory().setItem(0, new ItemStack(Material.BOW, 1));
-	        p.getInventory().setItem(1, new ItemStack(Material.IRON_SWORD, 1));
+	        if (fish) {
+	        	p.getInventory().setItem(1, new ItemStack(Material.RAW_FISH, 1));
+	        } else {
+	        	p.getInventory().setItem(1, new ItemStack(Material.IRON_SWORD, 1));
+	        }
 	        p.getInventory().setItem(8, new ItemStack(Material.ARROW, 15));
 	        p.getInventory().setItem(7, new ItemStack(Material.FEATHER, 75));
         }

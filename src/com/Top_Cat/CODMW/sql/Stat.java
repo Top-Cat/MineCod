@@ -52,7 +52,10 @@ public enum Stat {
     FURTHEST_KILL(45),
     FURTHEST_HEADSHOT(46),
     LIFE_REGENS(47),
-    BLOCKS_MOVED(48);
+    BLOCKS_MOVED(48),
+    ITEMS_THROWN(49),
+    FISH_KILLS(50),
+    FISH_DEATHS(51);
     
     private final int id;
 

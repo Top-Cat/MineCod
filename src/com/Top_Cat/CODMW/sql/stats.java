@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.TimerTask;
 
@@ -25,6 +27,7 @@ public class stats {
     List<Stat> newv = new ArrayList<Stat>();
     List<Achievement> newa = new ArrayList<Achievement>();
     main plugin;
+    List<Achievement> hidden = Arrays.asList(Achievement.TEAMNOSWITCH, Achievement.ONTHEGROUND, Achievement.KONAMI, Achievement.READINGABOOK, Achievement.FIREARMS);
     int tid;
     
     public stats(main instance, player _p) {
@@ -104,16 +107,24 @@ public class stats {
             Player ex = p.p;
             ContribPlayer cp = (ContribPlayer) p.p;
             if (cp.isBukkitContribEnabled()) {
-                ex = null;
+                if (a.getHidden()) {
+                	ex.sendMessage(plugin.d + p.getTeam().getColour() + p.nick + " earned achievement: '" + a.getName() + "' (" + a.getDesc() + ")");
+                } else {
+                	ex = null;
+                }
                 cp.sendNotification("Achievement Get!", a.getName(), a.getMat());
             } else {
-                p.p.sendMessage(plugin.d + p.getTeam().getColour() + "You earned achievement: '" + a.getText() + "'");
+                p.p.sendMessage(plugin.d + p.getTeam().getColour() + "You earned achievement: " + a.getText());
             }
-            plugin.game.sendMessage(team.BOTH, plugin.d + p.getTeam().getColour() + p.nick + " earned achievement: '" + a.getText() + "'", ex);
+            plugin.game.sendMessage(team.BOTH, plugin.d + p.getTeam().getColour() + p.nick + " earned achievement: " + a.getText(), ex);
+            incStat(Stat.POINTS, a.getPoints());
             newa.add(a);
             achs.add(a);
             toach.remove(a);
         }
+        if (!achs.contains(Achievement.GIGLOCK_HOLMES) && achs.containsAll(hidden)) {
+    		awardAchievement(Achievement.GIGLOCK_HOLMES);
+    	}
     }
     
     public void destroy() {
@@ -122,34 +133,30 @@ public class stats {
     }
     
     public class updatestats extends TimerTask {
-
         @Override
         public void run() {
             update();
         }
-        
     }
     
     public void update() {
-        synchronized (this) {
-            List<Stat> r = new ArrayList<Stat>();
-            for (Stat i : newv) {
-                plugin.sql.update("INSERT INTO cod_stats VALUES('" + p.dbid + "', '" + i.getId() + "', '" + stats.get(i) + "')");
-                r.add(i);
-            }
-            newv.removeAll(r);
-            updated.removeAll(r);
-            r.clear();
-            for (Stat i : updated) {
-                plugin.sql.update("UPDATE cod_stats SET count = '" + stats.get(i) + "' WHERE PID = '" + p.dbid + "' and type = '" + i.getId() + "'");
-                r.add(i);
-            }
-            updated.removeAll(r);
-            r.clear();
-            for (Achievement a : newa) {
-                plugin.sql.update("INSERT INTO cod_achievement VALUES(NULL, '" + p.dbid + "', '" + a.getId() + "')");
-            }
-            newa.clear();
+        List<Stat> r = new ArrayList<Stat>();
+        for (Stat i : newv) {
+            plugin.sql.update("INSERT INTO cod_stats VALUES('" + p.dbid + "', '" + i.getId() + "', '" + stats.get(i) + "')");
+            r.add(i);
         }
+        newv.removeAll(r);
+        updated.removeAll(r);
+        r.clear();
+        for (Stat i : updated) {
+            plugin.sql.update("UPDATE cod_stats SET count = '" + stats.get(i) + "' WHERE PID = '" + p.dbid + "' and type = '" + i.getId() + "'");
+            r.add(i);
+        }
+        updated.removeAll(r);
+        r.clear();
+        for (Achievement a : newa) {
+            plugin.sql.update("INSERT INTO cod_achievement VALUES(NULL, '" + p.dbid + "', '" + a.getId() + "')");
+        }
+        newa.clear();
     }
 }

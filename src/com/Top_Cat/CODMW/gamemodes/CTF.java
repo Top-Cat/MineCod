@@ -142,6 +142,7 @@ public class CTF extends team_gm {
         if (event.getTo().distance(f1.l) < 2) {
             if (plugin.p(event.getPlayer()).getTeam() != f1.t) {
                 f1.takeFlag(event.getPlayer());
+                plugin.p(event.getPlayer()).addPoints(2);
             } else if (event.getPlayer() == f2.p) {
                 f2.returnFlag(plugin.p(event.getPlayer()).getTeam() == team.DIAMOND ? Material.DIAMOND_HELMET : Material.GOLD_HELMET, true);
                 if (f2.t == team.GOLD) {
@@ -151,10 +152,12 @@ public class CTF extends team_gm {
                 }
                 int score = scores.containsKey(plugin.p(event.getPlayer())) ? scores.get(plugin.p(event.getPlayer())) : 0;
                 scores.put(plugin.p(event.getPlayer()), score + 1);
+                plugin.p(event.getPlayer()).addPoints(7);
             }
         } else if (event.getTo().distance(f2.l) < 2) {
             if (plugin.p(event.getPlayer()).getTeam() != f2.t) {
                 f2.takeFlag(event.getPlayer());
+                plugin.p(event.getPlayer()).addPoints(2);
             } else if (event.getPlayer() == f1.p) {
                 f1.returnFlag(plugin.p(event.getPlayer()).getTeam() == team.DIAMOND ? Material.DIAMOND_HELMET : Material.GOLD_HELMET, true);
                 if (f2.t == team.GOLD) {
@@ -164,6 +167,7 @@ public class CTF extends team_gm {
                 }
                 int score = scores.containsKey(plugin.p(event.getPlayer())) ? scores.get(plugin.p(event.getPlayer())) : 0;
                 scores.put(plugin.p(event.getPlayer()), score + 1);
+                plugin.p(event.getPlayer()).addPoints(7);
             }
         }
     }

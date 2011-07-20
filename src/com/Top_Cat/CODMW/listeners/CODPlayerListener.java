@@ -55,6 +55,7 @@ public class CODPlayerListener extends PlayerListener {
         allowed_pickup.add(Material.DIAMOND);
         allowed_pickup.add(Material.DIAMOND_BLOCK);
         allowed_pickup.add(Material.GOLD_BLOCK);
+        allowed_pickup.add(Material.RAW_FISH);
     }
     
     @Override
@@ -63,6 +64,11 @@ public class CODPlayerListener extends PlayerListener {
         int itemId = ((EntityItem)item.getHandle()).itemStack.id;
         if (!allowed_pickup.contains(Material.getMaterial(itemId))) {
             event.setCancelled(true);
+        } else {
+        	player p = plugin.p(event.getPlayer());
+        	if (p != null) {
+        		p.s.incStat(Stat.ITEMS_THROWN, event.getItemDrop().getItemStack().getAmount());
+        	}
         }
     }
     
@@ -306,6 +312,8 @@ public class CODPlayerListener extends PlayerListener {
                 plugin.p(event.getPlayer()).s.incStat(Stat.CHOPPERS_USED);
                 plugin.p(event.getPlayer()).addPoints(3);
                 new chopper(plugin, event.getPlayer());
+            } else if (um == Material.RAW_FISH) {
+            	event.setUseItemInHand(Result.DENY);
             }
         } else if (event.getAction() == Action.LEFT_CLICK_BLOCK && event.getPlayer().getItemInHand().getType() == Material.IRON_SWORD) {
             ArrayList<sentry> r = new ArrayList<sentry>();
