@@ -61,7 +61,6 @@ public enum Killstreaks {
     public killstreak callIn(main instance, Player owner, Object[] args) {
         try {
             Constructor<? extends killstreak> c = k.getDeclaredConstructor(new Class[] {main.class, Player.class, Object[].class});
-            c.setAccessible(true);
             killstreak n = c.newInstance(instance, owner, args);
             instance.ks.add(n);
             return n;

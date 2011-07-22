@@ -46,9 +46,6 @@ import org.bukkitcontrib.BukkitContrib;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
-import com.Top_Cat.CODMW.gamemodes.CTF;
-import com.Top_Cat.CODMW.gamemodes.FFA;
-import com.Top_Cat.CODMW.gamemodes.TDM;
 import com.Top_Cat.CODMW.gamemodes.gamemode;
 import com.Top_Cat.CODMW.gamemodes.team_gm;
 import com.Top_Cat.CODMW.listeners.CODBlockListener;
@@ -192,12 +189,8 @@ public class main extends JavaPlugin {
 
         r = new redstone(currentWorld.getBlockAt(-6, 64, 0), this);
         
-        switch (gm) {
-            case TDM: game = new TDM(this); break; 
-            case CTF: game = new CTF(this); break;
-            case FFA: game = new FFA(this); break;
-        }
-        
+        gm.createGame(this);
+
         players.clear();
         diam = 0;
         gold = 0;
