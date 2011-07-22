@@ -133,10 +133,10 @@ public class gamemode {
         _p.setinv();
         
         if (!start) {
-        	int slot = 3;
-        	for (Killstreaks s : _p.last.keySet()) {
-        		_p.giveItem(slot++, new ItemStack(s.getMat(), _p.last.get(s)));
-        	}
+            int slot = 3;
+            for (Killstreaks s : _p.last.keySet()) {
+                _p.giveItem(slot++, new ItemStack(s.getMat(), _p.last.get(s)));
+            }
         }
         
         spawnTele(_p, p, start);
@@ -197,7 +197,7 @@ public class gamemode {
             //This happens on server stop
         }
         for (killstreak i : plugin.ks) {
-        	i.destroy();
+            i.destroy();
         }
         plugin.ks.clear();
         plugin.activeGame = false;
@@ -207,10 +207,10 @@ public class gamemode {
     public void onRespawn(Player p) {}
     
     @SuppressWarnings("unchecked")
-	public void tick() {
-    	for (killstreak i : (ArrayList<killstreak>) plugin.ks.clone()) {
-    		i.tick();
-    	}
+    public void tick() {
+        for (killstreak i : (ArrayList<killstreak>) plugin.ks.clone()) {
+            i.tick();
+        }
         for (player p : plugin.players.values()) {
             int life = (int) (new Date().getTime() - p.spawn);
             if (life > 300000) {
@@ -236,16 +236,16 @@ public class gamemode {
     }
     
     @SuppressWarnings("unchecked")
-	public void tickfast() {
-    	for (killstreak i : (ArrayList<killstreak>) plugin.ks.clone()) {
-    		i.tickfast();
-    	}
+    public void tickfast() {
+        for (killstreak i : (ArrayList<killstreak>) plugin.ks.clone()) {
+            i.tickfast();
+        }
         List<Entity> r2 = new ArrayList<Entity>();
         for (Entity i : plugin.currentWorld.getEntities()) {
             if (i instanceof Arrow) {
                 Location l = i.getLocation();
                 if (!floc.containsKey(i)) {
-                	floc.put((Arrow) i, i.getLocation());
+                    floc.put((Arrow) i, i.getLocation());
                 }
                 if (ploc.containsKey(i)) {
                     if (l.distance(ploc.get(i)) < 0.1) {

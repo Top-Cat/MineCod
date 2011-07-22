@@ -26,7 +26,7 @@ public class chopper extends useable {
     }
 
     public chopper(main instance, Player _o, Object[] args) {
-    	super(instance, _o, args);
+        super(instance, _o, args);
         plugin.game.sendMessage(team.BOTH, plugin.d + plugin.p(getOwner()).getTeam().getColour() + plugin.p(getOwner()).nick + plugin.d + "f called in a chopper!");
         getOwnerplayer().s.incStat(Stat.CHOPPERS_USED);
         l = avgEnemies();
@@ -35,16 +35,16 @@ public class chopper extends useable {
 
     @Override
     public void destroy() {
-    	super.destroy();
+        super.destroy();
         l.getBlock().setType(Material.AIR);
     }
     
     @Override
     public void tick() {
-    	super.tick();
-    	if (getLifetime() >= 60) {
-    		destroy();
-    	} else if (health <= 0) {
+        super.tick();
+        if (getLifetime() >= 60) {
+            destroy();
+        } else if (health <= 0) {
             destroy();
         } else {
             tick++;
@@ -93,8 +93,8 @@ public class chopper extends useable {
     
     @Override
     public void tickfast() {
-    	super.tickfast();
-    	for (Entity i : plugin.currentWorld.getEntities()) {
+        super.tickfast();
+        for (Entity i : plugin.currentWorld.getEntities()) {
             if (i instanceof Arrow) {
                 Location l = i.getLocation();
                 if (plugin.game.ploc.containsKey(i)) {

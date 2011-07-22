@@ -106,9 +106,9 @@ public class stats {
             ContribPlayer cp = (ContribPlayer) p.p;
             if (cp.isBukkitContribEnabled()) {
                 if (a.getHidden()) {
-                	ex.sendMessage(plugin.d + p.getTeam().getColour() + p.nick + " earned achievement: '" + a.getName() + "' (" + a.getDesc() + ")");
+                    ex.sendMessage(plugin.d + p.getTeam().getColour() + p.nick + " earned achievement: '" + a.getName() + "' (" + a.getDesc() + ")");
                 } else {
-                	ex = null;
+                    ex = null;
                 }
                 cp.sendNotification("Achievement Get!", a.getName(), a.getMat());
             } else {
@@ -121,8 +121,8 @@ public class stats {
             toach.remove(a);
         }
         if (!achs.contains(Achievement.GIGLOCK_HOLMES) && achs.containsAll(hidden)) {
-    		awardAchievement(Achievement.GIGLOCK_HOLMES);
-    	}
+            awardAchievement(Achievement.GIGLOCK_HOLMES);
+        }
     }
     
     public void destroy() {

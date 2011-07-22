@@ -60,10 +60,10 @@ public class CODPlayerListener extends PlayerListener {
         if (!allowed_pickup.contains(Material.getMaterial(itemId))) {
             event.setCancelled(true);
         } else {
-        	player p = plugin.p(event.getPlayer());
-        	if (p != null) {
-        		p.s.incStat(Stat.ITEMS_THROWN, event.getItemDrop().getItemStack().getAmount());
-        	}
+            player p = plugin.p(event.getPlayer());
+            if (p != null) {
+                p.s.incStat(Stat.ITEMS_THROWN, event.getItemDrop().getItemStack().getAmount());
+            }
         }
     }
     
@@ -132,50 +132,50 @@ public class CODPlayerListener extends PlayerListener {
 
     @Override
     public void onPlayerMove(PlayerMoveEvent event) {
-    	for (killstreak i : plugin.ks) {
-    		i.onMove(event);
-    	}
+        for (killstreak i : plugin.ks) {
+            i.onMove(event);
+        }
         
         plugin.game.playermove(event);
         Location t = event.getTo();
         if (t.getBlock() != lastB) {
-        	lastB = t.getBlock();
-	        team e;
-	        
-	        player p = plugin.p(event.getPlayer());
-	        if (p != null) {
-	        	p.s.incStat(Stat.BLOCKS_MOVED);
-	        }
-	        
-	        if (t.getX() > -10 && t.getX() < -8 && t.getZ() > 14 && t.getZ() < 16 && t.getBlockY() == 64) {
-	            e = team.GOLD;
-	        } else if (t.getX() > -10 && t.getX() < -8 && t.getZ() > 10 && t.getZ() < 12 && t.getBlockY() == 64) {
-	            e = team.DIAMOND;
-	        } else if (t.getX() > -8 && t.getX() < -6 && t.getZ() > 12 && t.getZ() < 14 && t.getBlockY() == 64) {
-	            if (plugin.diam > plugin.gold) {
-	                e = team.GOLD;
-	            } else if (plugin.gold > plugin.diam) {
-	                e = team.DIAMOND;
-	            } else if (generator.nextInt(2) > 0) {
-	                e = team.DIAMOND;
-	            } else {
-	                e = team.GOLD;
-	            }
-	        } else {
-	            return;
-	        }
-	        if (!plugin.players.containsKey(event.getPlayer())) {
-	            new player(plugin, event.getPlayer(), e);
-	        } else {
-	            plugin.players.get(event.getPlayer()).setTeam(e);
-	            if (plugin.activeGame) {
-	                plugin.game.spawnTele(plugin.p(event.getPlayer()), event.getPlayer(), false);
-	            } else {
-	                plugin.players.get(event.getPlayer()).dead = false;
-	            }
-	            recount();
-	        }
-	        plugin.setDoors();
+            lastB = t.getBlock();
+            team e;
+            
+            player p = plugin.p(event.getPlayer());
+            if (p != null) {
+                p.s.incStat(Stat.BLOCKS_MOVED);
+            }
+            
+            if (t.getX() > -10 && t.getX() < -8 && t.getZ() > 14 && t.getZ() < 16 && t.getBlockY() == 64) {
+                e = team.GOLD;
+            } else if (t.getX() > -10 && t.getX() < -8 && t.getZ() > 10 && t.getZ() < 12 && t.getBlockY() == 64) {
+                e = team.DIAMOND;
+            } else if (t.getX() > -8 && t.getX() < -6 && t.getZ() > 12 && t.getZ() < 14 && t.getBlockY() == 64) {
+                if (plugin.diam > plugin.gold) {
+                    e = team.GOLD;
+                } else if (plugin.gold > plugin.diam) {
+                    e = team.DIAMOND;
+                } else if (generator.nextInt(2) > 0) {
+                    e = team.DIAMOND;
+                } else {
+                    e = team.GOLD;
+                }
+            } else {
+                return;
+            }
+            if (!plugin.players.containsKey(event.getPlayer())) {
+                new player(plugin, event.getPlayer(), e);
+            } else {
+                plugin.players.get(event.getPlayer()).setTeam(e);
+                if (plugin.activeGame) {
+                    plugin.game.spawnTele(plugin.p(event.getPlayer()), event.getPlayer(), false);
+                } else {
+                    plugin.players.get(event.getPlayer()).dead = false;
+                }
+                recount();
+            }
+            plugin.setDoors();
         }
     }
     
@@ -239,32 +239,32 @@ public class CODPlayerListener extends PlayerListener {
     }
     
     @SuppressWarnings("unchecked")
-	@Override
+    @Override
     public void onPlayerInteract(PlayerInteractEvent event) {
         event.setUseInteractedBlock(Result.DENY);
         event.setUseItemInHand(Result.ALLOW);
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-        	Killstreaks s = Killstreaks.fromMaterial(event.getPlayer().getItemInHand().getType());
-        	if (s != null && s.getkClass().isAssignableFrom(useable.class)) {
-        		event.setUseItemInHand(Result.DENY);
-        		event.getPlayer().getInventory().removeItem(new ItemStack(event.getPlayer().getItemInHand().getType(), 1));
-        		s.callIn(plugin, event.getPlayer(), new Object[] {});
-        	} else if (event.getPlayer().getItemInHand().getType() == Material.BOW) {
-        		if (plugin.p(event.getPlayer()).rtime < new Date().getTime()) {
-	                plugin.p(event.getPlayer()).stime = new Date().getTime() + 3000;
-	                if (event.getPlayer().getInventory().contains(Material.ARROW)) {
-	                    plugin.p(event.getPlayer()).s.incStat(Stat.ARROWS_FIRED);
-	                }
-        		} else {
-        			event.setUseItemInHand(Result.DENY);
-        			event.getPlayer().updateInventory();
-        		}
+            Killstreaks s = Killstreaks.fromMaterial(event.getPlayer().getItemInHand().getType());
+            if (s != null && s.getkClass().isAssignableFrom(useable.class)) {
+                event.setUseItemInHand(Result.DENY);
+                event.getPlayer().getInventory().removeItem(new ItemStack(event.getPlayer().getItemInHand().getType(), 1));
+                s.callIn(plugin, event.getPlayer(), new Object[] {});
+            } else if (event.getPlayer().getItemInHand().getType() == Material.BOW) {
+                if (plugin.p(event.getPlayer()).rtime < new Date().getTime()) {
+                    plugin.p(event.getPlayer()).stime = new Date().getTime() + 3000;
+                    if (event.getPlayer().getInventory().contains(Material.ARROW)) {
+                        plugin.p(event.getPlayer()).s.incStat(Stat.ARROWS_FIRED);
+                    }
+                } else {
+                    event.setUseItemInHand(Result.DENY);
+                    event.getPlayer().updateInventory();
+                }
             } else if (event.getPlayer().getItemInHand().getType() == Material.RAW_FISH) {
-            	event.setUseItemInHand(Result.DENY);
+                event.setUseItemInHand(Result.DENY);
             }
         }
         for (killstreak i : (ArrayList<killstreak>) plugin.ks.clone()) {
-        	i.onInteract(event);
+            i.onInteract(event);
         }
     }
     

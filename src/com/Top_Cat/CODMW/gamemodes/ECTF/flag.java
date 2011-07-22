@@ -64,7 +64,7 @@ public class flag {
                 plugin.p(p).s.incStat(Stat.FLAG_RETURNS);
             }
             if (a != null) {
-            	p.getInventory().setHelmet(new ItemStack(a, 1));
+                p.getInventory().setHelmet(new ItemStack(a, 1));
             }
             p = null;
         }

@@ -21,8 +21,8 @@ public class WolfPack extends useable {
     Random generator = new Random();
     
     public WolfPack(main instance, Player _o, Object[] args) {
-    	super(instance, _o, args);
-    	
+        super(instance, _o, args);
+        
         getOwnerplayer().s.incStat(Stat.DOGS_USED);
         plugin.game.sendMessage(team.BOTH, plugin.d + getOwnerplayer().getTeam().getColour() + getOwnerplayer().nick + plugin.d + "f called in a pack of dogs!");
         for (Player i : plugin.players.keySet()) {
@@ -46,7 +46,7 @@ public class WolfPack extends useable {
     
     @Override
     public void tick() {
-    	super.tick();
+        super.tick();
         if (wolf.size() == 0 || getLifetime() >= 30) {
             destroy();
         }
@@ -54,14 +54,14 @@ public class WolfPack extends useable {
     
     @Override
     public void teamSwitch() {
-    	super.teamSwitch();
-    	destroy();
+        super.teamSwitch();
+        destroy();
     }
     
     @Override
     public void destroy() {
-    	super.destroy();
-    	removeAll();
+        super.destroy();
+        removeAll();
     }
     
     public void remove(Wolf r) {

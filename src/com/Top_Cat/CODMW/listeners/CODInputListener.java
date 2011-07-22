@@ -26,7 +26,7 @@ public class CODInputListener extends InputListener {
     
     @Override
     public void onKeyReleasedEvent(KeyReleasedEvent event) {
-    	
+        
     }
     
     @Override
@@ -37,13 +37,13 @@ public class CODInputListener extends InputListener {
         }
         int p = konami_p.containsKey(event.getPlayer()) ? konami_p.get(event.getPlayer()) : 0;
         if (event.getKey() == konami.get(p)) {
-        	p++;
-        	if (p >= 10) {
-        		plugin.p(event.getPlayer()).s.awardAchievement(Achievement.KONAMI);
-        		p = 0;
-        	}
+            p++;
+            if (p >= 10) {
+                plugin.p(event.getPlayer()).s.awardAchievement(Achievement.KONAMI);
+                p = 0;
+            }
         } else {
-        	p = 0;
+            p = 0;
         }
         konami_p.put(event.getPlayer(), p);
     }

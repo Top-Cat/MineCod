@@ -35,46 +35,46 @@ public enum Killstreaks {
     }
     
     private Killstreaks(int id, int kills, Class<? extends killstreak> k, Material m, Stat ach) {
-    	this(id, kills, k, m, ach, 1);
+        this(id, kills, k, m, ach, 1);
     }
     
-	public int getId() {
-		return id;
-	}
-	
-	public int getKills() {
-		return kills;
-	}
-	
-	public Stat getStat() {
-		return ach;
-	}
-	
-	public int getAmm() {
-		return amm;
-	}
-	
-	public Class<? extends killstreak> getkClass() {
-		return k;
-	}
-	
-	public killstreak callIn(main instance, Player owner, Object[] args) {
-		try {
-			Constructor<? extends killstreak> c = k.getDeclaredConstructor(new Class[] {main.class, Player.class, Object.class});
-			c.setAccessible(true);
-			c.newInstance(instance, owner, args);
-			killstreak n = k.newInstance();
-			instance.ks.add(n);
-			return n;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	public Material getMat() {
-		return m;
-	}	
+    public int getId() {
+        return id;
+    }
+    
+    public int getKills() {
+        return kills;
+    }
+    
+    public Stat getStat() {
+        return ach;
+    }
+    
+    public int getAmm() {
+        return amm;
+    }
+    
+    public Class<? extends killstreak> getkClass() {
+        return k;
+    }
+    
+    public killstreak callIn(main instance, Player owner, Object[] args) {
+        try {
+            Constructor<? extends killstreak> c = k.getDeclaredConstructor(new Class[] {main.class, Player.class, Object.class});
+            c.setAccessible(true);
+            c.newInstance(instance, owner, args);
+            killstreak n = k.newInstance();
+            instance.ks.add(n);
+            return n;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    public Material getMat() {
+        return m;
+    }    
     
     public static HashMap<Integer, Killstreaks> table = new HashMap<Integer, Killstreaks>(); 
     static {

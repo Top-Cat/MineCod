@@ -65,13 +65,13 @@ public class player {
             dbid = r.getInt("Id");
             premium = r.getBoolean("premium");
             if (premium) {
-            	fish = r.getBoolean("fish");
+                fish = r.getBoolean("fish");
             }
             for (String i : r.getString("killstreaks").split(",")) {
-            	Killstreaks s = Killstreaks.valueOf(Integer.parseInt(i));
-            	if (yks.size() < 3 && !yks.contains(s)) { 
-            		yks.add(s);
-            	}
+                Killstreaks s = Killstreaks.valueOf(Integer.parseInt(i));
+                if (yks.size() < 3 && !yks.contains(s)) { 
+                    yks.add(s);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -138,17 +138,17 @@ public class player {
     public void addStreak() {
         streak++;
         for (Killstreaks ks : yks) {
-        	if (ks.getKills() == streak) {
-        		giveItem(slot++, new ItemStack(ks.getMat(), ks.getAmm()));
-        		s.incStat(ks.getStat());
-        		
+            if (ks.getKills() == streak) {
+                giveItem(slot++, new ItemStack(ks.getMat(), ks.getAmm()));
+                s.incStat(ks.getStat());
+                
                 if ((new Date().getTime() - laststreak) < 20000) {
                     s.awardAchievement(Achievement.WARGASM);
                 }
                 laststreak = new Date().getTime();
-        		
-        		break;
-        	}
+                
+                break;
+            }
         }
         s.maxStat(Stat.MAX_STREAK, streak);
     }
@@ -174,9 +174,9 @@ public class player {
     }
     
     public void onKill(player killed, Reason reason, Object l) {
-    	for (killstreak i : plugin.ks) {
-    		i.onKill(this, killed, reason, l);
-    	}
+        for (killstreak i : plugin.ks) {
+            i.onKill(this, killed, reason, l);
+        }
         s.incStat(Stat.KILLS);
         kill++;
         s.maxStat(Stat.MAX_KILLS, kill);
@@ -214,7 +214,7 @@ public class player {
             s.awardAchievement(Achievement.CLOSE_CHOPPER);
         }
         if (p.getFireTicks() > 0) {
-        	s.awardAchievement(Achievement.FIREARMS);
+            s.awardAchievement(Achievement.FIREARMS);
         }
         
         if (killed == lastk) {
@@ -254,19 +254,19 @@ public class player {
     }
     
     public void incHealth(int _h, Player attacker, int reason, Object ks) {
-    	Reason r = Reason.valueOf(reason);
-    	for (killstreak i : plugin.ks) {
-    		_h = i.onDamage(_h, attacker, p, r, ks);
-    	}
+        Reason r = Reason.valueOf(reason);
+        for (killstreak i : plugin.ks) {
+            _h = i.onDamage(_h, attacker, p, r, ks);
+        }
         if (_h < 0 && !regen) {
-        	regen = true;
+            regen = true;
             regens++;
             s.maxStat(Stat.LIFE_REGENS, regens);
         }
         h -= _h;
         if (h > 20) { h = 20; }
         if (_h > 0) {
-        	regen = false;
+            regen = false;
             htime = new Date().getTime() + 10000;
             stime = new Date().getTime() + 5000;
         }
@@ -333,12 +333,12 @@ public class player {
             
             List<Block> bs = p.getLineOfSight(null, 3);
             for (Block i : bs) {
-            	if (i.getType() != Material.AIR) {
-            		if (i.getType() == Material.BOOKSHELF) {
-            			s.awardAchievement(Achievement.READINGABOOK);
-            		}
-            		break;
-            	}
+                if (i.getType() != Material.AIR) {
+                    if (i.getType() == Material.BOOKSHELF) {
+                        s.awardAchievement(Achievement.READINGABOOK);
+                    }
+                    break;
+                }
             }
             
             p.teleport(plugin.prespawn);
@@ -346,7 +346,7 @@ public class player {
             dead = true;
         }
         if (_h > 0) {
-        	assist = attacker;
+            assist = attacker;
         }
         p.setHealth(h);
     }
@@ -355,17 +355,17 @@ public class player {
         last = new HashMap<Killstreaks, Integer>();
         for (ItemStack i : p.getInventory().getContents()) {
             if (i != null) {
-            	Killstreaks s = Killstreaks.fromMaterial(i.getType());
-            	if (s != null) {
-            		int c = last.containsKey(s) ? last.get(s) : 0;
-            		last.put(s, c + i.getAmount());
-            	}
+                Killstreaks s = Killstreaks.fromMaterial(i.getType());
+                if (s != null) {
+                    int c = last.containsKey(s) ? last.get(s) : 0;
+                    last.put(s, c + i.getAmount());
+                }
             }
         }
     }
     
     public void setinv() {
-    	setinv(true);
+        setinv(true);
     }
     
     public void setinv(boolean weapons) {
@@ -380,14 +380,14 @@ public class player {
                           break;
         }
         if (weapons) {
-	        p.getInventory().setItem(0, new ItemStack(Material.BOW, 1));
-	        if (fish) {
-	        	p.getInventory().setItem(1, new ItemStack(Material.RAW_FISH, 1));
-	        } else {
-	        	p.getInventory().setItem(1, new ItemStack(Material.IRON_SWORD, 1));
-	        }
-	        p.getInventory().setItem(8, new ItemStack(Material.ARROW, 15));
-	        p.getInventory().setItem(7, new ItemStack(Material.FEATHER, 75));
+            p.getInventory().setItem(0, new ItemStack(Material.BOW, 1));
+            if (fish) {
+                p.getInventory().setItem(1, new ItemStack(Material.RAW_FISH, 1));
+            } else {
+                p.getInventory().setItem(1, new ItemStack(Material.IRON_SWORD, 1));
+            }
+            p.getInventory().setItem(8, new ItemStack(Material.ARROW, 15));
+            p.getInventory().setItem(7, new ItemStack(Material.FEATHER, 75));
         }
     }
     

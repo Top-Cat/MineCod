@@ -28,9 +28,9 @@ public class claymore extends placeable {
     public int r;
 
     public claymore(main instance, Player _o, Object[] args) {
-    	super(instance, _o, args);
-    	b = (Block) args[0];
-    	r = (Integer) CODBlockListener.rotateblock(_o, b);
+        super(instance, _o, args);
+        b = (Block) args[0];
+        r = (Integer) CODBlockListener.rotateblock(_o, b);
         init = new Date().getTime() + 1000;
         getOwnerplayer().s.incStat(Stat.CLAYMORES_USED);
         switch (r) {
@@ -43,26 +43,26 @@ public class claymore extends placeable {
     
     @Override
     public void teamSwitch() {
-    	super.teamSwitch();
-    	setText();
+        super.teamSwitch();
+        setText();
     }
 
     @Override
     public void destroy() {
-    	super.destroy();
-    	b.setType(Material.AIR);
+        super.destroy();
+        b.setType(Material.AIR);
     }
     
     @Override
     public void onMove(PlayerMoveEvent event) {
-    	super.onMove(event);
-    	if (exploded == false) {
+        super.onMove(event);
+        if (exploded == false) {
             detect(event.getPlayer());
         }
     }
     
     public void setText() {
-    	Sign s = (Sign) b.getState();
+        Sign s = (Sign) b.getState();
         s.setLine(0, plugin.game.getClaymoreText(getOwner()));
         s.setLine(3, plugin.game.getClaymoreText(getOwner()));
         
@@ -73,8 +73,8 @@ public class claymore extends placeable {
     
     @Override
     public void tickfast() {
-    	super.tickfast();
-    	if (init < new Date().getTime() && b.getType() != Material.WALL_SIGN) {
+        super.tickfast();
+        if (init < new Date().getTime() && b.getType() != Material.WALL_SIGN) {
             b.setType(Material.WALL_SIGN);
             
             switch (r) {

@@ -81,27 +81,27 @@ public class map {
             ZipFile.delete();
         }
         try {
-        	Map<String, Object> map = (Map<String, Object>) yaml.load(new FileInputStream("./" + mapname + "/minecod_data.yml"));
-        	
+            Map<String, Object> map = (Map<String, Object>) yaml.load(new FileInputStream("./" + mapname + "/minecod_data.yml"));
+            
             name = mapname;
             try {
-            	time = Integer.parseInt(map.get("time").toString());
+                time = Integer.parseInt(map.get("time").toString());
             } catch (NullPointerException ex) {
                 throw new Exception("world time for '" + mapname + "' is not defined");
             }
             try {
-            	storm = (Boolean) map.get("storm");
+                storm = (Boolean) map.get("storm");
             } catch (NullPointerException ex) {
                 throw new Exception("storm for '" + mapname + "' is not defined");
             }
             try {
-            	spawns = map.get("spawns");
+                spawns = map.get("spawns");
             } catch (NullPointerException ex) {
                 throw new Exception("no spawns for '" + mapname + "' defined");
             }
-        	
+            
         } catch (FileNotFoundException e) {
-        	throw new Exception("Missing minecod_data.yml for '" + mapname + "'! Please redownload the map");
+            throw new Exception("Missing minecod_data.yml for '" + mapname + "'! Please redownload the map");
         }
     }
     

@@ -128,7 +128,7 @@ public enum Achievement {
     }
     
     Achievement(int id, Stat s, int c, String name, String desc, Material m, int points) {
-    	this(id, s, c, name, desc, m, points, "");
+        this(id, s, c, name, desc, m, points, "");
     }
     
     Achievement(int id, Stat s, int c, String name, String desc, Material m) {
@@ -172,11 +172,11 @@ public enum Achievement {
     }
     
     public String getText() {
-    	if (hidden) {
-    		return hidden_txt;
-    	} else {
-    		return "'" + this.name + "' (" + this.desc + ")";
-    	}
+        if (hidden) {
+            return hidden_txt;
+        } else {
+            return "'" + this.name + "' (" + this.desc + ")";
+        }
     }
     
     public static ArrayList<Achievement> table = new ArrayList<Achievement>(); 

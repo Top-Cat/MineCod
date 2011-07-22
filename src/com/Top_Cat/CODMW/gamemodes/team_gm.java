@@ -67,10 +67,10 @@ public class team_gm extends gamemode {
         team t1 = team.BOTH;
         team t2 = team.BOTH;
         if (a instanceof Player) {
-        	player p = plugin.p((Player) a);
-        	if (p != null) {
-        		t1 = p.getTeam();
-        	}
+            player p = plugin.p((Player) a);
+            if (p != null) {
+                t1 = p.getTeam();
+            }
         } else if (a instanceof Wolf) {
             for (killstreak i : plugin.ks) {
                 if (i instanceof WolfPack && ((WolfPack) i).wolf.contains(a)) {
@@ -79,12 +79,12 @@ public class team_gm extends gamemode {
             }
         }
         if (d instanceof Player) {
-        	player p = plugin.p((Player) d);
-        	if (p != null) {
-        		t2 = p.getTeam();
-        	}
+            player p = plugin.p((Player) d);
+            if (p != null) {
+                t2 = p.getTeam();
+            }
         } else if (d instanceof Wolf) {
-        	for (killstreak i : plugin.ks) {
+            for (killstreak i : plugin.ks) {
                 if (i instanceof WolfPack && ((WolfPack) i).wolf.contains(d)) {
                     t2 = i.getOwnerplayer().getTeam();
                 }
