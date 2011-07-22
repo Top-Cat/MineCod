@@ -250,10 +250,15 @@ public class CODPlayerListener extends PlayerListener {
         		event.getPlayer().getInventory().removeItem(new ItemStack(event.getPlayer().getItemInHand().getType(), 1));
         		s.callIn(plugin, event.getPlayer(), new Object[] {});
         	} else if (event.getPlayer().getItemInHand().getType() == Material.BOW) {
-                plugin.p(event.getPlayer()).stime = new Date().getTime() + 3000;
-                if (event.getPlayer().getInventory().contains(Material.ARROW)) {
-                    plugin.p(event.getPlayer()).s.incStat(Stat.ARROWS_FIRED);
-                }
+        		if (plugin.p(event.getPlayer()).rtime < new Date().getTime()) {
+	                plugin.p(event.getPlayer()).stime = new Date().getTime() + 3000;
+	                if (event.getPlayer().getInventory().contains(Material.ARROW)) {
+	                    plugin.p(event.getPlayer()).s.incStat(Stat.ARROWS_FIRED);
+	                }
+        		} else {
+        			event.setUseItemInHand(Result.DENY);
+        			event.getPlayer().updateInventory();
+        		}
             } else if (event.getPlayer().getItemInHand().getType() == Material.RAW_FISH) {
             	event.setUseItemInHand(Result.DENY);
             }

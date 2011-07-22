@@ -37,6 +37,7 @@ public class player {
     public int h = 20;
     public long htime = 0;
     public long stime = 0;
+    public long rtime = 0;
     public int todrop = 0;
     public int regens = 0;
     public Location dropl;
