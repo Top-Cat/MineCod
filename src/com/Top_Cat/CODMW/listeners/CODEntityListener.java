@@ -54,7 +54,7 @@ public class CODEntityListener extends EntityListener {
         try {
             if (event.getCause() == DamageCause.FALL && event.getDamage() >= 4) {
                 if (event.getEntity() instanceof Player) {
-                    plugin.p((Player) event.getEntity()).incHealth(1, (Player) event.getEntity(), 0, null);
+                    plugin.p((Player) event.getEntity()).incHealth(event.getDamage(), (Player) event.getEntity(), 0, null);
                 }
                 event.setCancelled(false);
             }
@@ -85,7 +85,7 @@ public class CODEntityListener extends EntityListener {
                             }
                             
                         }
-                        plugin.p(defender).incHealth(1, attacker, reason, ks);
+                        plugin.p(defender).incHealth(10, attacker, reason, ks);
                         event.setCancelled(false);
                     }
                 }
@@ -97,14 +97,14 @@ public class CODEntityListener extends EntityListener {
                     Location d = defender.getLocation();
                     if (attacker.getItemInHand().getType() == Material.RAW_FISH && !plugin.p(attacker).premium) {
                     	plugin.currentWorld.strikeLightningEffect(attacker.getLocation());
-                    	plugin.p(attacker).incHealth(2, attacker, 8, null);
+                    	plugin.p(attacker).incHealth(20, attacker, 8, null);
                     	return;
                     }
                     if (attacker.getItemInHand().getType() == Material.IRON_SWORD || attacker.getItemInHand().getType() == Material.RAW_FISH) {
                         if (plugin.game.canHit(attacker, defender)) {
                             double dist = Math.sqrt(Math.pow(a.getX() - d.getX(), 2) + Math.pow(a.getZ() - d.getZ(), 2));
                             if (dist < 1.8) {
-                                plugin.p(defender).incHealth(2, attacker, attacker.getItemInHand().getType() == Material.IRON_SWORD ? 1 : 9, null);
+                                plugin.p(defender).incHealth(20, attacker, attacker.getItemInHand().getType() == Material.IRON_SWORD ? 1 : 9, null);
                                 event.setCancelled(false);
                             }
                         }
@@ -118,7 +118,7 @@ public class CODEntityListener extends EntityListener {
                     	if (i instanceof WolfPack) {
 	                        if (((WolfPack) i).wolf.contains(((EntityDamageByEntityEvent) event).getDamager())) {
 	                            if (plugin.game.canHit(i.getOwner(), defender)) {
-	                                plugin.p(defender).incHealth(2, i.getOwner(), 4, i);
+	                                plugin.p(defender).incHealth(20, i.getOwner(), 4, i);
 	                            }
 	                            ((WolfPack) i).remove((Wolf) ((EntityDamageByEntityEvent) event).getDamager());
 	                        }

@@ -108,7 +108,7 @@ public class claymore extends placeable {
         int kill = 0;
         for (Player p : plugin.players.keySet()) {
             if ((plugin.game.canHit(getOwner(), p) || p == getOwner()) && (p.getLocation().getBlock() == b || p.getLocation().getBlock() == d1 || p.getLocation().getBlock() == d2)) {
-                plugin.p(p).incHealth(2, getOwner(), 3, this);
+                plugin.p(p).incHealth(20, getOwner(), 3, this);
                 kill++;
             }
         }

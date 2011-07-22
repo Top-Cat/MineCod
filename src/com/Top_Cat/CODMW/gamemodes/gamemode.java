@@ -228,10 +228,10 @@ public class gamemode {
                 }
                 spawnPlayer(p.p, false);
             }
-            if (p.htime < new Date().getTime()) {
-                p.incHealth(-1, null, 0, null);
+            if (p.htime < new Date().getTime() && p.h < 20) {
+                p.incHealth(-3, null, 0, null);
             }
-            p.p.setHealth(p.h * 10);
+            p.p.setHealth(p.h);
         }
     }
     

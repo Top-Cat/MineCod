@@ -33,7 +33,7 @@ public class player {
     public int dbid;
     team t;
     public stats s;
-    public int h = 2;
+    public int h = 20;
     public long htime = 0;
     public long stime = 0;
     public int todrop = 0;
@@ -253,13 +253,13 @@ public class player {
     }
     
     public void incHealth(int _h, Player attacker, int reason, Object ks) {
-        if (_h < 0 && h < 2) {
+        /*if (_h < 0 && h < 2) { TODO: Fix this
             regens++;
             s.maxStat(Stat.LIFE_REGENS, regens);
-        }
+        }*/
         if (_h < 0 || inv == false) {
             h -= _h;
-            if (h > 2) { h = 2; }
+            if (h > 20) { h = 20; }
             if (_h > 0) {
                 htime = new Date().getTime() + 10000;
                 stime = new Date().getTime() + 5000;
@@ -288,7 +288,7 @@ public class player {
                 s.maxStat(Stat.MAX_DEATHS, death);
                 streak = 0;
                 
-                h = 2;
+                h = 20;
                 
                 int ammo = 0;
                 for (ItemStack i : p.getInventory().getContents()) {
@@ -343,9 +343,9 @@ public class player {
             assist = attacker;
             }
         } else {
-            h = 2;
+            h = 20;
         }
-        p.setHealth(h * 10);
+        p.setHealth(h);
     }
     
     public void setStreaks() {
