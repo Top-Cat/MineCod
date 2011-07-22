@@ -74,7 +74,7 @@ import java.security.MessageDigest;
 
 public class main extends JavaPlugin {
 
-    int minecod_version = 3;
+    int minecod_version = 4;
     
     public World currentWorld;
     public Location teamselect;

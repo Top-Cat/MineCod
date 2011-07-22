@@ -1,7 +1,6 @@
 package com.Top_Cat.CODMW.Killstreaks;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.Material;
@@ -77,10 +76,10 @@ public enum Killstreaks {
 		return m;
 	}	
     
-    public static ArrayList<Killstreaks> table = new ArrayList<Killstreaks>(); 
+    public static HashMap<Integer, Killstreaks> table = new HashMap<Integer, Killstreaks>(); 
     static {
         for (Killstreaks i : Killstreaks.values()) {
-            table.add(i.getId(), i);
+            table.put(i.getId(), i);
         }
     }
 
