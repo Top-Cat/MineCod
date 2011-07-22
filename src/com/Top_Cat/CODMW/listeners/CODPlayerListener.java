@@ -2,7 +2,6 @@ package com.Top_Cat.CODMW.listeners;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Random;
 import java.util.TimerTask;
 
@@ -12,9 +11,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.entity.CreatureType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Wolf;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerBedEnterEvent;
@@ -32,11 +28,10 @@ import org.bukkit.inventory.PlayerInventory;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
-import com.Top_Cat.CODMW.objects.CWolfPack;
-import com.Top_Cat.CODMW.objects.chopper;
-import com.Top_Cat.CODMW.objects.claymore;
+import com.Top_Cat.CODMW.Killstreaks.Killstreaks;
+import com.Top_Cat.CODMW.Killstreaks.killstreak;
+import com.Top_Cat.CODMW.Killstreaks.useable;
 import com.Top_Cat.CODMW.objects.player;
-import com.Top_Cat.CODMW.objects.sentry;
 import com.Top_Cat.CODMW.sql.Stat;
 
 public class CODPlayerListener extends PlayerListener {
@@ -137,19 +132,9 @@ public class CODPlayerListener extends PlayerListener {
 
     @Override
     public void onPlayerMove(PlayerMoveEvent event) {
-        for (claymore i : plugin.clays) {
-            if (i.exploded == false) {
-                i.detect(event.getPlayer());
-            }
-        }
-        if (event.getTo().getBlock().getRelative(0, -1, 0).getType() == Material.DISPENSER) {
-            for (sentry i : plugin.sentries) {
-                if (i.b == event.getTo().getBlock().getRelative(0, -2, 0)) {
-                    event.setTo(plugin.game.spawnTele(plugin.p(event.getPlayer()), event.getPlayer(), false));
-                    event.getPlayer().sendMessage(plugin.d + "bOnly Gigs stand on dispensers, you have been respawned!");
-                }
-            }
-        }
+    	for (killstreak i : plugin.ks) {
+    		i.onMove(event);
+    	}
         
         plugin.game.playermove(event);
         Location t = event.getTo();
@@ -167,7 +152,6 @@ public class CODPlayerListener extends PlayerListener {
 	        } else if (t.getX() > -10 && t.getX() < -8 && t.getZ() > 10 && t.getZ() < 12 && t.getBlockY() == 64) {
 	            e = team.DIAMOND;
 	        } else if (t.getX() > -8 && t.getX() < -6 && t.getZ() > 12 && t.getZ() < 14 && t.getBlockY() == 64) {
-	            //Random team
 	            if (plugin.diam > plugin.gold) {
 	                e = team.GOLD;
 	            } else if (plugin.gold > plugin.diam) {
@@ -180,20 +164,18 @@ public class CODPlayerListener extends PlayerListener {
 	        } else {
 	            return;
 	        }
-	        //Location l = plugin.prespawn;
 	        if (!plugin.players.containsKey(event.getPlayer())) {
 	            new player(plugin, event.getPlayer(), e);
 	        } else {
 	            plugin.players.get(event.getPlayer()).setTeam(e);
 	            if (plugin.activeGame) {
-	                /*l = */plugin.game.spawnTele(plugin.p(event.getPlayer()), event.getPlayer(), false);
+	                plugin.game.spawnTele(plugin.p(event.getPlayer()), event.getPlayer(), false);
 	            } else {
 	                plugin.players.get(event.getPlayer()).dead = false;
 	            }
 	            recount();
 	        }
 	        plugin.setDoors();
-	        //event.setTo(l);
         }
     }
     
@@ -256,76 +238,28 @@ public class CODPlayerListener extends PlayerListener {
         }
     }
     
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public void onPlayerInteract(PlayerInteractEvent event) {
         event.setUseInteractedBlock(Result.DENY);
         event.setUseItemInHand(Result.ALLOW);
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            Material um = event.getPlayer().getItemInHand().getType();
-            if (um == Material.BOW) {
-                plugin.p(event.getPlayer()).stime = new Date().getTime() + 5000;
+        	Killstreaks s = Killstreaks.fromMaterial(event.getPlayer().getItemInHand().getType());
+        	if (s != null && s.getkClass().isAssignableFrom(useable.class)) {
+        		event.setUseItemInHand(Result.DENY);
+        		event.getPlayer().getInventory().removeItem(new ItemStack(event.getPlayer().getItemInHand().getType(), 1));
+        		s.callIn(plugin, event.getPlayer(), new Object[] {});
+        	} else if (event.getPlayer().getItemInHand().getType() == Material.BOW) {
+                plugin.p(event.getPlayer()).stime = new Date().getTime() + 3000;
                 if (event.getPlayer().getInventory().contains(Material.ARROW)) {
                     plugin.p(event.getPlayer()).s.incStat(Stat.ARROWS_FIRED);
                 }
-            } else if (um == Material.APPLE) {
-                plugin.p(event.getPlayer()).vtime = new Date().getTime() + 10000;
-                plugin.p(event.getPlayer()).s.incStat(Stat.APPLES_USED);
-                plugin.p(event.getPlayer()).addPoints(3);
-                Player i = event.getPlayer();
-                if (plugin.p(event.getPlayer()).getTeam() == team.GOLD) {
-                    i.getInventory().setChestplate(new ItemStack(Material.GOLD_CHESTPLATE, 1));
-                    i.getInventory().setLeggings(new ItemStack(Material.GOLD_LEGGINGS, 1));
-                    i.getInventory().setBoots(new ItemStack(Material.GOLD_BOOTS, 1));
-                } else {
-                    i.getInventory().setChestplate(new ItemStack(Material.DIAMOND_CHESTPLATE, 1));
-                    i.getInventory().setLeggings(new ItemStack(Material.DIAMOND_LEGGINGS, 1));
-                    i.getInventory().setBoots(new ItemStack(Material.DIAMOND_BOOTS, 1));
-                }
-                i.updateInventory();
-                plugin.p(event.getPlayer()).inv = true;
-            } else if (um == Material.BONE) {
-                event.getPlayer().getInventory().removeItem(new ItemStack(Material.BONE, 1));
-                plugin.p(event.getPlayer()).s.incStat(Stat.DOGS_USED);
-                plugin.p(event.getPlayer()).addPoints(3);
-                plugin.game.sendMessage(team.BOTH, plugin.d + plugin.p(event.getPlayer()).getTeam().getColour() + plugin.p(event.getPlayer()).nick + plugin.d + "f called in a pack of dogs!");
-                List<Wolf> wl = new ArrayList<Wolf>();
-                for (Player i : plugin.players.keySet()) {
-                    if (plugin.game.canHit(event.getPlayer(), i)) {
-                        double theta = (generator.nextFloat() * Math.PI * 2);
-                        Location l = i.getLocation().clone(); 
-                        for (int j = 1; j <= 15; j++) {
-                            if (i.getLocation().add(j * Math.cos(theta), 0, j * Math.sin(theta)).getBlock().getType() == Material.AIR) {
-                                l = i.getLocation().add(j * Math.cos(theta), 0, j * Math.sin(theta));
-                            } else {
-                                break;
-                            }
-                        }
-                        Wolf w = (Wolf) plugin.currentWorld.spawnCreature(l, CreatureType.WOLF);
-                        w.setTarget(i);
-                        w.setAngry(true);
-                        wl.add(w);
-                    }
-                }
-                plugin.wolves.add(new CWolfPack(plugin, wl, event.getPlayer(), new Date().getTime() + 30000));
-            } else if (um == Material.DIAMOND) {
-                event.getPlayer().getInventory().removeItem(new ItemStack(Material.DIAMOND, 1));
-                plugin.p(event.getPlayer()).s.incStat(Stat.CHOPPERS_USED);
-                plugin.p(event.getPlayer()).addPoints(3);
-                new chopper(plugin, event.getPlayer());
-            } else if (um == Material.RAW_FISH) {
+            } else if (event.getPlayer().getItemInHand().getType() == Material.RAW_FISH) {
             	event.setUseItemInHand(Result.DENY);
             }
-        } else if (event.getAction() == Action.LEFT_CLICK_BLOCK && event.getPlayer().getItemInHand().getType() == Material.IRON_SWORD) {
-            ArrayList<sentry> r = new ArrayList<sentry>();
-            for (sentry i : plugin.sentries) {
-                if (event.getClickedBlock() == i.bt && plugin.game.canHit(event.getPlayer(), i.getOwner())) {
-                    i.destroy();
-                    r.add(i);
-                    plugin.p(event.getPlayer()).addPoints(3);
-                    plugin.p(event.getPlayer()).s.incStat(Stat.SENTRIES_DESTROYED);
-                }
-            }
-            plugin.sentries.removeAll(r);
+        }
+        for (killstreak i : (ArrayList<killstreak>) plugin.ks.clone()) {
+        	i.onInteract(event);
         }
     }
     

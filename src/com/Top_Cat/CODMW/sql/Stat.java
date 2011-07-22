@@ -55,7 +55,9 @@ public enum Stat {
     BLOCKS_MOVED(48),
     ITEMS_THROWN(49),
     FISH_KILLS(50),
-    FISH_DEATHS(51);
+    FISH_DEATHS(51),
+    PORK_USED(52),
+    PORK_ACHIEVED(53);
     
     private final int id;
 

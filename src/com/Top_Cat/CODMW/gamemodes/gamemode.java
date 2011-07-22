@@ -14,7 +14,6 @@ import net.minecraft.server.EntityItem;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creature;
@@ -31,11 +30,9 @@ import org.bukkitcontrib.BukkitContrib;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
-import com.Top_Cat.CODMW.objects.CWolfPack;
-import com.Top_Cat.CODMW.objects.chopper;
-import com.Top_Cat.CODMW.objects.claymore;
+import com.Top_Cat.CODMW.Killstreaks.Killstreaks;
+import com.Top_Cat.CODMW.Killstreaks.killstreak;
 import com.Top_Cat.CODMW.objects.player;
-import com.Top_Cat.CODMW.objects.sentry;
 import com.Top_Cat.CODMW.sql.Achievement;
 import com.Top_Cat.CODMW.sql.Stat;
 
@@ -43,7 +40,7 @@ public class gamemode {
     
     main plugin;
     ArrayList<ArrayList<Location>> spawns = new ArrayList<ArrayList<Location>>();
-    HashMap<Arrow, Location> ploc = new HashMap<Arrow, Location>();
+    public HashMap<Arrow, Location> ploc = new HashMap<Arrow, Location>();
     public HashMap<Arrow, Location> floc = new HashMap<Arrow, Location>();
     ArrayList<String> lossmesssages = new ArrayList<String>();
     ArrayList<String> winmesssages = new ArrayList<String>();
@@ -51,7 +48,7 @@ public class gamemode {
     Location d1, d2, d3, d4;
     private int t1, t2, t3, t4;
     boolean dl = false;
-    int time = 0;
+    public int time = 0;
     Timer t = new Timer();
     
     public gamemode(main instance) {
@@ -136,11 +133,10 @@ public class gamemode {
         _p.setinv();
         
         if (!start) {
-            _p.giveItem(2, new ItemStack(Material.WALL_SIGN, _p.last.clays));
-            _p.giveItem(3, new ItemStack(Material.APPLE, _p.last.apples));
-            _p.giveItem(4, new ItemStack(Material.BONE, _p.last.dogs));
-            _p.giveItem(5, new ItemStack(Material.DISPENSER, _p.last.sentry));
-            _p.giveItem(6, new ItemStack(Material.DIAMOND, _p.last.chop));
+        	int slot = 3;
+        	for (Killstreaks s : _p.last.keySet()) {
+        		_p.giveItem(slot++, new ItemStack(s.getMat(), _p.last.get(s)));
+        	}
         }
         
         spawnTele(_p, p, start);
@@ -200,36 +196,22 @@ public class gamemode {
         } catch (NoClassDefFoundError e) {
             //This happens on server stop
         }
-        for (claymore i : plugin.clays) {
-            i.b.setType(Material.AIR);
+        for (killstreak i : plugin.ks) {
+        	i.destroy();
         }
-        for (CWolfPack i : plugin.wolves) {
-            i.removeAll();
-        }
-        for (sentry i : plugin.sentries) {
-            i.destroy();
-        }
-        for (chopper i : plugin.choppers) {
-            i.destroy();
-        }
-        plugin.clays.clear();
-        plugin.wolves.clear();
-        plugin.sentries.clear();
-        plugin.choppers.clear();
+        plugin.ks.clear();
         plugin.activeGame = false;
         t.cancel();
     }
     
     public void onRespawn(Player p) {}
     
-    public void tick() {
+    @SuppressWarnings("unchecked")
+	public void tick() {
+    	for (killstreak i : (ArrayList<killstreak>) plugin.ks.clone()) {
+    		i.tick();
+    	}
         for (player p : plugin.players.values()) {
-            if (p.vtime < new Date().getTime()) {
-                p.p.getInventory().clear(38);
-                p.p.getInventory().clear(37);
-                p.p.getInventory().clear(36);
-                p.inv = false;
-            }
             int life = (int) (new Date().getTime() - p.spawn);
             if (life > 300000) {
                 p.s.awardAchievement(Achievement.BEAR_GRYLLS);
@@ -251,34 +233,17 @@ public class gamemode {
             }
             p.p.setHealth(p.h * 10);
         }
-        List<CWolfPack> r = new ArrayList<CWolfPack>();
-        for (CWolfPack i : plugin.wolves) {
-            /*if (((CraftWolf) i).getHandle().pathEntity.b()) {
-                System.out.println("Wolf b");
-            }*/
-            if (i.wolf.size() == 0 || i.expire < new Date().getTime()) {
-                i.removeAll();
-                r.add(i);
-            }
-        }
-        for (CWolfPack j : r) {
-            plugin.wolves.remove(j);
-        }
     }
     
-    public void tickfast() {
-        List<claymore> r = new ArrayList<claymore>();
+    @SuppressWarnings("unchecked")
+	public void tickfast() {
+    	for (killstreak i : (ArrayList<killstreak>) plugin.ks.clone()) {
+    		i.tickfast();
+    	}
         List<Entity> r2 = new ArrayList<Entity>();
         for (Entity i : plugin.currentWorld.getEntities()) {
             if (i instanceof Arrow) {
                 Location l = i.getLocation();
-                for (claymore j : plugin.clays) {
-                    if (j.b.getLocation().add(0.5, 0, 0.5).distance(l) < 1) {
-                        j.setOwner((Player) ((Arrow)i).getShooter(), plugin.p((Player) ((Arrow)i).getShooter()));
-                        j.kill();
-                        r.add(j);
-                    }
-                }
                 if (!floc.containsKey(i)) {
                 	floc.put((Arrow) i, i.getLocation());
                 }
@@ -286,19 +251,12 @@ public class gamemode {
                     if (l.distance(ploc.get(i)) < 0.1) {
                         r2.add(i);
                         floc.remove(i);
-                        
-                        for (chopper j : plugin.choppers) {
-                            if (j.l.distance(l) < 1.5) {
-                                j.arrowhit();
-                            }
-                        }
-                        
                     }
                 }
                 ploc.put((Arrow) i, l);
             } else if (i instanceof Item) {
                 int itemId = ((EntityItem)((CraftEntity)i).getHandle()).itemStack.id;
-                if (!plugin.playerListener.allowed_pickup.contains(Material.getMaterial(itemId))) {
+                if (!plugin.playerListener.allowed_pickup.contains(Material.getMaterial(itemId)) && !Killstreaks.table2.keySet().contains(Material.getMaterial(itemId))) {
                     r2.add(i);
                 }
             } else if (i instanceof Creature && !(i instanceof Wolf)) {
@@ -308,33 +266,6 @@ public class gamemode {
                 j.remove();
             }
         }
-        for (claymore i : plugin.clays) {
-            if (i.init < new Date().getTime() && i.b.getType() != Material.WALL_SIGN) {
-                i.b.setType(Material.WALL_SIGN);
-                
-                switch (i.r) {
-                    case 1: i.b.setData((byte) 4); break;
-                    case 2: i.b.setData((byte) 2); break;
-                    case 3: i.b.setData((byte) 5); break;
-                    case 4: i.b.setData((byte) 3); break;
-                }
-                
-                if (i.b.getState() instanceof Sign) {
-                    Sign s = (Sign) i.b.getState();
-                    s.setLine(0, getClaymoreText(i.getOwner()));
-                    s.setLine(3, getClaymoreText(i.getOwner()));
-                    
-                    s.setLine(1, "This side");
-                    s.setLine(2, "towards enemy");
-                    s.update();
-                }
-            }
-            if (i.exploded && i.explode < new Date().getTime()) {
-                i.kill();
-                r.add(i);
-            }
-        }
-        plugin.clays.removeAll(r);
     }
     
     public void printScore(Player p, team t) {};
@@ -365,7 +296,7 @@ public class gamemode {
             if (r.first()) {
                 nick = r.getString("nick");
             } else {
-                int id = plugin.sql.update("INSERT INTO cod_players VALUES (NULL, '" + event.getPlayer().getDisplayName() + "', '" + event.getPlayer().getDisplayName() + "')");
+                int id = plugin.sql.update("INSERT INTO cod_players (username, nick) VALUES ('" + event.getPlayer().getDisplayName() + "', '" + event.getPlayer().getDisplayName() + "')");
                 plugin.sql.update("INSERT INTO cod_stats VALUES ('" + id + "', '0', '1000')");
             }
         } catch (SQLException e) {

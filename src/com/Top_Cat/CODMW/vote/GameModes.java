@@ -10,9 +10,9 @@ public enum GameModes {
     private static final HashMap<String, GameModes> lookupId = new HashMap<String, GameModes>();
     
     public static GameModes getGMFromId(String name) {
-        return lookupId.get(name);
+       return lookupId.get(name);
     }
-    
+     
     static {
         for (GameModes gm : values()) {
             lookupId.put(gm.toString(), gm);

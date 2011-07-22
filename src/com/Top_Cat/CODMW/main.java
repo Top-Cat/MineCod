@@ -10,8 +10,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,26 +57,25 @@ import com.Top_Cat.CODMW.listeners.CODInputListener;
 import com.Top_Cat.CODMW.listeners.CODInventoryListener;
 import com.Top_Cat.CODMW.listeners.CODPlayerListener;
 import com.Top_Cat.CODMW.listeners.CODWeatherListener;
-import com.Top_Cat.CODMW.objects.CWolfPack;
 import com.Top_Cat.CODMW.objects.Rotation;
-import com.Top_Cat.CODMW.objects.chopper;
-import com.Top_Cat.CODMW.objects.claymore;
+import com.Top_Cat.CODMW.Killstreaks.killstreak;
 import com.Top_Cat.CODMW.objects.door;
 import com.Top_Cat.CODMW.objects.map;
 import com.Top_Cat.CODMW.objects.player;
 import com.Top_Cat.CODMW.objects.redstone;
-import com.Top_Cat.CODMW.objects.sentry;
 import com.Top_Cat.CODMW.sql.Achievement;
+import com.Top_Cat.CODMW.sql.MCrypt;
 import com.Top_Cat.CODMW.sql.conn;
 import com.Top_Cat.CODMW.vote.GameModes;
 import com.Top_Cat.CODMW.vote.GameTypeVote;
 import com.Top_Cat.CODMW.vote.MapVote;
 import com.Top_Cat.CODMW.vote.Vote;
+import java.security.MessageDigest;
 
 public class main extends JavaPlugin {
 
-	int minecod_version = 2;
-	
+    int minecod_version = 3;
+    
     public World currentWorld;
     public Location teamselect;
     public Location prespawn;
@@ -88,11 +91,8 @@ public class main extends JavaPlugin {
     public CODInventoryListener inventoryListener;
     public CODWeatherListener weatherListener;
     public CODInputListener inputListener;
-    public ArrayList<claymore> clays = new ArrayList<claymore>();
-    public ArrayList<CWolfPack> wolves = new ArrayList<CWolfPack>();
-    public ArrayList<sentry> sentries = new ArrayList<sentry>();
+    public ArrayList<killstreak> ks = new ArrayList<killstreak>();
     public ArrayList<Player> totele = new ArrayList<Player>();
-    public ArrayList<chopper> choppers = new ArrayList<chopper>();
     public final String d = "\u00C2\u00A7";
     door d1, d2, d3, d4;
     public gamemode game;
@@ -108,6 +108,7 @@ public class main extends JavaPlugin {
     public String name = "MineCod Server";
     public String welcome_msg = "Welcome to the MineCod Server!";
     public String join_msg = "$nick has joined the fray";
+    Logger log;
     
     public void clearinv(Player p) {
         PlayerInventory i = p.getInventory();
@@ -227,8 +228,7 @@ public class main extends JavaPlugin {
     
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command,
-            String label, String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player p = ((Player) sender);
             if (command.getName().equals("r")) {
@@ -276,7 +276,7 @@ public class main extends JavaPlugin {
                 } else if (args[0].equalsIgnoreCase("noswitch")) {
                     p.sendMessage("Your team was not switched!");
                     if (players.containsKey(p)) {
-                    	p(p).s.awardAchievement(Achievement.TEAMNOSWITCH);
+                        p(p).s.awardAchievement(Achievement.TEAMNOSWITCH);
                     }
                     return true;
                 }
@@ -308,6 +308,40 @@ public class main extends JavaPlugin {
                 v.VoteUp((Player) sender);
             } else if (command.getName().equalsIgnoreCase("n") && v != null) {
                 v.VoteDown((Player) sender);
+            } else if (command.getName().equalsIgnoreCase("auth")) {
+                if (args.length >= 1)  {
+                    try {
+                        String ptmp = ((Player) sender).getDisplayName() + MCrypt.key + args[0];
+                        MessageDigest m= MessageDigest.getInstance("MD5");
+                        m.update(ptmp.getBytes(),0,ptmp.length());
+                        ptmp = new BigInteger(1,m.digest()).toString(16);
+                        while (ptmp.length() < 32) {
+                            ptmp = "0" + ptmp;
+                        }
+                        
+                        String data = URLEncoder.encode("mcuser", "UTF-8") + "=" + URLEncoder.encode(((Player) sender).getDisplayName(), "UTF-8");
+                        data += "&" + URLEncoder.encode("mcauth", "UTF-8") + "=" + URLEncoder.encode(args[0], "UTF-8");
+                        data += "&" + URLEncoder.encode("conf", "UTF-8") + "=" + URLEncoder.encode(ptmp, "UTF-8");
+
+                        URL url = new URL("http://www.thegigcast.net/minecod/auth.php");
+                        URLConnection conn = url.openConnection();
+                        conn.setDoOutput(true);
+                        OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+                        wr.write(data);
+                        wr.flush();
+
+                        BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                        String line;
+                        while ((line = rd.readLine()) != null) {
+                            ((Player) sender).sendMessage(line);
+                        }
+                        wr.close();
+                        rd.close();
+                    } catch (Exception e) {
+                    }
+                } else {
+                    ((Player) sender).sendMessage("You need to supply your authorisation code from the Gigcast website");
+                }
             }
             if ((command.getName().equalsIgnoreCase("y") || command.getName().equalsIgnoreCase("n")) && v == null) {
                 ((Player) sender).sendMessage("No vote in progress!");
@@ -331,9 +365,9 @@ public class main extends JavaPlugin {
                 return;
             }
             player _p = p(p);
-            for (CWolfPack i : wolves) {
+            for (killstreak i : ks) {
                 if (i.getOwner() == p) {
-                    i.removeAll();
+                    i.teamSwitch();
                 }
             }
             game.sendMessage(team.BOTH, d + _p.getTeam().getColour() + _p.nick + " switched to " + _p.getTeam().toString() + " team!");
@@ -375,15 +409,13 @@ public class main extends JavaPlugin {
             BufferedReader in = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
             ip = in.readLine();
         } catch (MalformedURLException e1) {
-            e1.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.warning("Error determining ip address for master server list");
         }
     }
     
     @SuppressWarnings("unchecked")
     private void setup() throws Exception {
-        Logger log = getServer().getLogger();
         final PluginManager pm = getServer().getPluginManager();
         if (pm.getPlugin("BukkitContrib") == null) {
             try {
@@ -415,18 +447,18 @@ public class main extends JavaPlugin {
                 throw new Exception("server-name is of wrong type");
             }
             if (map.containsKey("welcome-message")) {
-	            try {
-	                welcome_msg = (String) map.get("welcome-message");
-	            } catch (ClassCastException ex) {
-	                throw new Exception("welcome-message is of wrong type");
-	            }
+                try {
+                    welcome_msg = (String) map.get("welcome-message");
+                } catch (ClassCastException ex) {
+                    throw new Exception("welcome-message is of wrong type");
+                }
             }
             if (map.containsKey("join-message")) {
-	            try {
-	                join_msg = (String) map.get("join-message");
-	            } catch (ClassCastException ex) {
-	                throw new Exception("join-message is of wrong type");
-	            }
+                try {
+                    join_msg = (String) map.get("join-message");
+                } catch (ClassCastException ex) {
+                    throw new Exception("join-message is of wrong type");
+                }
             }
             try {
                 ArrayList<String> rotation = (ArrayList<String>) map.get("map-rotation");
@@ -512,6 +544,7 @@ public class main extends JavaPlugin {
     @Override
     public void onEnable() {
         try {
+            log = getServer().getLogger();
             try {
                 URL url = new URL("http://www.thegigcast.net/minecod/version.txt");
                 BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -522,7 +555,7 @@ public class main extends JavaPlugin {
                         in.close();
                         File directory = new File(getServer().getUpdateFolder());
                         File plugin = new File(directory.getPath(), "MineCod.jar");
-                        download(getServer().getLogger(), new URL("http://www.thegigcast.net/minecod/MineCod.jar"), plugin);
+                        download(log, new URL("http://www.thegigcast.net/minecod/MineCod.jar"), plugin);
                         break;
                     }
                 }
@@ -532,7 +565,7 @@ public class main extends JavaPlugin {
             
             setup();
         } catch (Exception e) {
-            getServer().getLogger().log(Level.SEVERE, "Error loading minecod: " + e.getMessage());
+            log.log(Level.SEVERE, "Error loading minecod: " + e.getMessage());
             getServer().getPluginManager().disablePlugin(this);
         }
     }

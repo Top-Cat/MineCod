@@ -16,3 +16,5 @@ commands:
         description: Vote yes
     n:
         description: Vote no
+    auth:
+        description: Link minecraft and forum accounts

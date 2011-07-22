@@ -1,5 +1,7 @@
 package com.Top_Cat.CODMW.listeners;
 
+import java.util.ArrayList;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.entity.CraftArrow;
@@ -20,7 +22,8 @@ import org.bukkit.event.painting.PaintingPlaceEvent;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.objects.CArrow;
-import com.Top_Cat.CODMW.objects.CWolfPack;
+import com.Top_Cat.CODMW.Killstreaks.WolfPack;
+import com.Top_Cat.CODMW.Killstreaks.killstreak;
 
 public class CODEntityListener extends EntityListener {
     
@@ -44,7 +47,8 @@ public class CODEntityListener extends EntityListener {
         }
     }
     
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public void onEntityDamage(EntityDamageEvent event) {
         event.setCancelled(true);
         try {
@@ -57,9 +61,11 @@ public class CODEntityListener extends EntityListener {
             event.setDamage(1);
             if (event instanceof EntityDamageByProjectileEvent) {
                 if (event.getEntity() instanceof Wolf) {
-                    plugin.wolves.remove(event.getEntity());
-                    event.getEntity().remove();
-                    return;
+                	for (killstreak i : (ArrayList<killstreak>) plugin.ks.clone()) {
+                        if (i instanceof WolfPack && ((WolfPack) i).wolf.contains(event.getEntity())) {
+                        	((WolfPack) i).remove((Wolf) event.getEntity());
+                        }
+                	}
                 } else {
                     int reason = 2;
                     Object ks = null;
@@ -108,17 +114,22 @@ public class CODEntityListener extends EntityListener {
                     }
                 } else if (((EntityDamageByEntityEvent) event).getDamager() instanceof Wolf && ((EntityDamageByEntityEvent) event).getEntity() instanceof Player) {
                     Player defender = (Player) (((EntityDamageByEntityEvent) event).getEntity());
-                    for (CWolfPack i : plugin.wolves) {
-                        if (i.wolf.contains(((EntityDamageByEntityEvent) event).getDamager())) {
-                            if (plugin.game.canHit(i.getOwner(), defender)) {
-                                plugin.p(defender).incHealth(2, i.getOwner(), 4, i);
-                            }
-                            i.remove((Wolf) ((EntityDamageByEntityEvent) event).getDamager());
-                        }
+                    for (killstreak i : plugin.ks) {
+                    	if (i instanceof WolfPack) {
+	                        if (((WolfPack) i).wolf.contains(((EntityDamageByEntityEvent) event).getDamager())) {
+	                            if (plugin.game.canHit(i.getOwner(), defender)) {
+	                                plugin.p(defender).incHealth(2, i.getOwner(), 4, i);
+	                            }
+	                            ((WolfPack) i).remove((Wolf) ((EntityDamageByEntityEvent) event).getDamager());
+	                        }
+                    	}
                     }
                 } else if (((EntityDamageByEntityEvent) event).getEntity() instanceof Wolf) {
-                    plugin.wolves.remove(event.getEntity());
-                    ((EntityDamageByEntityEvent) event).getEntity().remove();
+                	for (killstreak i : (ArrayList<killstreak>) plugin.ks.clone()) {
+                        if (i instanceof WolfPack && ((WolfPack) i).wolf.contains(event.getEntity())) {
+                        	((WolfPack) i).remove((Wolf) event.getEntity());
+                        }
+                	}
                 }
             }
         } catch (Exception e) {

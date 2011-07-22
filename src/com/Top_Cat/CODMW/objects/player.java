@@ -2,7 +2,9 @@ package com.Top_Cat.CODMW.objects;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Location;
@@ -16,6 +18,7 @@ import org.bukkitcontrib.BukkitContrib;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
+import com.Top_Cat.CODMW.Killstreaks.Killstreaks;
 import com.Top_Cat.CODMW.sql.Achievement;
 import com.Top_Cat.CODMW.sql.Stat;
 import com.Top_Cat.CODMW.sql.stats;
@@ -23,7 +26,7 @@ import com.Top_Cat.CODMW.sql.stats;
 public class player {
     
     public int kill, streak, death, assists, points;
-    public streaks last = new streaks();
+    public HashMap<Killstreaks, Integer> last = new HashMap<Killstreaks, Integer>();
     private final main plugin;
     public Player p;
     public String nick;
@@ -33,7 +36,6 @@ public class player {
     public int h = 2;
     public long htime = 0;
     public long stime = 0;
-    public long vtime = 0;
     public int todrop = 0;
     public int regens = 0;
     public boolean inv = false;
@@ -47,7 +49,7 @@ public class player {
     int hshot_streak = 0;
     int melee_streak = 0;
     public boolean premium, fish = false;
-    
+    public List<Killstreaks> yks = new ArrayList<Killstreaks>();
     public boolean dead = false;
     
     public player(main instance, Player _p, team _t) {
@@ -63,6 +65,12 @@ public class player {
             premium = r.getBoolean("premium");
             if (premium) {
             	fish = r.getBoolean("fish");
+            }
+            for (String i : r.getString("killstreaks").split(",")) {
+            	Killstreaks s = Killstreaks.valueOf(Integer.parseInt(i));
+            	if (yks.size() < 3 && !yks.contains(s)) { 
+            		yks.add(s);
+            	}
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -124,22 +132,22 @@ public class player {
     s.maxStat(Stat.MAX_POINTS, points);
     }
     
+    int slot = 3;
+    
     public void addStreak() {
         streak++;
-        boolean gstreak = true;
-        switch (streak) {
-            case 3: giveItem(2, new ItemStack(Material.WALL_SIGN, 2)); s.incStat(Stat.CLAYMORES_ACHIEVED); break;
-            case 5: giveItem(3, new ItemStack(Material.APPLE, 1)); s.incStat(Stat.APPLES_ACHIEVED); break;
-            case 7: giveItem(5, new ItemStack(Material.DISPENSER, 1)); s.incStat(Stat.SENTRIES_ACHIEVED); break;
-            case 9: giveItem(4, new ItemStack(Material.BONE, 1)); s.incStat(Stat.DOGS_ACHIEVED); break;
-            case 11: giveItem(6, new ItemStack(Material.DIAMOND, 1)); s.incStat(Stat.CHOPPERS_ACHIEVED); break;
-            default: gstreak = false;
-        }
-        if (gstreak) {
-            if ((new Date().getTime() - laststreak) < 20000) {
-                s.awardAchievement(Achievement.WARGASM);
-            }
-            laststreak = new Date().getTime();
+        for (Killstreaks ks : yks) {
+        	if (ks.getKills() == streak) {
+        		giveItem(slot++, new ItemStack(ks.getMat(), ks.getAmm()));
+        		s.incStat(ks.getStat());
+        		
+                if ((new Date().getTime() - laststreak) < 20000) {
+                    s.awardAchievement(Achievement.WARGASM);
+                }
+                laststreak = new Date().getTime();
+        		
+        		break;
+        	}
         }
         s.maxStat(Stat.MAX_STREAK, streak);
     }
@@ -169,7 +177,6 @@ public class player {
         kill++;
         s.maxStat(Stat.MAX_KILLS, kill);
         if (reason == 2 || reason == 7) {
-        	System.out.println(reason);
             s.maxStat(Stat.FURTHEST_KILL, getDistance(killed, (Arrow) l));
         }
         if (reason == 7) {
@@ -342,20 +349,14 @@ public class player {
     }
     
     public void setStreaks() {
-        last = new streaks();
+        last = new HashMap<Killstreaks, Integer>();
         for (ItemStack i : p.getInventory().getContents()) {
             if (i != null) {
-                if (i.getType() == Material.WALL_SIGN) {
-                    last.clays += i.getAmount();
-                } else if (i.getType() == Material.APPLE) {
-                    last.apples += i.getAmount();
-                } else if (i.getType() == Material.BONE) {
-                    last.dogs += i.getAmount();
-                } else if (i.getType() == Material.DISPENSER) {
-                    last.sentry += i.getAmount();
-                } else if (i.getType() == Material.DIAMOND) {
-                    last.chop += i.getAmount();
-                }
+            	Killstreaks s = Killstreaks.fromMaterial(i.getType());
+            	if (s != null) {
+            		int c = last.containsKey(s) ? last.get(s) : 0;
+            		last.put(s, c + i.getAmount());
+            	}
             }
         }
     }

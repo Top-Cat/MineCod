@@ -9,7 +9,8 @@ import org.bukkit.inventory.ItemStack;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
-import com.Top_Cat.CODMW.objects.CWolfPack;
+import com.Top_Cat.CODMW.Killstreaks.WolfPack;
+import com.Top_Cat.CODMW.Killstreaks.killstreak;
 import com.Top_Cat.CODMW.objects.player;
 import com.Top_Cat.CODMW.sql.Stat;
 
@@ -22,13 +23,6 @@ public class team_gm extends gamemode {
     @Override
     public void startGame() {
         super.startGame();
-        /*for (player i : plugin.players.values()) {
-            for (player j : plugin.players.values()) {
-                if (i.getTeam() != j.getTeam() || i.getTeam() == team.BOTH) {
-                    BukkitContrib.getAppearanceManager().hidePlayerTitle((ContribPlayer) i.p, j.p);
-                }
-            }
-        }*/
     }
     
     @Override
@@ -78,8 +72,8 @@ public class team_gm extends gamemode {
         		t1 = p.getTeam();
         	}
         } else if (a instanceof Wolf) {
-            for (CWolfPack i : plugin.wolves) {
-                if (i.wolf.contains(a)) {
+            for (killstreak i : plugin.ks) {
+                if (i instanceof WolfPack && ((WolfPack) i).wolf.contains(a)) {
                     t1 = i.getOwnerplayer().getTeam();
                 }
             }
@@ -90,8 +84,8 @@ public class team_gm extends gamemode {
         		t2 = p.getTeam();
         	}
         } else if (d instanceof Wolf) {
-            for (CWolfPack i : plugin.wolves) {
-                if (i.wolf.contains(d)) {
+        	for (killstreak i : plugin.ks) {
+                if (i instanceof WolfPack && ((WolfPack) i).wolf.contains(d)) {
                     t2 = i.getOwnerplayer().getTeam();
                 }
             }

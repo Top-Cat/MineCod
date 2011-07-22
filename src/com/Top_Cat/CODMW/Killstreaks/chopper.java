@@ -1,23 +1,23 @@
-package com.Top_Cat.CODMW.objects;
-
-import java.util.Timer;
-import java.util.TimerTask;
+package com.Top_Cat.CODMW.Killstreaks;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
+import com.Top_Cat.CODMW.objects.CArrow;
+import com.Top_Cat.CODMW.objects.player;
+import com.Top_Cat.CODMW.sql.Stat;
 
-public class chopper extends ownable {
+public class chopper extends useable {
 
     Location p;
     public Location l;
-    main plugin;
     double mx = 0, mz = 0, tx = 0, tz = 0;
     int tick = 0;
-    Timer k = new Timer();
     boolean started = false;
     int health = 5;
     
@@ -25,47 +25,27 @@ public class chopper extends ownable {
         health--;
     }
 
-    public chopper(main instance, Player _o) {
-        plugin = instance;
-        setOwner(_o, plugin.p(_o));
+    public chopper(main instance, Player _o, Object[] args) {
+    	super(instance, _o, args);
         plugin.game.sendMessage(team.BOTH, plugin.d + plugin.p(getOwner()).getTeam().getColour() + plugin.p(getOwner()).nick + plugin.d + "f called in a chopper!");
-        
-        plugin.choppers.add(this);
-        
-        k.schedule(new tick(), 150, 150);
-        k.schedule(new destroyTask(), 60000);
+        getOwnerplayer().s.incStat(Stat.CHOPPERS_USED);
         l = avgEnemies();
         moveto();
     }
 
-    public class destroyTask extends TimerTask {
-
-        @Override
-        public void run() {
-            destroy();
-            plugin.choppers.remove(this);
-        }
-
-    }
-
+    @Override
     public void destroy() {
-        k.cancel();
+    	super.destroy();
         l.getBlock().setType(Material.AIR);
     }
-
-    public class tick extends TimerTask {
-
-        @Override
-        public void run() {
-            tick();
-        }
-        
-    }
     
-    private void tick() {
-        if (health <= 0) {
+    @Override
+    public void tick() {
+    	super.tick();
+    	if (getLifetime() >= 60) {
+    		destroy();
+    	} else if (health <= 0) {
             destroy();
-            plugin.choppers.remove(this);
         } else {
             tick++;
             if (tick <= 10) {
@@ -107,6 +87,23 @@ public class chopper extends ownable {
                     }
                 }
                 
+            }
+        }
+    }
+    
+    @Override
+    public void tickfast() {
+    	super.tickfast();
+    	for (Entity i : plugin.currentWorld.getEntities()) {
+            if (i instanceof Arrow) {
+                Location l = i.getLocation();
+                if (plugin.game.ploc.containsKey(i)) {
+                    if (l.distance(plugin.game.ploc.get(i)) < 0.1) {
+                        if (l.distance(l) < 1.5) {
+                            arrowhit();
+                        }
+                    }
+                }
             }
         }
     }
