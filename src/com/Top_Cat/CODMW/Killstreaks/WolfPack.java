@@ -17,7 +17,6 @@ import com.Top_Cat.CODMW.sql.Stat;
 public class WolfPack extends useable {
     
     public List<Wolf> wolf = new ArrayList<Wolf>();
-    main plugin;
     Random generator = new Random();
     
     public WolfPack(main instance, Player _o, Object[] args) {

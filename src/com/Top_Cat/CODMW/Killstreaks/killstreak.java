@@ -37,7 +37,7 @@ public class killstreak extends ownable {
         
     }
     
-    public void onMove(PlayerMoveEvent event) {
+    public void onMove(PlayerMoveEvent event, boolean blockmove) {
         
     }
     

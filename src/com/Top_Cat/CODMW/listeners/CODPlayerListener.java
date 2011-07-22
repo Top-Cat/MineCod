@@ -132,12 +132,11 @@ public class CODPlayerListener extends PlayerListener {
 
     @Override
     public void onPlayerMove(PlayerMoveEvent event) {
-        for (killstreak i : plugin.ks) {
-            i.onMove(event);
-        }
-        
         plugin.game.playermove(event);
         Location t = event.getTo();
+        for (killstreak i : plugin.ks) {
+            i.onMove(event, t.getBlock() != lastB);
+        }
         if (t.getBlock() != lastB) {
             lastB = t.getBlock();
             team e;
@@ -245,7 +244,7 @@ public class CODPlayerListener extends PlayerListener {
         event.setUseItemInHand(Result.ALLOW);
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             Killstreaks s = Killstreaks.fromMaterial(event.getPlayer().getItemInHand().getType());
-            if (s != null && s.getkClass().isAssignableFrom(useable.class)) {
+            if (s != null && useable.class.isAssignableFrom(s.getkClass())) {
                 event.setUseItemInHand(Result.DENY);
                 event.getPlayer().getInventory().removeItem(new ItemStack(event.getPlayer().getItemInHand().getType(), 1));
                 s.callIn(plugin, event.getPlayer(), new Object[] {});

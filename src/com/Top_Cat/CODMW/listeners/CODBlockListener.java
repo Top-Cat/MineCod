@@ -45,7 +45,7 @@ public class CODBlockListener extends BlockListener {
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
         Killstreaks s = Killstreaks.fromMaterial(event.getBlockPlaced().getType());
-        if (s != null && s.getkClass().isAssignableFrom(placeable.class)) {
+        if (s != null && placeable.class.isAssignableFrom(s.getkClass())) {
             if ((event.getBlockPlaced().getType() != Material.WALL_SIGN || event.getBlockPlaced().getState() instanceof Sign) && (event.getBlockPlaced().getType() != Material.DISPENSER || event.getBlockPlaced().getRelative(0, 1, 0).getType() == Material.AIR)) {
                 s.callIn(plugin, event.getPlayer(), new Object[] {event.getBlockPlaced()});
             } else {

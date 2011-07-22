@@ -33,6 +33,7 @@ public class claymore extends placeable {
         r = (Integer) CODBlockListener.rotateblock(_o, b);
         init = new Date().getTime() + 1000;
         getOwnerplayer().s.incStat(Stat.CLAYMORES_USED);
+        setText();
         switch (r) {
             case 0: d1 = b.getRelative(0, 0, 1); d2 = b.getRelative(0, 0, 2); break;
             case 1: d1 = b.getRelative(-1, 0, 0); d2 = b.getRelative(-2, 0, 0); break;
@@ -54,8 +55,8 @@ public class claymore extends placeable {
     }
     
     @Override
-    public void onMove(PlayerMoveEvent event) {
-        super.onMove(event);
+    public void onMove(PlayerMoveEvent event, boolean blockmove) {
+        super.onMove(event, blockmove);
         if (exploded == false) {
             detect(event.getPlayer());
         }

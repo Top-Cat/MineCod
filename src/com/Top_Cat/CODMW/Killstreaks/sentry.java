@@ -17,7 +17,6 @@ import com.Top_Cat.CODMW.sql.Stat;
 public class sentry extends placeable {
     
     public Block b, bt;
-    main plugin;
     int rot;
     
     public sentry(main instance, Player _o, Object[] args) {
@@ -38,10 +37,10 @@ public class sentry extends placeable {
     }
     
     @Override
-    public void onMove(PlayerMoveEvent event) {
-        super.onMove(event);
-        if (event.getTo().getBlock().getRelative(0, -2, 0) == b) {
-            event.setTo(plugin.game.spawnTele(plugin.p(event.getPlayer()), event.getPlayer(), false));
+    public void onMove(PlayerMoveEvent event, boolean blockmove) {
+        super.onMove(event, blockmove);
+        if (blockmove && event.getTo().getBlock().getRelative(0, -2, 0) == b) {
+            plugin.game.spawnTele(plugin.p(event.getPlayer()), event.getPlayer(), false);
             event.getPlayer().sendMessage(plugin.d + "bOnly Gigs stand on dispensers, you have been respawned!");
         }
     }
