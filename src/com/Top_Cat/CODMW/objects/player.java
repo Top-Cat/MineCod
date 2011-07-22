@@ -19,6 +19,7 @@ import org.bukkitcontrib.BukkitContrib;
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
 import com.Top_Cat.CODMW.Killstreaks.Killstreaks;
+import com.Top_Cat.CODMW.Killstreaks.killstreak;
 import com.Top_Cat.CODMW.sql.Achievement;
 import com.Top_Cat.CODMW.sql.Stat;
 import com.Top_Cat.CODMW.sql.stats;
@@ -38,7 +39,6 @@ public class player {
     public long stime = 0;
     public int todrop = 0;
     public int regens = 0;
-    public boolean inv = false;
     public Location dropl;
     public Player assist;
     public long spawn = new Date().getTime();
@@ -50,7 +50,7 @@ public class player {
     int melee_streak = 0;
     public boolean premium, fish = false;
     public List<Killstreaks> yks = new ArrayList<Killstreaks>();
-    public boolean dead = false;
+    public boolean dead = false, regen = false;
     
     public player(main instance, Player _p, team _t) {
         plugin = instance;
@@ -172,28 +172,28 @@ public class player {
         return out;
     }
     
-    public void onKill(player killed, int reason, Object l) {
+    public void onKill(player killed, Reason reason, Object l) {
+    	for (killstreak i : plugin.ks) {
+    		i.onKill(this, killed, reason, l);
+    	}
         s.incStat(Stat.KILLS);
         kill++;
         s.maxStat(Stat.MAX_KILLS, kill);
-        if (reason == 2 || reason == 7) {
+        if (reason == Reason.BOW || reason == Reason.HEADSHOT) {
             s.maxStat(Stat.FURTHEST_KILL, getDistance(killed, (Arrow) l));
         }
-        if (reason == 7) {
+        if (reason == Reason.HEADSHOT) {
             s.maxStat(Stat.FURTHEST_HEADSHOT, getDistance(killed, (Arrow) l));
         }
         if (plugin.game.floc.containsKey(l)) {
             plugin.game.floc.remove(l);
-        }
-        if (inv) {
-            s.incStat(Stat.INVULNERABLE_KILLS);
         }
         if (killed.nick.equalsIgnoreCase("Gigthank")) {
             s.awardAchievement(Achievement.KILL_GIG);
         } else if (killed.nick.equalsIgnoreCase("Notch")) {
             s.awardAchievement(Achievement.KILL_NOTCH);
         }
-        if (reason <= 3 || reason == 7) {
+        if (reason.getStreak()) {
             addStreak();
         }
         
@@ -206,7 +206,7 @@ public class player {
             }
         }
         
-        if (ammo == 0 && reason == 1) {
+        if (ammo == 0 && reason == Reason.KNIFE) {
             s.awardAchievement(Achievement.LAST_RESORT);
         }
         if (killed.streak == 10) {
@@ -234,7 +234,7 @@ public class player {
         } else {
             lastk_top_count = 0;
         }
-        if (reason == 7) {
+        if (reason == Reason.HEADSHOT) {
             hshot_streak++;
             if (hshot_streak > 3) {
                 s.awardAchievement(Achievement.HOTSHOT);
@@ -242,7 +242,7 @@ public class player {
         } else {
             hshot_streak = 0;
         }
-        if (reason == 1) {
+        if (reason == Reason.KNIFE) {
             melee_streak++;
             if (melee_streak > 3) {
                 s.awardAchievement(Achievement.COMMANDO);
@@ -253,97 +253,99 @@ public class player {
     }
     
     public void incHealth(int _h, Player attacker, int reason, Object ks) {
-        /*if (_h < 0 && h < 2) { TODO: Fix this
+    	Reason r = Reason.valueOf(reason);
+    	for (killstreak i : plugin.ks) {
+    		_h = i.onDamage(_h, attacker, p, r, ks);
+    	}
+        if (_h < 0 && !regen) {
+        	regen = true;
             regens++;
             s.maxStat(Stat.LIFE_REGENS, regens);
-        }*/
-        if (_h < 0 || inv == false) {
-            h -= _h;
-            if (h > 20) { h = 20; }
-            if (_h > 0) {
-                htime = new Date().getTime() + 10000;
-                stime = new Date().getTime() + 5000;
+        }
+        h -= _h;
+        if (h > 20) { h = 20; }
+        if (_h > 0) {
+        	regen = false;
+            htime = new Date().getTime() + 10000;
+            stime = new Date().getTime() + 5000;
+        }
+        if (h <= 0) {
+            regens = 0;
+            lastk_count = 0;
+            lastk_top_count = 0;
+            hshot_streak = 0;
+            melee_streak = 0;
+            player a = plugin.p(attacker);
+            if (a != this) {
+                a.onKill(this, r, ks);
+            } else {
+                kill--;
             }
-            if (h <= 0) {
-                regens = 0;
-                lastk_count = 0;
-                lastk_top_count = 0;
-                hshot_streak = 0;
-                melee_streak = 0;
-                player a = plugin.p(attacker);
-                if (a != this) {
-                    a.onKill(this, reason, ks);
-                } else {
-                    kill--;
-                }
-                String assist_txt = "";
-                if (assist != null && assist != attacker) {
-                    assist_txt = plugin.d + "c (Assist: " + plugin.d + plugin.p(assist).getTeam().getColour() + plugin.p(assist).nick + plugin.d + "c)";
-                    plugin.p(assist).assists++;
-                    plugin.p(assist).s.incStat(Stat.ASSISTS);
-                    plugin.p(assist).addPoints(2);
-                }
-                s.incStat(Stat.DEATHS);
-                death++;
-                s.maxStat(Stat.MAX_DEATHS, death);
-                streak = 0;
-                
-                h = 20;
-                
-                int ammo = 0;
-                for (ItemStack i : p.getInventory().getContents()) {
-                    if (i != null) {
-                        if (i.getType() == Material.FEATHER || i.getType() == Material.ARROW) {
-                            ammo += i.getAmount();
-                        }
+            String assist_txt = "";
+            if (assist != null && assist != attacker) {
+                assist_txt = plugin.d + "c (Assist: " + plugin.d + plugin.p(assist).getTeam().getColour() + plugin.p(assist).nick + plugin.d + "c)";
+                plugin.p(assist).assists++;
+                plugin.p(assist).s.incStat(Stat.ASSISTS);
+                plugin.p(assist).addPoints(2);
+            }
+            s.incStat(Stat.DEATHS);
+            death++;
+            s.maxStat(Stat.MAX_DEATHS, death);
+            streak = 0;
+            
+            h = 20;
+            
+            int ammo = 0;
+            for (ItemStack i : p.getInventory().getContents()) {
+                if (i != null) {
+                    if (i.getType() == Material.FEATHER || i.getType() == Material.ARROW) {
+                        ammo += i.getAmount();
                     }
                 }
-                ammo = (int) (ammo / 15);
-                setStreaks();
-                
-                String desc = "";
-                String as = "";
-                switch (reason) {
-                    case 0: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(p).nick + " fell to his death. LOL!" + assist_txt); plugin.p(p).s.incStat(Stat.FALL_DEATHS); break;
-                    case 1: desc = " knifed"; plugin.p(p).s.incStat(Stat.KNIFE_DEATHS); plugin.p(attacker).s.incStat(Stat.KNIFE_KILLS); break;
-                    case 2: desc = " shot"; plugin.p(p).s.incStat(Stat.BOW_DEATHS); plugin.p(attacker).s.incStat(Stat.BOW_KILLS); break;
-                    case 3: desc = " claymored"; plugin.p(p).s.incStat(Stat.CLAYMORE_DEATHS); plugin.p(attacker).s.incStat(Stat.CLAYMORE_KILLS); break;
-                    case 4: as = "'s"; desc = " dogs mauled"; plugin.p(p).s.incStat(Stat.DOG_DEATHS); plugin.p(attacker).s.incStat(Stat.DOG_KILLS); break;
-                    case 5: as = "'s"; desc = " sentry shot"; plugin.p(p).s.incStat(Stat.SENTRY_DEATHS); plugin.p(attacker).s.incStat(Stat.SENTRY_KILLS); break;
-                    case 6: as = "'s"; desc = " chopper battered"; plugin.p(p).s.incStat(Stat.CHOPPER_DEATHS); plugin.p(attacker).s.incStat(Stat.CHOPPER_KILLS); break;
-                    case 7: desc = " headshot"; plugin.p(p).s.incStat(Stat.BOW_DEATHS); plugin.p(attacker).s.incStat(Stat.HEADSHOTS); plugin.p(attacker).s.incStat(Stat.BOW_KILLS); break;
-                    case 8: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(p).nick + " was smited for using a premium fish!" + assist_txt); break;
-                    case 9: desc = " got a FISH KILL on"; plugin.p(p).s.incStat(Stat.FISH_DEATHS); plugin.p(attacker).s.incStat(Stat.FISH_KILLS); break;
-                }
-                if (!(reason == 0 || reason == 8)) {
-                    plugin.game.sendMessage(team.BOTH, plugin.d + plugin.p(attacker).getTeam().getColour() + plugin.p(attacker).nick + as + plugin.d + "c" + desc + " " + plugin.d + t.getColour() + nick + assist_txt);
-                }
-                if (ks != null && ks instanceof ownable) {
-                    ((ownable) ks).incKills();
-                }
-                clearinv();
-                todrop += ammo;
-                dropl = p.getLocation();
-                
-                List<Block> bs = p.getLineOfSight(null, 3);
-                for (Block i : bs) {
-                	if (i.getType() != Material.AIR) {
-                		if (i.getType() == Material.BOOKSHELF) {
-                			s.awardAchievement(Achievement.READINGABOOK);
-                		}
-                		break;
-                	}
-                }
-                
-                p.teleport(plugin.prespawn);
-                plugin.game.onKill(plugin.p(attacker), this, p.getLocation());
-                dead = true;
             }
-            if (_h > 0) {
-            assist = attacker;
+            ammo = (int) (ammo / 15);
+            setStreaks();
+            
+            String desc = "";
+            String as = "";
+            switch (r) {
+                case FALL: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(p).nick + " fell to his death. LOL!" + assist_txt); plugin.p(p).s.incStat(Stat.FALL_DEATHS); break;
+                case KNIFE: desc = " knifed"; plugin.p(p).s.incStat(Stat.KNIFE_DEATHS); plugin.p(attacker).s.incStat(Stat.KNIFE_KILLS); break;
+                case BOW: desc = " shot"; plugin.p(p).s.incStat(Stat.BOW_DEATHS); plugin.p(attacker).s.incStat(Stat.BOW_KILLS); break;
+                case CLAYMORE: desc = " claymored"; plugin.p(p).s.incStat(Stat.CLAYMORE_DEATHS); plugin.p(attacker).s.incStat(Stat.CLAYMORE_KILLS); break;
+                case DOGS: as = "'s"; desc = " dogs mauled"; plugin.p(p).s.incStat(Stat.DOG_DEATHS); plugin.p(attacker).s.incStat(Stat.DOG_KILLS); break;
+                case SENTRY: as = "'s"; desc = " sentry shot"; plugin.p(p).s.incStat(Stat.SENTRY_DEATHS); plugin.p(attacker).s.incStat(Stat.SENTRY_KILLS); break;
+                case CHOPPER: as = "'s"; desc = " chopper battered"; plugin.p(p).s.incStat(Stat.CHOPPER_DEATHS); plugin.p(attacker).s.incStat(Stat.CHOPPER_KILLS); break;
+                case HEADSHOT: desc = " headshot"; plugin.p(p).s.incStat(Stat.BOW_DEATHS); plugin.p(attacker).s.incStat(Stat.HEADSHOTS); plugin.p(attacker).s.incStat(Stat.BOW_KILLS); break;
+                case FISH_SMITE: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(p).nick + " was smited for using a premium fish!" + assist_txt); break;
+                case FISH: desc = " got a FISH KILL on"; plugin.p(p).s.incStat(Stat.FISH_DEATHS); plugin.p(attacker).s.incStat(Stat.FISH_KILLS); break;
             }
-        } else {
-            h = 20;
+            if (r != Reason.FALL && r != Reason.FISH_SMITE) {
+                plugin.game.sendMessage(team.BOTH, plugin.d + plugin.p(attacker).getTeam().getColour() + plugin.p(attacker).nick + as + plugin.d + "c" + desc + " " + plugin.d + t.getColour() + nick + assist_txt);
+            }
+            if (ks != null && ks instanceof ownable) {
+                ((ownable) ks).incKills();
+            }
+            clearinv();
+            todrop += ammo;
+            dropl = p.getLocation();
+            
+            List<Block> bs = p.getLineOfSight(null, 3);
+            for (Block i : bs) {
+            	if (i.getType() != Material.AIR) {
+            		if (i.getType() == Material.BOOKSHELF) {
+            			s.awardAchievement(Achievement.READINGABOOK);
+            		}
+            		break;
+            	}
+            }
+            
+            p.teleport(plugin.prespawn);
+            plugin.game.onKill(plugin.p(attacker), this, p.getLocation());
+            dead = true;
+        }
+        if (_h > 0) {
+        	assist = attacker;
         }
         p.setHealth(h);
     }

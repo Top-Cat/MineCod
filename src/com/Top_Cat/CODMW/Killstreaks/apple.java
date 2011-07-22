@@ -6,6 +6,8 @@ import org.bukkit.inventory.ItemStack;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
+import com.Top_Cat.CODMW.objects.Reason;
+import com.Top_Cat.CODMW.objects.player;
 import com.Top_Cat.CODMW.sql.Stat;
 
 public class apple extends useable {
@@ -15,7 +17,6 @@ public class apple extends useable {
         getOwnerplayer().s.incStat(Stat.APPLES_USED);
         setArmour();
         getOwner().updateInventory();
-        getOwnerplayer().inv = true;
 	}
 	
 	public void setArmour() {
@@ -31,6 +32,19 @@ public class apple extends useable {
 	}
 	
 	@Override
+	public int onDamage(int damage, Player attacker, Player defender, Reason reason, Object ks) {
+		if (defender == getOwner()) {
+			damage = 0;
+		}
+		return damage;
+	}
+	
+	@Override
+	public void onKill(player attacker, player defender, Reason reason, Object ks) {
+		attacker.s.incStat(Stat.INVULNERABLE_KILLS);
+	}
+	
+	@Override
 	public void teamSwitch() {
 		super.teamSwitch();
 		setArmour();
@@ -42,7 +56,6 @@ public class apple extends useable {
         getOwner().getInventory().clear(38);
         getOwner().getInventory().clear(37);
         getOwner().getInventory().clear(36);
-        getOwnerplayer().inv = false;
 	}
 	
 	@Override

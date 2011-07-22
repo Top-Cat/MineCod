@@ -5,7 +5,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import com.Top_Cat.CODMW.main;
+import com.Top_Cat.CODMW.objects.Reason;
 import com.Top_Cat.CODMW.objects.ownable;
+import com.Top_Cat.CODMW.objects.player;
 
 public class killstreak extends ownable {
 	
@@ -17,6 +19,14 @@ public class killstreak extends ownable {
 		setOwner(owner, plugin.p(owner));
 		starttick = plugin.game.time;
 		getOwnerplayer().addPoints(3);
+	}
+	
+	public int onDamage(int damage, Player attacker, Player defender, Reason reason, Object ks) {
+		return damage;
+	}
+	
+	public void onKill(player attacker, player defender, Reason reason, Object ks) {
+		
 	}
 	
 	public int getLifetime() {
