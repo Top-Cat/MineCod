@@ -3,6 +3,7 @@ package com.Top_Cat.CODMW.objects;
 import java.util.ArrayList;
 
 public enum Reason {
+	NONE(-1),
     FALL(0),
     KNIFE(1, true),
     BOW(2, true),
@@ -12,7 +13,9 @@ public enum Reason {
     CHOPPER(6),
     HEADSHOT(7, true),
     FISH_SMITE(8),
-    FISH(9, true);
+    FISH(9, true),
+    GRENADE(10, true),
+    TOMAHAWK(11, true);
     
     final private int id;
     final private boolean streak;
@@ -37,7 +40,9 @@ public enum Reason {
     public static ArrayList<Reason> table = new ArrayList<Reason>(); 
     static {
         for (Reason i : Reason.values()) {
-            table.add(i.getId(), i);
+        	if (i.getId() >= 0) {
+        		table.add(i.getId(), i);
+        	}
         }
     }
 

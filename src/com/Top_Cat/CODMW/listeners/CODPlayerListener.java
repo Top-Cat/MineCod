@@ -1,7 +1,9 @@
 package com.Top_Cat.CODMW.listeners;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.TimerTask;
 
@@ -11,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerBedEnterEvent;
@@ -23,6 +26,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -31,6 +35,7 @@ import com.Top_Cat.CODMW.team;
 import com.Top_Cat.CODMW.Killstreaks.Killstreaks;
 import com.Top_Cat.CODMW.Killstreaks.killstreak;
 import com.Top_Cat.CODMW.Killstreaks.useable;
+import com.Top_Cat.CODMW.objects.grenade;
 import com.Top_Cat.CODMW.objects.player;
 import com.Top_Cat.CODMW.sql.Stat;
 
@@ -43,14 +48,11 @@ public class CODPlayerListener extends PlayerListener {
     public CODPlayerListener(main instance) {
         plugin = instance;
         allowed_pickup.add(Material.FEATHER);
-        allowed_pickup.add(Material.WALL_SIGN);
-        allowed_pickup.add(Material.APPLE);
-        allowed_pickup.add(Material.BONE);
-        allowed_pickup.add(Material.DISPENSER);
-        allowed_pickup.add(Material.DIAMOND);
         allowed_pickup.add(Material.DIAMOND_BLOCK);
         allowed_pickup.add(Material.GOLD_BLOCK);
         allowed_pickup.add(Material.RAW_FISH);
+        allowed_pickup.add(Material.SULPHUR);
+        allowed_pickup.addAll(Killstreaks.table2.keySet());
     }
     
     @Override
@@ -191,23 +193,32 @@ public class CODPlayerListener extends PlayerListener {
         }
     }
     
-    @Override
-    public void onPlayerPickupItem(PlayerPickupItemEvent event) {
-        CraftEntity item = (CraftEntity)event.getItem();
-        int itemId = ((EntityItem)item.getHandle()).itemStack.id;
-        int amm = ((EntityItem)item.getHandle()).itemStack.count;
-        if (!allowed_pickup.contains(Material.getMaterial(itemId))) {
-            event.setCancelled(true);
-        } else if (Material.getMaterial(itemId) == Material.FEATHER) {
-            int ammo = 0;
-            for (ItemStack i : event.getPlayer().getInventory().getContents()) {
-                if (i != null) {
-                    if (i.getType() == Material.FEATHER) {
-                        ammo += i.getAmount();
-                        event.getPlayer().getInventory().remove(i);
-                    }
+    private int inv_count(Inventory in, List<Material> m) {
+    	int out = 0;
+        for (ItemStack i : in.getContents()) {
+            if (i != null) {
+                if (m.contains(i.getType())) {
+                    out += i.getAmount();
                 }
             }
+        }
+        return out;
+    }
+    
+    private int inv_count(Inventory in, Material m) {
+    	return inv_count(in, Arrays.asList(m));
+    }
+    
+    @Override
+    public void onPlayerPickupItem(PlayerPickupItemEvent event) {
+        int itemId = event.getItem().getItemStack().getType().getId();
+        int amm = event.getItem().getItemStack().getAmount();
+        Material um = Material.getMaterial(itemId);
+        if (!allowed_pickup.contains(um)) {
+            event.setCancelled(true);
+        } else if (um == Material.FEATHER) {
+            int ammo = inv_count(event.getPlayer().getInventory(), Material.FEATHER);
+            event.getPlayer().getInventory().remove(Material.FEATHER);
             if (ammo < 99) {
                 event.getItem().remove();
                 amm += ammo;
@@ -225,15 +236,22 @@ public class CODPlayerListener extends PlayerListener {
                 i.setItem(7, new ItemStack(Material.FEATHER, amm));
             }
             event.setCancelled(true);
+        } else if (um == Material.IRON_SWORD || um == Material.RAW_FISH) {
+        	event.setCancelled(true);
+        	if (inv_count(event.getPlayer().getInventory(), Arrays.asList(Material.IRON_SWORD, Material.RAW_FISH)) == 0) {
+        		plugin.p(event.getPlayer()).giveItem(1, event.getItem().getItemStack());
+        	}
         }
         plugin.game.playerpickup(event, Material.getMaterial(itemId));
-        
     }
     
     @Override
     public void onPlayerChat(PlayerChatEvent event) {
         if (plugin.players.containsKey(event.getPlayer())) {
-            event.setMessage(plugin.d + plugin.p(event.getPlayer()).getTeam().getColour() + event.getMessage());
+        	event.setCancelled(true);
+        	for (Player i : plugin.getServer().getOnlinePlayers()) {
+        		i.sendMessage("<" + plugin.p(event.getPlayer()).nick + "> " + plugin.d + plugin.p(event.getPlayer()).getTeam().getColour() + event.getMessage());
+        	}
         }
     }
     
@@ -258,6 +276,10 @@ public class CODPlayerListener extends PlayerListener {
                     event.setUseItemInHand(Result.DENY);
                     event.getPlayer().updateInventory();
                 }
+            } else if (event.getPlayer().getItemInHand().getType() == Material.SNOW_BALL) {
+            	new grenade(plugin, event.getPlayer());
+            	event.getPlayer().getInventory().removeItem(new ItemStack(Material.SNOW_BALL, 1));
+            	event.setUseItemInHand(Result.DENY);
             } else if (event.getPlayer().getItemInHand().getType() == Material.RAW_FISH) {
                 event.setUseItemInHand(Result.DENY);
             }

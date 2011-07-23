@@ -57,6 +57,7 @@ import com.Top_Cat.CODMW.listeners.CODWeatherListener;
 import com.Top_Cat.CODMW.objects.Rotation;
 import com.Top_Cat.CODMW.Killstreaks.killstreak;
 import com.Top_Cat.CODMW.objects.door;
+import com.Top_Cat.CODMW.objects.grenade;
 import com.Top_Cat.CODMW.objects.map;
 import com.Top_Cat.CODMW.objects.player;
 import com.Top_Cat.CODMW.objects.redstone;
@@ -89,6 +90,7 @@ public class main extends JavaPlugin {
     public CODWeatherListener weatherListener;
     public CODInputListener inputListener;
     public ArrayList<killstreak> ks = new ArrayList<killstreak>();
+    public ArrayList<grenade> g = new ArrayList<grenade>();
     public ArrayList<Player> totele = new ArrayList<Player>();
     public final String d = "\u00C2\u00A7";
     door d1, d2, d3, d4;
@@ -189,7 +191,7 @@ public class main extends JavaPlugin {
 
         r = new redstone(currentWorld.getBlockAt(-6, 64, 0), this);
         
-        gm.createGame(this);
+        game = gm.createGame(this);
 
         players.clear();
         diam = 0;
@@ -502,6 +504,7 @@ public class main extends JavaPlugin {
         pm.registerEvent(Event.Type.CREATURE_SPAWN, entityListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PAINTING_BREAK, entityListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PAINTING_PLACE, entityListener, Priority.Normal, this);
+        pm.registerEvent(Event.Type.PROJECTILE_HIT, entityListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.ENTITY_REGAIN_HEALTH, entityListener, Priority.Normal, this);
 
         pm.registerEvent(Event.Type.CUSTOM_EVENT, inventoryListener, Priority.Normal, this);
@@ -521,6 +524,8 @@ public class main extends JavaPlugin {
         BukkitContrib.getItemManager().setItemName(Material.DISPENSER, "Sentry");
         BukkitContrib.getItemManager().setItemName(Material.DIAMOND, "Chopper");
         BukkitContrib.getItemManager().setItemName(Material.IRON_SWORD, "Knife");
+        BukkitContrib.getItemManager().setItemName(Material.GRILLED_PORK, "Power Pork");
+        BukkitContrib.getItemManager().setItemName(Material.FLINT, "Unlimited Arrows");
         
         setDoors();
         for (Player p : getServer().getOnlinePlayers()) {

@@ -52,10 +52,12 @@ public class TDM extends team_gm {
         attacker.addPoints(5);
         defender.addPoints(-2);
         
+        int add = attacker == defender ? -1 : 1;
+        
         if (attacker.getTeam() == team.GOLD) {
-            gold++;
+            gold += add;
         } else {
-            diam++;
+            diam += add;
         }
         
         if (diam >= 50) {

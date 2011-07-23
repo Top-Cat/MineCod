@@ -100,9 +100,14 @@ public enum Achievement {
     TEAMNOSWITCH(92, Stat.OTHER, -1, "Noswitch!", "Don't switch teams", Material.LEVER, 50, "A hidden achievement (4/5)"),
     KONAMI(93, Stat.OTHER, -1, "Konami Code", "Perform the konami code", Material.GREEN_RECORD, 50, "A hidden achievement (5/5)"),
     GIGLOCK_HOLMES(94, Stat.OTHER, -1, "Giglock Holmes", "Get the 5 hidden achievements", Material.MAP),
-    FISH_KILLS_10(95, Stat.FISH_KILLS, 10, "Out of plaice", "Get 10 fish kills", Material.RAW_FISH),
+    FISH_KILLS_10(95, Stat.FISH_KILLS, 10, "Codswallop", "Get 10 fish kills", Material.RAW_FISH),
     FISH_KILLS_50(96, Stat.FISH_KILLS, 50, "Oh my cod!", "Get 50 fish kills", Material.RAW_FISH),
     FISH_KILLS_100(97, Stat.FISH_KILLS, 100, "MineCOD", "Get 100 fish kills", Material.RAW_FISH),
+    FALL_DAMAGE_25(98, Stat.FALL_DAMAGE, 25, "A bit tipsy", "Take 25 fall damage", Material.LEATHER_BOOTS),
+    FALL_DAMAGE_50(99, Stat.FALL_DAMAGE, 50, "One beer too many", "Take 50 fall damage", Material.LEATHER_BOOTS),
+    FALL_DAMAGE_100(100, Stat.FALL_DAMAGE, 100, "Try walking in a straight line", "Take 100 fall damage", Material.LEATHER_BOOTS),
+    FALL_DAMAGE_250(101, Stat.FALL_DAMAGE, 250, "Definitely Drunk", "Take 250 fall damage", Material.LEATHER_BOOTS),
+    FALL_DAMAGE_500(102, Stat.FALL_DAMAGE, 500, "George Michael", "Take 500 fall damage", Material.LEATHER_BOOTS),
     ;
     
     private final int id;

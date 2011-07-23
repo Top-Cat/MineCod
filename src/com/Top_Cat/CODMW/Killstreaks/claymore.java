@@ -2,14 +2,11 @@ package com.Top_Cat.CODMW.Killstreaks;
 
 import java.util.Date;
 
-import net.minecraft.server.World;
-
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
-import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -17,6 +14,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.listeners.CODBlockListener;
+import com.Top_Cat.CODMW.objects.Reason;
 import com.Top_Cat.CODMW.sql.Achievement;
 import com.Top_Cat.CODMW.sql.Stat;
 
@@ -109,7 +107,7 @@ public class claymore extends placeable {
         int kill = 0;
         for (Player p : plugin.players.keySet()) {
             if ((plugin.game.canHit(getOwner(), p) || p == getOwner()) && (p.getLocation().getBlock() == b || p.getLocation().getBlock() == d1 || p.getLocation().getBlock() == d2)) {
-                plugin.p(p).incHealth(20, getOwner(), 3, this);
+                plugin.p(p).incHealth(20, getOwner(), Reason.CLAYMORE, this);
                 kill++;
             }
         }
@@ -118,9 +116,11 @@ public class claymore extends placeable {
         }
         init = new Date().getTime() + 10000;
         plugin.currentWorld.createExplosion(b.getLocation(), 0);
-        ((World) ((CraftWorld)plugin.currentWorld).getHandle()).a("explode", b.getX(), b.getY(), b.getZ(), 1, 1, 1);
-        ((World) ((CraftWorld)plugin.currentWorld).getHandle()).a("smoke", b.getX(), b.getY(), b.getZ(), 1, 1, 1);
+        //((World) ((CraftWorld)plugin.currentWorld).getHandle()).a("explode", b.getX(), b.getY(), b.getZ(), 1, 1, 1);
+        //((World) ((CraftWorld)plugin.currentWorld).getHandle()).a("smoke", b.getX(), b.getY(), b.getZ(), 1, 1, 1);
         destroy();
+        
+        
     }
 
     public void detect(Player p) {

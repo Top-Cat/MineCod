@@ -114,7 +114,6 @@ public class player {
     }
     
     public void setTeam(team _t) {
-        System.out.println(_t.toString());
         t = _t;
     }
     
@@ -133,13 +132,13 @@ public class player {
     s.maxStat(Stat.MAX_POINTS, points);
     }
     
-    int slot = 3;
+    int slot = 0;
     
     public void addStreak() {
         streak++;
         for (Killstreaks ks : yks) {
             if (ks.getKills() == streak) {
-                giveItem(slot++, new ItemStack(ks.getMat(), ks.getAmm()));
+                giveItem(slot++ + 3, new ItemStack(ks.getMat(), ks.getAmm()));
                 s.incStat(ks.getStat());
                 
                 if ((new Date().getTime() - laststreak) < 20000) {
@@ -169,7 +168,7 @@ public class player {
         int out = 0;
         try {
             out = (int) p.p.getLocation().distance(plugin.game.floc.get(l));
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { }
         return out;
     }
     
@@ -189,9 +188,9 @@ public class player {
         if (plugin.game.floc.containsKey(l)) {
             plugin.game.floc.remove(l);
         }
-        if (killed.nick.equalsIgnoreCase("Gigthank")) {
+        if (killed.p.getDisplayName().equalsIgnoreCase("Gigthank")) {
             s.awardAchievement(Achievement.KILL_GIG);
-        } else if (killed.nick.equalsIgnoreCase("Notch")) {
+        } else if (killed.p.getDisplayName().equalsIgnoreCase("Notch")) {
             s.awardAchievement(Achievement.KILL_NOTCH);
         }
         if (reason.getStreak()) {
@@ -253,8 +252,7 @@ public class player {
         }
     }
     
-    public void incHealth(int _h, Player attacker, int reason, Object ks) {
-        Reason r = Reason.valueOf(reason);
+    public void incHealth(int _h, Player attacker, Reason r, Object ks) {
         for (killstreak i : plugin.ks) {
             _h = i.onDamage(_h, attacker, p, r, ks);
         }
@@ -269,6 +267,9 @@ public class player {
             regen = false;
             htime = new Date().getTime() + 10000;
             stime = new Date().getTime() + 5000;
+        }
+        if (r == Reason.FALL) {
+        	s.incStat(Stat.FALL_DAMAGE, _h);
         }
         if (h <= 0) {
             regens = 0;
@@ -320,6 +321,7 @@ public class player {
                 case HEADSHOT: desc = " headshot"; plugin.p(p).s.incStat(Stat.BOW_DEATHS); plugin.p(attacker).s.incStat(Stat.HEADSHOTS); plugin.p(attacker).s.incStat(Stat.BOW_KILLS); break;
                 case FISH_SMITE: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(p).nick + " was smited for using a premium fish!" + assist_txt); break;
                 case FISH: desc = " got a FISH KILL on"; plugin.p(p).s.incStat(Stat.FISH_DEATHS); plugin.p(attacker).s.incStat(Stat.FISH_KILLS); break;
+                case GRENADE: desc = " grenaded"; plugin.p(p).s.incStat(Stat.GRENADE_DEATHS); plugin.p(attacker).s.incStat(Stat.GRENADE_KILLS); break;
             }
             if (r != Reason.FALL && r != Reason.FISH_SMITE) {
                 plugin.game.sendMessage(team.BOTH, plugin.d + plugin.p(attacker).getTeam().getColour() + plugin.p(attacker).nick + as + plugin.d + "c" + desc + " " + plugin.d + t.getColour() + nick + assist_txt);
@@ -344,6 +346,7 @@ public class player {
             p.teleport(plugin.prespawn);
             plugin.game.onKill(plugin.p(attacker), this, p.getLocation());
             dead = true;
+            slot = 0;
         }
         if (_h > 0) {
             assist = attacker;
@@ -378,6 +381,8 @@ public class player {
                           BukkitContrib.getAppearanceManager().setGlobalTitle(p, plugin.d + "b" + nick);
                           BukkitContrib.getAppearanceManager().setGlobalCloak(p, "http://www.thorgaming.com/minecraft/blueteamcape.png");
                           break;
+            case BOTH:    BukkitContrib.getAppearanceManager().setGlobalTitle(p, nick);
+                          break;
         }
         if (weapons) {
             p.getInventory().setItem(0, new ItemStack(Material.BOW, 1));
@@ -386,6 +391,7 @@ public class player {
             } else {
                 p.getInventory().setItem(1, new ItemStack(Material.IRON_SWORD, 1));
             }
+            p.getInventory().setItem(2, new ItemStack(Material.SNOW_BALL, 2));
             p.getInventory().setItem(8, new ItemStack(Material.ARROW, 15));
             p.getInventory().setItem(7, new ItemStack(Material.FEATHER, 75));
         }

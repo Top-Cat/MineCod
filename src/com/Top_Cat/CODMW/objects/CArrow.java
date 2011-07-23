@@ -21,10 +21,10 @@ public class CArrow extends EntityArrow {
     private double firstY = 123.0D;
     public int speed = 2;
     main plugin;
-    public int reason = 0;
+    public Reason reason = Reason.NONE;
     public ownable killstreak;
 
-    public CArrow(org.bukkit.World w, LivingEntity el, Block b, main instance, int yaw, int pitch, int r, int _reason, ownable ks) {
+    public CArrow(org.bukkit.World w, LivingEntity el, Block b, main instance, int yaw, int pitch, int r, Reason _reason, ownable ks) {
         super(((CraftWorld)w).getHandle());
         
         killstreak = ks;

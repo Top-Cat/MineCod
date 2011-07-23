@@ -6,15 +6,22 @@ softdepend: [BukkitContrib]
 commands:
     r:
         description: Reload bow
+        usage: /<command>
     s:
         description: Display score
+        usage: /<command> [d/g]
     team:
         description: Team operations
+        usage: /<command> switch
     vote:
         description: Vote for game options
+        usage: /<command> [type] [for]
     y:
         description: Vote yes
+        usage: /<command>
     n:
         description: Vote no
+        usage: /<command>
     auth:
         description: Link minecraft and forum accounts
+        usage: /<command> [authcode]

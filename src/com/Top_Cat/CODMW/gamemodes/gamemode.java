@@ -32,6 +32,8 @@ import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
 import com.Top_Cat.CODMW.Killstreaks.Killstreaks;
 import com.Top_Cat.CODMW.Killstreaks.killstreak;
+import com.Top_Cat.CODMW.objects.Reason;
+import com.Top_Cat.CODMW.objects.grenade;
 import com.Top_Cat.CODMW.objects.player;
 import com.Top_Cat.CODMW.sql.Achievement;
 import com.Top_Cat.CODMW.sql.Stat;
@@ -98,7 +100,7 @@ public class gamemode {
     }
     
     public void scheduleGame() {
-        t.schedule(new startgame(), 55000);
+        t.schedule(new startgame(), 5000); //TODO: Change me back to 55000
     }
 
     public class startgame extends TimerTask {
@@ -186,7 +188,8 @@ public class gamemode {
         dl = !dl;    
     }
     
-    public void destroy() {
+    @SuppressWarnings("unchecked")
+	public void destroy() {
         plugin.getServer().getScheduler().cancelTask(t1);
         plugin.getServer().getScheduler().cancelTask(t2);
         plugin.getServer().getScheduler().cancelTask(t3);
@@ -196,7 +199,7 @@ public class gamemode {
         } catch (NoClassDefFoundError e) {
             //This happens on server stop
         }
-        for (killstreak i : plugin.ks) {
+        for (killstreak i : (ArrayList<killstreak>) plugin.ks.clone()) {
             i.destroy();
         }
         plugin.ks.clear();
@@ -229,7 +232,7 @@ public class gamemode {
                 spawnPlayer(p.p, false);
             }
             if (p.htime < new Date().getTime() && p.h < 20) {
-                p.incHealth(-3, null, 0, null);
+                p.incHealth(-3, null, Reason.NONE, null);
             }
             p.p.setHealth(p.h);
         }
@@ -239,6 +242,9 @@ public class gamemode {
     public void tickfast() {
         for (killstreak i : (ArrayList<killstreak>) plugin.ks.clone()) {
             i.tickfast();
+        }
+        for (grenade i : (ArrayList<grenade>) plugin.g.clone()) {
+            i.explode();
         }
         List<Entity> r2 = new ArrayList<Entity>();
         for (Entity i : plugin.currentWorld.getEntities()) {
@@ -256,7 +262,7 @@ public class gamemode {
                 ploc.put((Arrow) i, l);
             } else if (i instanceof Item) {
                 int itemId = ((EntityItem)((CraftEntity)i).getHandle()).itemStack.id;
-                if (!plugin.playerListener.allowed_pickup.contains(Material.getMaterial(itemId)) && !Killstreaks.table2.keySet().contains(Material.getMaterial(itemId))) {
+                if (!plugin.playerListener.allowed_pickup.contains(Material.getMaterial(itemId)) && !Killstreaks.table2.keySet().contains(Material.getMaterial(itemId)) && itemId != 332) {
                     r2.add(i);
                 }
             } else if (i instanceof Creature && !(i instanceof Wolf)) {

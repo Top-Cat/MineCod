@@ -57,7 +57,16 @@ public enum Stat {
     FISH_KILLS(50),
     FISH_DEATHS(51),
     PORK_USED(52),
-    PORK_ACHIEVED(53);
+    PORK_ACHIEVED(53),
+    GRENADE_KILLS(54),
+    GRENADE_DEATHS(55),
+    GRENADES_THROWN(56),
+    UARROWS_USED(57),
+    UARROWS_ACHIEVED(58),
+    FALL_DAMAGE(59),
+    CAREPACKAGES_ACHIEVED(60),
+    CAREPACKAGES_USED(61),
+    ;
     
     private final int id;
 
