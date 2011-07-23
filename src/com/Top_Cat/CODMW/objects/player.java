@@ -343,8 +343,9 @@ public class player {
                 }
             }
             
+            Location l = p.getLocation();
             p.teleport(plugin.prespawn);
-            plugin.game.onKill(plugin.p(attacker), this, p.getLocation());
+            plugin.game.onKill(plugin.p(attacker), this, l);
             dead = true;
             slot = 0;
         }

@@ -57,9 +57,9 @@ public class CTF extends team_gm {
         defender.addPoints(-1);
         
         if (defender == plugin.p(f1.p)) {
-            f1.drop = defender.p.getLocation();
+            f1.drop = l;
         } else if (defender == plugin.p(f2.p)) {
-            f2.drop = defender.p.getLocation();
+            f2.drop = l;
         }
     }
     

@@ -236,11 +236,6 @@ public class CODPlayerListener extends PlayerListener {
                 i.setItem(7, new ItemStack(Material.FEATHER, amm));
             }
             event.setCancelled(true);
-        } else if (um == Material.IRON_SWORD || um == Material.RAW_FISH) {
-        	event.setCancelled(true);
-        	if (inv_count(event.getPlayer().getInventory(), Arrays.asList(Material.IRON_SWORD, Material.RAW_FISH)) == 0) {
-        		plugin.p(event.getPlayer()).giveItem(1, event.getItem().getItemStack());
-        	}
         }
         plugin.game.playerpickup(event, Material.getMaterial(itemId));
     }
