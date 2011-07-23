@@ -174,7 +174,7 @@ public class gamemode {
             lastkill.s.incStat(Stat.LAST_KILL);
         }
         
-        sendMessage(team.BOTH, plugin.d + "9Game ended, game will resume on '" + plugin.currentMap.name + "' in 60 seconds");
+        sendMessage(team.BOTH, plugin.d + "9Game ended, game will resume on '" + plugin.gm.toString().toLowerCase() + "_" + plugin.currentMap.time + "' in 60 seconds");
     }
     
     public void onKill(player attacker, player defender, Location l) {

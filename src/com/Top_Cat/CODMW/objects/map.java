@@ -27,7 +27,7 @@ import com.Top_Cat.CODMW.sql.conn;
 public class map {
     
     private static final Yaml yaml = new Yaml(new SafeConstructor());
-    public String name;
+    public String name, title;
     public int time;
     public boolean storm;
     conn sql;
@@ -84,11 +84,15 @@ public class map {
             Map<String, Object> map = (Map<String, Object>) yaml.load(new FileInputStream("./" + mapname + "/minecod_data.yml"));
             
             name = mapname;
+            title = mapname;
             try {
                 time = Integer.parseInt(map.get("time").toString());
             } catch (NullPointerException ex) {
                 throw new Exception("world time for '" + mapname + "' is not defined");
             }
+            try {
+                title = map.get("name").toString();
+            } catch (NullPointerException ex) { }
             try {
                 storm = (Boolean) map.get("storm");
             } catch (NullPointerException ex) {
