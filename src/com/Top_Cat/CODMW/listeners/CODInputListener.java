@@ -12,6 +12,7 @@ import org.bukkitcontrib.event.input.KeyReleasedEvent;
 import org.bukkitcontrib.keyboard.Keyboard;
 
 import com.Top_Cat.CODMW.main;
+import com.Top_Cat.CODMW.objects.player;
 import com.Top_Cat.CODMW.sql.Achievement;
 
 public class CODInputListener extends InputListener {
@@ -25,27 +26,25 @@ public class CODInputListener extends InputListener {
     }
     
     @Override
-    public void onKeyReleasedEvent(KeyReleasedEvent event) {
-        
-    }
-    
-    @Override
     public void onKeyPressedEvent(KeyPressedEvent event) {
-        if (event.getKey() == Keyboard.KEY_R) {
-            plugin.getServer().dispatchCommand(event.getPlayer(), "r");
-            plugin.p(event.getPlayer()).rtime = new Date().getTime() + 3000;
-        }
-        int p = konami_p.containsKey(event.getPlayer()) ? konami_p.get(event.getPlayer()) : 0;
-        if (event.getKey() == konami.get(p)) {
-            p++;
-            if (p >= 10) {
-                plugin.p(event.getPlayer()).s.awardAchievement(Achievement.KONAMI);
-                p = 0;
-            }
-        } else {
-            p = 0;
-        }
-        konami_p.put(event.getPlayer(), p);
+    	player u = plugin.p(event.getPlayer());
+    	if (u != null) {
+	        if (event.getKey() == Keyboard.KEY_R) {
+	            plugin.getServer().dispatchCommand(event.getPlayer(), "r");
+	            u.rtime = new Date().getTime() + 3000;
+	        }
+	        int p = konami_p.containsKey(event.getPlayer()) ? konami_p.get(event.getPlayer()) : 0;
+	        if (event.getKey() == konami.get(p)) {
+	            p++;
+	            if (p >= 10) {
+	                u.s.awardAchievement(Achievement.KONAMI);
+	                p = 0;
+	            }
+	        } else {
+	            p = 0;
+	        }
+	        konami_p.put(event.getPlayer(), p);
+    	}
     }
     
 }
