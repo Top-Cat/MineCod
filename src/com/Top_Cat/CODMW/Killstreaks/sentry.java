@@ -49,7 +49,7 @@ public class sentry extends placeable {
     @Override
     public void onInteract(PlayerInteractEvent event) {
         super.onInteract(event);
-        if (event.getAction() == Action.LEFT_CLICK_BLOCK && event.getPlayer().getItemInHand().getType() == Material.IRON_SWORD) {
+        if (event.getAction() == Action.LEFT_CLICK_BLOCK && (event.getPlayer().getItemInHand().getType() == Material.IRON_SWORD || event.getPlayer().getItemInHand().getType() == Material.RAW_FISH)) {
             if (event.getClickedBlock() == bt && plugin.game.canHit(event.getPlayer(), getOwner())) {
                 destroy();
                 plugin.p(event.getPlayer()).addPoints(3);
@@ -68,8 +68,8 @@ public class sentry extends placeable {
     
     @Override
     public void tickfast() {
-    	super.tickfast();
-    	for (player i : plugin.players.values()) {
+        super.tickfast();
+        for (player i : plugin.players.values()) {
             Location l1 = i.p.getLocation();
             Location l2 = b.getLocation();
             if (plugin.game.canHit(getOwner(), i.p) && l1.distance(l2) < 10 && Math.abs(l1.getY() - l2.getY()) < 3) {
