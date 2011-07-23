@@ -8,7 +8,6 @@ import java.util.List;
 import org.bukkit.entity.Player;
 import org.bukkitcontrib.event.input.InputListener;
 import org.bukkitcontrib.event.input.KeyPressedEvent;
-import org.bukkitcontrib.event.input.KeyReleasedEvent;
 import org.bukkitcontrib.keyboard.Keyboard;
 
 import com.Top_Cat.CODMW.main;
