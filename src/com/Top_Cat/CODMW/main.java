@@ -31,6 +31,7 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -73,7 +74,7 @@ import java.security.MessageDigest;
 
 public class main extends JavaPlugin {
 
-    int minecod_version = 10;
+    int minecod_version = 12;
     
     public World currentWorld;
     public Location teamselect;
@@ -135,7 +136,10 @@ public class main extends JavaPlugin {
                 File plugin = new File(directory.getPath(), "MineCod.jar");
                 if (plugin.exists()) {
                     FileUtil.copy(plugin, this.getFile());
-                    plugin.delete();
+                    try {
+						plugin.delete();
+					}
+					catch (SecurityException e1) {}
                 }
             }
         }
@@ -541,29 +545,38 @@ public class main extends JavaPlugin {
     public void onEnable() {
         try {
             log = getServer().getLogger();
-            try {
-                URL url = new URL("http://www.thegigcast.net/minecod/version.txt");
-                BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-                String str;
-                while ((str = in.readLine()) != null) {
-                    int version = Integer.parseInt(str);
-                    if (version > minecod_version){
-                        in.close();
-                        File directory = new File(getServer().getUpdateFolder());
-                        File plugin = new File(directory.getPath(), "MineCod.jar");
-                        download(log, new URL("http://www.thegigcast.net/minecod/MineCod.jar"), plugin);
-                        break;
-                    }
-                }
-                in.close();
-            }
-            catch (Exception e) { e.printStackTrace(); }
+            (new Thread() {
+    			public void run() {
+    				update();
+    			}
+    		}).start();
             
             setup();
         } catch (Exception e) {
             log.log(Level.SEVERE, "Error loading minecod: " + e.getMessage());
             getServer().getPluginManager().disablePlugin(this);
         }
+    }
+    
+    public void update() {
+    	try {
+            URL url = new URL("http://www.thegigcast.net/minecod/version.txt");
+            BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+            String str;
+            while ((str = in.readLine()) != null) {
+                int version = Integer.parseInt(str);
+                if (version > minecod_version){
+                    in.close();
+                    File directory = new File(getServer().getUpdateFolder());
+                    File plugin = new File(directory.getPath(), "MineCod.jar");
+                    download(log, new URL("http://www.thegigcast.net/minecod/MineCod.jar"), plugin);
+                    getServer().dispatchCommand(new ConsoleCommandSender(getServer()), "reload");
+                    break;
+                }
+            }
+            in.close();
+        }
+        catch (Exception e) { e.printStackTrace(); }
     }
     
     public static void download(Logger log, URL url, File file) throws IOException {
