@@ -55,6 +55,7 @@ import com.Top_Cat.CODMW.listeners.CODInventoryListener;
 import com.Top_Cat.CODMW.listeners.CODPlayerListener;
 import com.Top_Cat.CODMW.listeners.CODWeatherListener;
 import com.Top_Cat.CODMW.objects.Rotation;
+import com.Top_Cat.CODMW.Killstreaks.Killstreaks;
 import com.Top_Cat.CODMW.Killstreaks.killstreak;
 import com.Top_Cat.CODMW.objects.door;
 import com.Top_Cat.CODMW.objects.grenade;
@@ -518,14 +519,11 @@ public class main extends JavaPlugin {
         t.schedule(new sun(), 0, 20000);
 
         BukkitContrib.getItemManager().setItemName(Material.FEATHER, "Ammo");
-        BukkitContrib.getItemManager().setItemName(Material.WALL_SIGN, "Wall Sign");
-        BukkitContrib.getItemManager().setItemName(Material.APPLE, "Invulnerability");
-        BukkitContrib.getItemManager().setItemName(Material.BONE, "Dogs");
-        BukkitContrib.getItemManager().setItemName(Material.DISPENSER, "Sentry");
-        BukkitContrib.getItemManager().setItemName(Material.DIAMOND, "Chopper");
         BukkitContrib.getItemManager().setItemName(Material.IRON_SWORD, "Knife");
-        BukkitContrib.getItemManager().setItemName(Material.GRILLED_PORK, "Power Pork");
-        BukkitContrib.getItemManager().setItemName(Material.FLINT, "Unlimited Arrows");
+        BukkitContrib.getItemManager().setItemName(Material.RAW_FISH, "Fish!");
+        for (Killstreaks i : Killstreaks.values()) {
+            BukkitContrib.getItemManager().setItemName(i.getMat(), i.toString());
+        }
         
         setDoors();
         for (Player p : getServer().getOnlinePlayers()) {
