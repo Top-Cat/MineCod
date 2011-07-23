@@ -100,7 +100,7 @@ public class gamemode {
     }
     
     public void scheduleGame() {
-        t.schedule(new startgame(), 5000); //TODO: Change me back to 55000
+        t.schedule(new startgame(), 55000);
     }
 
     public class startgame extends TimerTask {
