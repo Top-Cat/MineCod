@@ -3,6 +3,7 @@ package com.Top_Cat.CODMW.objects;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event.Type;
 import org.bukkit.inventory.ItemStack;
 
 import com.Top_Cat.CODMW.main;
@@ -43,7 +44,9 @@ public class grenade extends ownable {
 	    		if (i instanceof Player && (plugin.game.canHit(getOwner(), (Player) i) || i == getOwner())) {
 	    			player p = plugin.p((Player) i);
 	    			if (p != null) {
-	    				p.incHealth((int) (Math.pow(1.5, -i.getLocation().distance(s_entity.getLocation())) * 16), getOwner(), Reason.GRENADE, null);
+	    				int cdf = (int) (StatUtil.erfc((i.getLocation().distance(s_entity.getLocation()) / 2) - 1.5) * 11);
+	    				//int exp = (int) (Math.pow(1.4, -i.getLocation().distance(s_entity.getLocation())) * 22);
+	    				p.incHealth(cdf, getOwner(), Reason.GRENADE, null);
 	    			}
 	    		}
 	    	}
