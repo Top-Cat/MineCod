@@ -3,7 +3,6 @@ package com.Top_Cat.CODMW.objects;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Type;
 import org.bukkit.inventory.ItemStack;
 
 import com.Top_Cat.CODMW.main;
