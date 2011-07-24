@@ -3,7 +3,6 @@ package com.Top_Cat.CODMW.gamemodes;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -25,6 +24,7 @@ import org.bukkit.entity.Wolf;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkitcontrib.BukkitContrib;
 
@@ -51,7 +51,11 @@ public class gamemode {
     private int t1, t2, t3, t4;
     boolean dl = false;
     public int time = 0;
+    int gamelength = 600;
+    int scorelimit = 0;
     Timer t = new Timer();
+    public int melee = 0;
+    public int respawntime = 0;
     
     public gamemode(main instance) {
         plugin = instance;
@@ -65,6 +69,9 @@ public class gamemode {
         winmesssages.add("Good job seals");
         winmesssages.add("You will receive cake for your victory here!");
         
+        gamelength = plugin.getVarValue("gamelength", 600);
+        melee = plugin.getVarValue("melee", 0);
+        respawntime = plugin.getVarValue("respawntime", 0);
         scheduleGame();
     }
     
@@ -100,7 +107,7 @@ public class gamemode {
     }
     
     public void scheduleGame() {
-        t.schedule(new startgame(), 55000);
+        t.schedule(new startgame(), plugin.getVarValue("waittime", 55) * 1000);
     }
 
     public class startgame extends TimerTask {
@@ -130,7 +137,7 @@ public class gamemode {
     
     public void spawnPlayer(Player p, boolean start) {
         player _p = plugin.p(p);
-        _p.spawn = new Date().getTime();
+        _p.spawn = System.currentTimeMillis();
         _p.clearinv();
         _p.setinv();
         
@@ -189,7 +196,7 @@ public class gamemode {
     }
     
     @SuppressWarnings("unchecked")
-	public void destroy() {
+    public void destroy() {
         plugin.getServer().getScheduler().cancelTask(t1);
         plugin.getServer().getScheduler().cancelTask(t2);
         plugin.getServer().getScheduler().cancelTask(t3);
@@ -207,7 +214,7 @@ public class gamemode {
         t.cancel();
     }
     
-    public void onRespawn(Player p) {}
+    public void afterDeath(Player p) {}
     
     @SuppressWarnings("unchecked")
     public void tick() {
@@ -215,7 +222,7 @@ public class gamemode {
             i.tick();
         }
         for (player p : plugin.players.values()) {
-            int life = (int) (new Date().getTime() - p.spawn);
+            int life = (int) (System.currentTimeMillis() - p.spawn);
             if (life > 300000) {
                 p.s.awardAchievement(Achievement.BEAR_GRYLLS);
             } else if (life > 180000) {
@@ -223,15 +230,7 @@ public class gamemode {
             } else if (life > 120000) {
                 p.s.awardAchievement(Achievement.HIDING);
             }
-            if (p.dead) {
-                onRespawn(p.p);
-                if (p.todrop > 0) {
-                    plugin.currentWorld.dropItem(p.dropl, new ItemStack(Material.FEATHER, p.todrop));
-                    p.todrop = 0;
-                }
-                spawnPlayer(p.p, false);
-            }
-            if (p.htime < new Date().getTime() && p.h < 20) {
+            if (p.htime < System.currentTimeMillis() && p.h < 20) {
                 p.incHealth(-3, null, Reason.NONE, null);
             }
             p.p.setHealth(p.h);
@@ -245,6 +244,19 @@ public class gamemode {
         }
         for (grenade i : (ArrayList<grenade>) plugin.g.clone()) {
             i.explode();
+        }
+        for (player p : plugin.players.values()) {
+            if (!p.dropped && p.time_todrop < System.currentTimeMillis()) {
+                afterDeath(p.p);
+                if (p.todrop > 0) {
+                    plugin.currentWorld.dropItem(p.dropl, new ItemStack(Material.FEATHER, p.todrop));
+                    p.todrop = 0;
+                }
+                p.dropped = true;
+            }
+            if (p.dead && p.tospawn < System.currentTimeMillis()) {
+                spawnPlayer(p.p, false);
+            }
         }
         List<Entity> r2 = new ArrayList<Entity>();
         for (Entity i : plugin.currentWorld.getEntities()) {
@@ -290,6 +302,15 @@ public class gamemode {
             plugin.totele.clear();
         }
         
+    }
+    
+    public void playerquit(PlayerQuitEvent event) {
+        String nick = event.getPlayer().getDisplayName();
+        player p = plugin.p(event.getPlayer());
+        if (p != null) {
+            nick = p.nick;
+        }
+        event.setQuitMessage(plugin.d + "9" + plugin.leave_msg.replaceAll("\\$nick", nick));
     }
     
     public void playerjoin(PlayerJoinEvent event) {

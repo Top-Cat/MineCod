@@ -1,7 +1,5 @@
 package com.Top_Cat.CODMW.Killstreaks;
 
-import java.util.Date;
-
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -29,7 +27,7 @@ public class claymore extends placeable {
         super(instance, _o, args);
         b = (Block) args[0];
         r = (Integer) CODBlockListener.rotateblock(_o, b);
-        init = new Date().getTime() + 1000;
+        init = System.currentTimeMillis() + 1000;
         getOwnerplayer().s.incStat(Stat.CLAYMORES_USED);
         setText();
         switch (r) {
@@ -73,7 +71,7 @@ public class claymore extends placeable {
     @Override
     public void tickfast() {
         super.tickfast();
-        if (init < new Date().getTime() && b.getType() != Material.WALL_SIGN) {
+        if (init < System.currentTimeMillis() && b.getType() != Material.WALL_SIGN) {
             b.setType(Material.WALL_SIGN);
             
             switch (r) {
@@ -87,7 +85,7 @@ public class claymore extends placeable {
                 setText();
             }
         }
-        if (exploded && explode < new Date().getTime()) {
+        if (exploded && explode < System.currentTimeMillis()) {
             kill();
             destroy();
         }
@@ -114,7 +112,7 @@ public class claymore extends placeable {
         if (kill > 1) {
             plugin.p(getOwner()).s.awardAchievement(Achievement.CLAYMORE_MULTI);
         }
-        init = new Date().getTime() + 10000;
+        init = System.currentTimeMillis() + 10000;
         plugin.currentWorld.createExplosion(b.getLocation(), 0);
         //((World) ((CraftWorld)plugin.currentWorld).getHandle()).a("explode", b.getX(), b.getY(), b.getZ(), 1, 1, 1);
         //((World) ((CraftWorld)plugin.currentWorld).getHandle()).a("smoke", b.getX(), b.getY(), b.getZ(), 1, 1, 1);
@@ -129,7 +127,7 @@ public class claymore extends placeable {
                 plugin.currentWorld.playEffect(p.getLocation(), Effect.CLICK2, 0);
             }
             exploded = true;
-            explode = new Date().getTime() + 400;
+            explode = System.currentTimeMillis() + 400;
         }
     }
 

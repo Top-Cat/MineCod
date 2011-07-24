@@ -16,9 +16,9 @@ public class CODInventoryListener extends InventoryListener {
     
     @Override
     public void onInventoryClick(InventoryClickEvent event) {
-    	if (event.getSlotType() == InventorySlotType.ARMOR || event.getSlotType() == InventorySlotType.BOOTS || event.getSlotType() == InventorySlotType.HELMET || event.getSlotType() == InventorySlotType.LEGGINGS) {
-    		event.setCancelled(true);
-    	}
+        if (event.getSlotType() == InventorySlotType.ARMOR || event.getSlotType() == InventorySlotType.BOOTS || event.getSlotType() == InventorySlotType.HELMET || event.getSlotType() == InventorySlotType.LEGGINGS) {
+            event.setCancelled(true);
+        }
     }
     
 }

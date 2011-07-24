@@ -1,6 +1,6 @@
 name: MineCod
 main: com.Top_Cat.CODMW.main
-version: 0.1
+version: 0.1.1
 author: Top_Cat
 softdepend: [BukkitContrib]
 commands:

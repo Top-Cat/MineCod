@@ -72,7 +72,7 @@ import java.security.MessageDigest;
 
 public class main extends JavaPlugin {
 
-    int minecod_version = 14;
+    int minecod_version = 15;
     
     public World currentWorld;
     public Location teamselect;
@@ -103,11 +103,15 @@ public class main extends JavaPlugin {
     Random gen = new Random();
     public GameModes gm = GameModes.FFA;
     public String ip;
-    public String name = "MineCod Server";
-    public String welcome_msg = "Welcome to the MineCod Server!";
-    public String join_msg = "$nick has joined the fray";
+    public String name;
+    public String welcome_msg;
+    public String join_msg;
+    public String leave_msg;
     Logger log;
     Configuration mainconfig;
+    Configuration gmconfig;
+    Configuration mapconfig;
+    Configuration specconfig;
     
     public void clearinv(Player p) {
         PlayerInventory i = p.getInventory();
@@ -135,9 +139,9 @@ public class main extends JavaPlugin {
                 if (plugin.exists()) {
                     FileUtil.copy(plugin, this.getFile());
                     try {
-						plugin.delete();
-					}
-					catch (SecurityException e1) {}
+                        plugin.delete();
+                    }
+                    catch (SecurityException e1) {}
                 }
             }
         }
@@ -216,6 +220,16 @@ public class main extends JavaPlugin {
     public void loadmap() {
         gm = map_rot.get(rot).gm;
         currentMap = map_rot.get(rot).m;
+        
+        gmconfig = new Configuration(new File("./" + gm.toString().toLowerCase() + ".yml"));
+        gmconfig.load();
+        
+        mapconfig = new Configuration(new File("./" + currentMap.name + "/minecod.yml"));
+        mapconfig.load();
+        
+        specconfig = new Configuration(new File("./" + currentMap.name + "/" + gm.toString().toLowerCase() + ".yml"));
+        specconfig.load();
+        
         rot++;
         while (rot >= map_rot.size()) {
             rot -= map_rot.size();
@@ -223,7 +237,9 @@ public class main extends JavaPlugin {
         preparemap();
     }
 
-    
+    public int getVarValue(String name, int def) {
+        return specconfig.getInt(name, mapconfig.getInt(name, gmconfig.getInt(name, mainconfig.getInt(name, def))));
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -431,14 +447,15 @@ public class main extends JavaPlugin {
         weatherListener = new CODWeatherListener(this);
         inputListener = new CODInputListener(this);
         
-    	mainconfig = new Configuration(new File("./minecod.yml"));
-    	mainconfig.load();
-    	
-    	name = mainconfig.getString("server-name", "MineCod Server");
-    	welcome_msg = mainconfig.getString("welcome-message", "Welcome to an awesome MineCod Server!");
-    	join_msg = mainconfig.getString("join-message", "$nick has joined the fray");
-    	
-		ArrayList<String> rotation = (ArrayList<String>) mainconfig.getStringList("map-rotation", Arrays.asList("ffa_MineCod-Crash", "ctf_MineCod-Broadcast", "ffa_MineCod-Vacant", "tdm_MineCod-Shipment", "ffa_MineCod-Broadcast", "ctf_MineCod-Vacant", "tdm_MineCod-Crash", "ctf_MineCod-Shipment", "tdm_MineCod-Vacant", "ctf_MineCod-Crash", "ffa_MineCod-Shipment", "tdm_MineCod-Broadcast"));
+        mainconfig = new Configuration(new File("./minecod.yml"));
+        mainconfig.load();
+        
+        name = mainconfig.getString("server-name", "MineCod Server");
+        welcome_msg = mainconfig.getString("welcome-message", "Welcome to an awesome MineCod Server!");
+        join_msg = mainconfig.getString("join-message", "$nick has joined the fray");
+        leave_msg = mainconfig.getString("leave-message", "$nick has left the game");
+        
+        ArrayList<String> rotation = (ArrayList<String>) mainconfig.getStringList("map-rotation", Arrays.asList("ffa_MineCod-Crash", "ctf_MineCod-Broadcast", "ffa_MineCod-Vacant", "tdm_MineCod-Shipment", "ffa_MineCod-Broadcast", "ctf_MineCod-Vacant", "tdm_MineCod-Crash", "ctf_MineCod-Shipment", "tdm_MineCod-Vacant", "ctf_MineCod-Crash", "ffa_MineCod-Shipment", "tdm_MineCod-Broadcast"));
         try {
             for (String i : rotation) {
                 String[] mi = ((String) i).split("_");
@@ -500,6 +517,7 @@ public class main extends JavaPlugin {
         BukkitContrib.getItemManager().setItemName(Material.FEATHER, "Ammo");
         BukkitContrib.getItemManager().setItemName(Material.IRON_SWORD, "Knife");
         BukkitContrib.getItemManager().setItemName(Material.RAW_FISH, "Fish!");
+        BukkitContrib.getItemManager().setItemName(Material.SNOW_BALL, "Grenade");
         for (Killstreaks i : Killstreaks.values()) {
             BukkitContrib.getItemManager().setItemName(i.getMat(), i.toString());
         }
@@ -521,21 +539,21 @@ public class main extends JavaPlugin {
         try {
             log = getServer().getLogger();
             (new Thread() {
-    			public void run() {
-    				update();
-    			}
-    		}).start();
+                public void run() {
+                    update();
+                }
+            }).start();
             
             setup();
         } catch (Exception e) {
-        	e.printStackTrace();
+            e.printStackTrace();
             log.log(Level.SEVERE, "Error loading minecod: " + e.getMessage());
             getServer().getPluginManager().disablePlugin(this);
         }
     }
     
     public void update() {
-    	try {
+        try {
             URL url = new URL("http://www.thegigcast.net/minecod/version.txt");
             BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
             String str;

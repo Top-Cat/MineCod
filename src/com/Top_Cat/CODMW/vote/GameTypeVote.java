@@ -1,7 +1,5 @@
 package com.Top_Cat.CODMW.vote;
 
-import java.util.Date;
-
 import org.bukkit.entity.Player;
 
 import com.Top_Cat.CODMW.main;
@@ -40,7 +38,7 @@ public class GameTypeVote extends Vote {
             na = t.nick;
         }
         for (Player i : plugin.getServer().getOnlinePlayers()) {
-            i.sendMessage(na + " voted " + fg + " the mode change. (" + ((y * 100) / (plugin.tot)) + "% in favour, " + ((end - new Date().getTime()) / 1000) + " seconds left)");
+            i.sendMessage(na + " voted " + fg + " the mode change. (" + ((y * 100) / (plugin.tot)) + "% in favour, " + ((end - System.currentTimeMillis()) / 1000) + " seconds left)");
         }
     }
     

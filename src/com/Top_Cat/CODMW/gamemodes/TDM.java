@@ -1,7 +1,6 @@
 package com.Top_Cat.CODMW.gamemodes;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -16,6 +15,7 @@ public class TDM extends team_gm {
     
     public TDM(main instance) {
         super(instance);
+        scorelimit = plugin.getVarValue("scorelimit", 50);
     }
     
     @Override
@@ -35,7 +35,7 @@ public class TDM extends team_gm {
     @Override
     public void tick() {
         super.tick();
-        if (time > 600) {
+        if (time > gamelength) {
             team d = team.GOLD;
             if (diam > gold) {
                 d = team.DIAMOND;
@@ -60,9 +60,9 @@ public class TDM extends team_gm {
             diam += add;
         }
         
-        if (diam >= 50) {
+        if (diam >= scorelimit) {
             onWin(team.DIAMOND, attacker, defender);
-        } else if (gold >= 50) {
+        } else if (gold >= scorelimit) {
             onWin(team.GOLD, attacker, defender);
         }
     }
@@ -72,7 +72,7 @@ public class TDM extends team_gm {
         Location g = null;
         ArrayList<Player> alivePlayers = new ArrayList<Player>();
         for (player i : plugin.players.values()) {
-            if (i.dead == false && i.getTeam() == _p.getTeam() && i.stime < new Date().getTime() && spawnCheck(i.p.getLocation())) {
+            if (i.dead == false && i.getTeam() == _p.getTeam() && i.stime < System.currentTimeMillis() && spawnCheck(i.p.getLocation())) {
                 alivePlayers.add(i.p);
             }
         }
@@ -92,7 +92,7 @@ public class TDM extends team_gm {
         } else {
             g = alivePlayers.get(generator.nextInt(alivePlayers.size())).getLocation();
         }
-        _p.stime = new Date().getTime() + 5000;
+        _p.stime = System.currentTimeMillis() + 5000;
         p.teleport(g);
         if (start) {
             p.sendMessage(plugin.d + _p.getTeam().getColour() + _p.getTeam().toString() + " team go!");
@@ -103,7 +103,7 @@ public class TDM extends team_gm {
     @Override
     public void printScore(Player p, team t) {
         if (t == team.BOTH) {
-            p.sendMessage(plugin.d + "6Gold: " + gold + plugin.d + "f  " + plugin.d + "bDiamond: " + diam + plugin.d + "f      / 50");
+            p.sendMessage(plugin.d + "6Gold: " + gold + plugin.d + "f  " + plugin.d + "bDiamond: " + diam + plugin.d + "f      / " + scorelimit);
         } else if (t == team.GOLD || t == team.DIAMOND) {
             String c = "6";
             if (t == team.DIAMOND) {
@@ -116,7 +116,7 @@ public class TDM extends team_gm {
                     p.sendMessage(plugin.d + c + i.nick + " | " + i.kill + " | " + i.assists + " | " + i.death + " |");
                 }
             }
-            p.sendMessage(plugin.d + c + (t == team.DIAMOND ? diam : gold) + " / 50");
+            p.sendMessage(plugin.d + c + (t == team.DIAMOND ? diam : gold) + " / " + scorelimit);
         }
     }
     

@@ -2,7 +2,6 @@ package com.Top_Cat.CODMW.listeners;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.TimerTask;
@@ -83,13 +82,14 @@ public class CODPlayerListener extends PlayerListener {
     
     @Override
     public void onPlayerQuit(PlayerQuitEvent event) {
+        plugin.game.playerquit(event);
         if (plugin.players.containsKey(event.getPlayer())) {
             plugin.p(event.getPlayer()).destroy();
             plugin.players.remove(event.getPlayer());
             
             int d = (int) Math.floor(Math.abs(plugin.diam - plugin.gold) / 2);
             if (d > 0) {
-                nextbalance = new Date().getTime() + 10000;
+                nextbalance = System.currentTimeMillis() + 10000;
                 
             }
         }
@@ -106,7 +106,7 @@ public class CODPlayerListener extends PlayerListener {
 
         @Override
         public void run() {
-            if (nextbalance < new Date().getTime()) {
+            if (nextbalance < System.currentTimeMillis()) {
                 int d = (int) Math.floor(Math.abs(plugin.diam - plugin.gold) / 2);
                 team b = team.DIAMOND;
                 if (plugin.gold > plugin.diam) {
@@ -194,7 +194,7 @@ public class CODPlayerListener extends PlayerListener {
     }
     
     private int inv_count(Inventory in, List<Material> m) {
-    	int out = 0;
+        int out = 0;
         for (ItemStack i : in.getContents()) {
             if (i != null) {
                 if (m.contains(i.getType())) {
@@ -206,7 +206,7 @@ public class CODPlayerListener extends PlayerListener {
     }
     
     private int inv_count(Inventory in, Material m) {
-    	return inv_count(in, Arrays.asList(m));
+        return inv_count(in, Arrays.asList(m));
     }
     
     @Override
@@ -243,10 +243,10 @@ public class CODPlayerListener extends PlayerListener {
     @Override
     public void onPlayerChat(PlayerChatEvent event) {
         if (plugin.players.containsKey(event.getPlayer())) {
-        	event.setCancelled(true);
-        	for (Player i : plugin.getServer().getOnlinePlayers()) {
-        		i.sendMessage("<" + plugin.p(event.getPlayer()).nick + "> " + plugin.d + plugin.p(event.getPlayer()).getTeam().getColour() + event.getMessage());
-        	}
+            event.setCancelled(true);
+            for (Player i : plugin.getServer().getOnlinePlayers()) {
+                i.sendMessage("<" + plugin.p(event.getPlayer()).nick + "> " + plugin.d + plugin.p(event.getPlayer()).getTeam().getColour() + event.getMessage());
+            }
         }
     }
     
@@ -262,8 +262,8 @@ public class CODPlayerListener extends PlayerListener {
                 event.getPlayer().getInventory().removeItem(new ItemStack(event.getPlayer().getItemInHand().getType(), 1));
                 s.callIn(plugin, event.getPlayer(), new Object[] {});
             } else if (event.getPlayer().getItemInHand().getType() == Material.BOW) {
-                if (plugin.p(event.getPlayer()).rtime < new Date().getTime()) {
-                    plugin.p(event.getPlayer()).stime = new Date().getTime() + 3000;
+                if (plugin.p(event.getPlayer()).rtime < System.currentTimeMillis()) {
+                    plugin.p(event.getPlayer()).stime = System.currentTimeMillis() + 3000;
                     if (event.getPlayer().getInventory().contains(Material.ARROW)) {
                         plugin.p(event.getPlayer()).s.incStat(Stat.ARROWS_FIRED);
                     }
@@ -272,9 +272,9 @@ public class CODPlayerListener extends PlayerListener {
                     event.getPlayer().updateInventory();
                 }
             } else if (event.getPlayer().getItemInHand().getType() == Material.SNOW_BALL) {
-            	new grenade(plugin, event.getPlayer());
-            	event.getPlayer().getInventory().removeItem(new ItemStack(Material.SNOW_BALL, 1));
-            	event.setUseItemInHand(Result.DENY);
+                new grenade(plugin, event.getPlayer());
+                event.getPlayer().getInventory().removeItem(new ItemStack(Material.SNOW_BALL, 1));
+                event.setUseItemInHand(Result.DENY);
             } else if (event.getPlayer().getItemInHand().getType() == Material.RAW_FISH) {
                 event.setUseItemInHand(Result.DENY);
             }

@@ -18,9 +18,9 @@ public class arrows extends useable {
     
     @Override
     public void onInteract(PlayerInteractEvent event) {
-    	super.onInteract(event);
-    	if (event.getPlayer() == getOwner() && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) && getOwner().getItemInHand().getType() == Material.BOW) {
-    		int arrows = 0;
+        super.onInteract(event);
+        if (event.getPlayer() == getOwner() && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) && getOwner().getItemInHand().getType() == Material.BOW) {
+            int arrows = 0;
             for (ItemStack i : getOwner().getInventory().getContents()) {
                 if (i != null) {
                     if (i.getType() == Material.ARROW) {
@@ -30,7 +30,7 @@ public class arrows extends useable {
             }
             getOwner().getInventory().addItem(new ItemStack(Material.ARROW, 15 - arrows));
             getOwner().updateInventory();
-    	}
+        }
     }
     
     @Override

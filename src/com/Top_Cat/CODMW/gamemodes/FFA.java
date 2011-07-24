@@ -1,7 +1,6 @@
 package com.Top_Cat.CODMW.gamemodes;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 import org.bukkit.Location;
@@ -20,6 +19,7 @@ public class FFA extends gamemode {
     
     public FFA(main instance) {
         super(instance);
+        scorelimit = plugin.getVarValue("scorelimit", 20);
     }
     
     @Override
@@ -30,7 +30,7 @@ public class FFA extends gamemode {
     @Override
     public void tick() {
         super.tick();
-        if (time > 600) {
+        if (time > gamelength) {
             player p = null;
             int max = 0;
             for (player i : scores.keySet()) {
@@ -72,7 +72,7 @@ public class FFA extends gamemode {
         
         scores.put(attacker, s);
         
-        if (scores.get(attacker) >= 20) {
+        if (scores.get(attacker) >= scorelimit) {
             onWin(attacker, attacker, defender);
         }
     }
@@ -85,7 +85,7 @@ public class FFA extends gamemode {
             if (spawnCheck(i)) { spawn.add(i); }
         }
         g = spawn.get(generator.nextInt(spawn.size()));
-        _p.stime = new Date().getTime() + 5000;
+        _p.stime = System.currentTimeMillis() + 5000;
         p.teleport(g);
         return g;
     }

@@ -1,6 +1,5 @@
 package com.Top_Cat.CODMW.vote;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.TimerTask;
 
@@ -36,7 +35,7 @@ public class Vote {
         for (Player i : plugin.getServer().getOnlinePlayers()) {
             i.sendMessage("Type /y or /n to vote!");
         }
-        end = new Date().getTime() + 30000;
+        end = System.currentTimeMillis() + 30000;
         plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Complete(), 600L);
     }
     

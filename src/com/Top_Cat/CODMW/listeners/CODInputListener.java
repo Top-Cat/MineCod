@@ -1,7 +1,6 @@
 package com.Top_Cat.CODMW.listeners;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,24 +25,24 @@ public class CODInputListener extends InputListener {
     
     @Override
     public void onKeyPressedEvent(KeyPressedEvent event) {
-    	player u = plugin.p(event.getPlayer());
-    	if (u != null) {
-	        if (event.getKey() == Keyboard.KEY_R) {
-	            plugin.getServer().dispatchCommand(event.getPlayer(), "r");
-	            u.rtime = new Date().getTime() + 3000;
-	        }
-	        int p = konami_p.containsKey(event.getPlayer()) ? konami_p.get(event.getPlayer()) : 0;
-	        if (event.getKey() == konami.get(p)) {
-	            p++;
-	            if (p >= 10) {
-	                u.s.awardAchievement(Achievement.KONAMI);
-	                p = 0;
-	            }
-	        } else {
-	            p = 0;
-	        }
-	        konami_p.put(event.getPlayer(), p);
-    	}
+        player u = plugin.p(event.getPlayer());
+        if (u != null) {
+            if (event.getKey() == Keyboard.KEY_R) {
+                plugin.getServer().dispatchCommand(event.getPlayer(), "r");
+                u.rtime = System.currentTimeMillis() + 3000;
+            }
+            int p = konami_p.containsKey(event.getPlayer()) ? konami_p.get(event.getPlayer()) : 0;
+            if (event.getKey() == konami.get(p)) {
+                p++;
+                if (p >= 10) {
+                    u.s.awardAchievement(Achievement.KONAMI);
+                    p = 0;
+                }
+            } else {
+                p = 0;
+            }
+            konami_p.put(event.getPlayer(), p);
+        }
     }
     
 }

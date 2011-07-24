@@ -3,7 +3,6 @@ package com.Top_Cat.CODMW.objects;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -42,7 +41,10 @@ public class player {
     public int regens = 0;
     public Location dropl;
     public Player assist;
-    public long spawn = new Date().getTime();
+    public long spawn = System.currentTimeMillis();
+    public long tospawn = 0;
+    public long time_todrop = 0;
+    public boolean dropped = true;
     player lastk;
     int lastk_count = 0;
     int lastk_top_count = 0;
@@ -141,10 +143,10 @@ public class player {
                 giveItem(slot++ + 3, new ItemStack(ks.getMat(), ks.getAmm()));
                 s.incStat(ks.getStat());
                 
-                if ((new Date().getTime() - laststreak) < 20000) {
+                if ((System.currentTimeMillis() - laststreak) < 20000) {
                     s.awardAchievement(Achievement.WARGASM);
                 }
-                laststreak = new Date().getTime();
+                laststreak = System.currentTimeMillis();
                 
                 break;
             }
@@ -261,15 +263,18 @@ public class player {
             regens++;
             s.maxStat(Stat.LIFE_REGENS, regens);
         }
+        if ((plugin.game.melee == 1 && (r == Reason.BOW || r == Reason.HEADSHOT || r == Reason.GRENADE)) || (plugin.game.melee == 2 && (r == Reason.KNIFE || r == Reason.FISH))) {
+            _h = _h > 0 ? 0 : _h;
+        }
         h -= _h;
         if (h > 20) { h = 20; }
         if (_h > 0) {
             regen = false;
-            htime = new Date().getTime() + 10000;
-            stime = new Date().getTime() + 5000;
+            htime = System.currentTimeMillis() + 10000;
+            stime = System.currentTimeMillis() + 5000;
         }
         if (r == Reason.FALL) {
-        	s.incStat(Stat.FALL_DAMAGE, _h);
+            s.incStat(Stat.FALL_DAMAGE, _h);
         }
         if (h <= 0) {
             regens = 0;
@@ -277,6 +282,9 @@ public class player {
             lastk_top_count = 0;
             hshot_streak = 0;
             melee_streak = 0;
+            tospawn = System.currentTimeMillis() + (plugin.game.respawntime * 1000);
+            time_todrop = System.currentTimeMillis() + 500;
+            dropped = false;
             player a = plugin.p(attacker);
             if (a != this) {
                 a.onKill(this, r, ks);
@@ -386,15 +394,21 @@ public class player {
                           break;
         }
         if (weapons) {
-            p.getInventory().setItem(0, new ItemStack(Material.BOW, 1));
-            if (fish) {
-                p.getInventory().setItem(1, new ItemStack(Material.RAW_FISH, 1));
-            } else {
-                p.getInventory().setItem(1, new ItemStack(Material.IRON_SWORD, 1));
+            if (plugin.game.melee != 1) {
+                p.getInventory().setItem(0, new ItemStack(Material.BOW, 1));
+                p.getInventory().setItem(8, new ItemStack(Material.ARROW, 15));
+                p.getInventory().setItem(7, new ItemStack(Material.FEATHER, 75));
             }
-            p.getInventory().setItem(2, new ItemStack(Material.SNOW_BALL, 2));
-            p.getInventory().setItem(8, new ItemStack(Material.ARROW, 15));
-            p.getInventory().setItem(7, new ItemStack(Material.FEATHER, 75));
+            if (plugin.game.melee != 2) {
+                if (fish) {
+                    p.getInventory().setItem(1, new ItemStack(Material.RAW_FISH, 1));
+                } else {
+                    p.getInventory().setItem(1, new ItemStack(Material.IRON_SWORD, 1));
+                }
+            }
+            if (plugin.game.melee == 0) {
+                p.getInventory().setItem(2, new ItemStack(Material.SNOW_BALL, 2));
+            }
         }
     }
     
