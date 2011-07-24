@@ -56,6 +56,7 @@ public class gamemode {
     Timer t = new Timer();
     public int melee = 0;
     public int respawntime = 0;
+    int waittime = 0;
     
     public gamemode(main instance) {
         plugin = instance;
@@ -72,6 +73,7 @@ public class gamemode {
         gamelength = plugin.getVarValue("gamelength", 600);
         melee = plugin.getVarValue("melee", 0);
         respawntime = plugin.getVarValue("respawntime", 0);
+        waittime = plugin.getVarValue("waittime", 55);
         scheduleGame();
     }
     
@@ -107,7 +109,7 @@ public class gamemode {
     }
     
     public void scheduleGame() {
-        t.schedule(new startgame(), plugin.getVarValue("waittime", 55) * 1000);
+        t.schedule(new startgame(), waittime * 1000);
     }
 
     public class startgame extends TimerTask {
@@ -181,7 +183,7 @@ public class gamemode {
             lastkill.s.incStat(Stat.LAST_KILL);
         }
         
-        sendMessage(team.BOTH, plugin.d + "9Game ended, game will resume on '" + plugin.gm.toString().toLowerCase() + "_" + plugin.currentMap.time + "' in 60 seconds");
+        sendMessage(team.BOTH, plugin.d + "9Game ended, game will resume on '" + plugin.gm.toString().toLowerCase() + "_" + plugin.currentMap.name + "' in " + (waittime + 5) + " seconds");
     }
     
     public void onKill(player attacker, player defender, Location l) {
