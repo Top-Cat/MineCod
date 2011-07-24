@@ -3,8 +3,6 @@ package com.Top_Cat.CODMW.objects;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -17,8 +15,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.bukkit.Location;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.SafeConstructor;
+import org.bukkit.util.config.Configuration;
+import org.bukkit.util.config.ConfigurationNode;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.sql.conn;
@@ -26,13 +24,12 @@ import com.Top_Cat.CODMW.sql.conn;
 @SuppressWarnings("unchecked")
 public class map {
     
-    private static final Yaml yaml = new Yaml(new SafeConstructor());
     public String name, title;
     public int time;
     public boolean storm;
     conn sql;
     main plugin;
-    Object spawns;
+    ConfigurationNode spawns;
     int BUFFER = 2048;
     
     public map(conn _c, main instance, String mapname) throws Exception {
@@ -80,51 +77,32 @@ public class map {
             zipFile.close();
             ZipFile.delete();
         }
-        try {
-            Map<String, Object> map = (Map<String, Object>) yaml.load(new FileInputStream("./" + mapname + "/minecod_data.yml"));
-            
-            name = mapname;
-            title = mapname;
-            try {
-                time = Integer.parseInt(map.get("time").toString());
-            } catch (NullPointerException ex) {
-                throw new Exception("world time for '" + mapname + "' is not defined");
-            }
-            try {
-                title = map.get("name").toString();
-            } catch (NullPointerException ex) { }
-            try {
-                storm = (Boolean) map.get("storm");
-            } catch (NullPointerException ex) {
-                throw new Exception("storm for '" + mapname + "' is not defined");
-            }
-            try {
-                spawns = map.get("spawns");
-            } catch (NullPointerException ex) {
-                throw new Exception("no spawns for '" + mapname + "' defined");
-            }
-            
-        } catch (FileNotFoundException e) {
-            throw new Exception("Missing minecod_data.yml for '" + mapname + "'! Please redownload the map");
-        }
+        Configuration mapconfig = new Configuration(new File("./" + mapname + "/minecod_data.yml"));
+		mapconfig.load();
+		
+		name = mapname;
+		time = mapconfig.getInt("time", 0);
+		title = mapconfig.getString("title", mapname);
+		storm = mapconfig.getBoolean("storm", false);
+		spawns = mapconfig.getNode("spawns");
     }
     
     public ArrayList<Location> getSpawns(int type) {
         ArrayList<Location> out = new ArrayList<Location>();
         try {
-        String t = "";
-        switch (type) {
-            case 0: t = "goldspawns"; break;
-            case 1: t = "diamondspawns"; break;
-            case 2: t = "gamespawns"; break;
-            case 3: t = "goldflag"; break;
-            case 4: t = "diamondflag"; break;
-        }
-        List<Map<String, Object>> s = ((Map<String, List<Map<String, Object>>>) spawns).get(t);
-        
-        for (Map<String, Object> i : s) {
-            out.add(new Location(plugin.getServer().getWorld(name), (Double) i.get("x"), (Double) i.get("y"), (Double) i.get("z"), (float) ((Integer) i.get("r")), 0));
-        }
+	        String t = "";
+	        switch (type) {
+	            case 0: t = "goldspawns"; break;
+	            case 1: t = "diamondspawns"; break;
+	            case 2: t = "gamespawns"; break;
+	            case 3: t = "goldflag"; break;
+	            case 4: t = "diamondflag"; break;
+	        }
+	        List<Object> s = spawns.getList(t);
+	        for (Object j : s) {
+	        	Map<String, Object> i = (Map<String, Object>) j;
+	        	out.add(new Location(plugin.getServer().getWorld(name), (Double) i.get("x"), (Double) i.get("y"), (Double) i.get("z"), (float) ((Integer) i.get("r")), 0));
+	        }
         } catch (Exception e) {
             e.printStackTrace();
         }

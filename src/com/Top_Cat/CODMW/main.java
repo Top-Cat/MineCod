@@ -3,7 +3,6 @@ package com.Top_Cat.CODMW;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,8 +16,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -43,9 +43,8 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.FileUtil;
+import org.bukkit.util.config.Configuration;
 import org.bukkitcontrib.BukkitContrib;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 import com.Top_Cat.CODMW.gamemodes.gamemode;
 import com.Top_Cat.CODMW.gamemodes.team_gm;
@@ -70,6 +69,7 @@ import com.Top_Cat.CODMW.vote.GameModes;
 import com.Top_Cat.CODMW.vote.GameTypeVote;
 import com.Top_Cat.CODMW.vote.MapVote;
 import com.Top_Cat.CODMW.vote.Vote;
+
 import java.security.MessageDigest;
 
 public class main extends JavaPlugin {
@@ -83,7 +83,6 @@ public class main extends JavaPlugin {
     public HashMap<Player, player> players = new HashMap<Player, player>();
     public ArrayList<Rotation> map_rot =  new ArrayList<Rotation>();
     public int rot = 0;
-    private static final Yaml yaml = new Yaml(new SafeConstructor());
     public int gold, diam, tot, minplayers = 0;
     public CODPlayerListener playerListener;
     public CODBlockListener blockListener;
@@ -110,6 +109,7 @@ public class main extends JavaPlugin {
     public String welcome_msg = "Welcome to the MineCod Server!";
     public String join_msg = "$nick has joined the fray";
     Logger log;
+    Configuration mainconfig;
     
     public void clearinv(Player p) {
         PlayerInventory i = p.getInventory();
@@ -414,7 +414,6 @@ public class main extends JavaPlugin {
         }
     }
     
-    @SuppressWarnings("unchecked")
     private void setup() throws Exception {
         final PluginManager pm = getServer().getPluginManager();
         if (pm.getPlugin("BukkitContrib") == null) {
@@ -434,57 +433,35 @@ public class main extends JavaPlugin {
         weatherListener = new CODWeatherListener(this);
         inputListener = new CODInputListener(this);
         
+    	mainconfig = new Configuration(new File("./minecod.yml"));
+    	mainconfig.load();
+    	
+    	name = mainconfig.getString("server-name", "MineCod Server");
+    	welcome_msg = mainconfig.getString("welcome-message", "Welcome to an awesome MineCod Server!");
+    	join_msg = mainconfig.getString("join-message", "$nick has joined the fray");
+    	
+		ArrayList<String> rotation = (ArrayList<String>) mainconfig.getStringList("map-rotation", Arrays.asList("ffa_MineCod-Crash", "ctf_MineCod-Broadcast", "ffa_MineCod-Vacant", "tdm_MineCod-Shipment", "ffa_MineCod-Broadcast", "ctf_MineCod-Vacant", "tdm_MineCod-Crash", "ctf_MineCod-Shipment", "tdm_MineCod-Vacant", "ctf_MineCod-Crash", "ffa_MineCod-Shipment", "tdm_MineCod-Broadcast"));
         try {
-            Map<String, Object> map = (Map<String, Object>) yaml.load(new FileInputStream("./minecod.yml"));
-            try {
-                name = map.get("server-name").toString();
-                if (!name.matches("^[A-Za-z0-9 _.-]+$")) {
-                    name = "MineCod Server";
-                }
-            } catch (NullPointerException ex) {
-                throw new Exception("server-name is not defined");
-            } catch (ClassCastException ex) {
-                throw new Exception("server-name is of wrong type");
-            }
-            if (map.containsKey("welcome-message")) {
-                try {
-                    welcome_msg = (String) map.get("welcome-message");
-                } catch (ClassCastException ex) {
-                    throw new Exception("welcome-message is of wrong type");
-                }
-            }
-            if (map.containsKey("join-message")) {
-                try {
-                    join_msg = (String) map.get("join-message");
-                } catch (ClassCastException ex) {
-                    throw new Exception("join-message is of wrong type");
-                }
-            }
-            try {
-                ArrayList<String> rotation = (ArrayList<String>) map.get("map-rotation");
-                for (String i : rotation) {
-                    String[] mi = i.split("_");
-                    if (!maps.containsKey(mi[1])) {
-                        try {
-                            map nm = new map(sql, this, mi[1]);
-                            maps.put(mi[1], nm);
-                        } catch (Exception e) {
-                            log.log(Level.WARNING, "Failed to load map " + mi[1]);
-                        }
-                    }
-                    if (maps.containsKey(mi[1])) {
-                        map_rot.add(new Rotation(maps.get(mi[1]), GameModes.getGMFromId(mi[0].toUpperCase())));
+            for (String i : rotation) {
+                String[] mi = ((String) i).split("_");
+                if (!maps.containsKey(mi[1])) {
+                    try {
+                        map nm = new map(sql, this, mi[1]);
+                        maps.put(mi[1], nm);
+                    } catch (Exception e) {
+                        log.log(Level.WARNING, "Failed to load map " + mi[1]);
                     }
                 }
-                
-                if (map_rot.size() == 0) {
-                    throw new Exception("map-rotation has no maps or no maps could be loaded");
+                if (maps.containsKey(mi[1])) {
+                    map_rot.add(new Rotation(maps.get(mi[1]), GameModes.getGMFromId(mi[0].toUpperCase())));
                 }
-            } catch (ClassCastException ex) {
-                throw new Exception("map-rotation is of wrong type");
             }
-        } catch (FileNotFoundException e2) {
-            throw new Exception("Missing minecod.yml! Please redownload the default or make your own");
+            
+            if (map_rot.size() == 0) {
+                throw new Exception("map-rotation has no maps or no maps could be loaded");
+            }
+        } catch (ClassCastException ex) {
+            throw new Exception("map-rotation is of wrong type");
         }
         
         updateServerStatus(true);
@@ -553,6 +530,7 @@ public class main extends JavaPlugin {
             
             setup();
         } catch (Exception e) {
+        	e.printStackTrace();
             log.log(Level.SEVERE, "Error loading minecod: " + e.getMessage());
             getServer().getPluginManager().disablePlugin(this);
         }
