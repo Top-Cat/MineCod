@@ -1,4 +1,6 @@
-package com.Top_Cat.CODMW.Killstreaks;
+package com.Top_Cat.CODMW.perks;
+
+import java.util.ArrayList;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -10,22 +12,25 @@ import com.Top_Cat.CODMW.objects.Reason;
 import com.Top_Cat.CODMW.objects.player;
 import com.Top_Cat.CODMW.objects.spawnitems;
 
-public class killstreak extends MineCodListener {
-    
-    int starttick = 0;
-    
-    public killstreak(main instance, Player owner, Object[] args) {
-        super(instance, owner);
-        starttick = plugin.game.time;
-        getOwnerplayer().addPoints(3);
-    }
-    
-    public int getLifetime() {
-        return plugin.game.time - starttick;
-    }
+public class perk extends MineCodListener {
 
-    public void teamSwitch() {
-        
+    public perk(main instance, Player owner) {
+        super(instance, owner);
+    }
+    
+    public void checkIsPerk() {
+        ArrayList<Tiers> r = new ArrayList<Tiers>();
+        for (Tiers i : getOwnerplayer().perks.keySet()) {
+            if (i.instanceOf(getOwnerplayer().perks.get(i))) {
+                r.add(i);
+            }
+        }
+        for (Tiers i : r) {
+            getOwnerplayer().perks.remove(i);
+        }
+        if (!getOwnerplayer().perks.containsValue(this)) {
+            plugin.listeners.remove(this);
+        }
     }
 
     @Override
@@ -72,5 +77,5 @@ public class killstreak extends MineCodListener {
     public double getVar(player p, String name, double def) {
         return def;
     }
-
+    
 }

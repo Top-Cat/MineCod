@@ -1,4 +1,4 @@
-package com.Top_Cat.CODMW.Killstreaks;
+package com.Top_Cat.CODMW.Killstreaks.useable;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -16,6 +16,7 @@ public class arrows extends useable {
         getOwnerplayer().s.incStat(Stat.UARROWS_USED);
     }
     
+    @SuppressWarnings("deprecation")
     @Override
     public void onInteract(PlayerInteractEvent event) {
         super.onInteract(event);

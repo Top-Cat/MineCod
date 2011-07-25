@@ -9,8 +9,8 @@ import org.bukkit.inventory.ItemStack;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
-import com.Top_Cat.CODMW.Killstreaks.WolfPack;
-import com.Top_Cat.CODMW.Killstreaks.killstreak;
+import com.Top_Cat.CODMW.Killstreaks.useable.WolfPack;
+import com.Top_Cat.CODMW.objects.MineCodListener;
 import com.Top_Cat.CODMW.objects.player;
 import com.Top_Cat.CODMW.sql.Stat;
 
@@ -63,7 +63,10 @@ public class team_gm extends gamemode {
     }
     
     @Override
-    public boolean canHit(LivingEntity a, LivingEntity d) {
+    public boolean canHit(LivingEntity a, LivingEntity d, boolean killstreak) {
+        if (killstreak && d instanceof Player && plugin.p((Player) d).getVar("ghost", 0) == 1) {
+            return false;
+        }
         team t1 = team.BOTH;
         team t2 = team.BOTH;
         if (a instanceof Player) {
@@ -72,7 +75,7 @@ public class team_gm extends gamemode {
                 t1 = p.getTeam();
             }
         } else if (a instanceof Wolf) {
-            for (killstreak i : plugin.ks) {
+            for (MineCodListener i : plugin.listeners) {
                 if (i instanceof WolfPack && ((WolfPack) i).wolf.contains(a)) {
                     t1 = i.getOwnerplayer().getTeam();
                 }
@@ -84,7 +87,7 @@ public class team_gm extends gamemode {
                 t2 = p.getTeam();
             }
         } else if (d instanceof Wolf) {
-            for (killstreak i : plugin.ks) {
+            for (MineCodListener i : plugin.listeners) {
                 if (i instanceof WolfPack && ((WolfPack) i).wolf.contains(d)) {
                     t2 = i.getOwnerplayer().getTeam();
                 }

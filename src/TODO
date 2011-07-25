@@ -3,6 +3,29 @@ Custom sounds
 More achievements
 More game types
 GUI Api
+Join message of map info
 
- * Longterm * 
-Mod for multiple servers
+Perks:
+
+1) BANDOLIER ------- More reserve ammo + bigger clips
+1) MARTYRDOM ------- Drop a live grenade on death
+1) IRON KNEES ------ No falling damage
+1) DEMOLITIONIST --- Carry an extra grenade
+1) SLEIGHT OF HAND - Faster reload
+
+2) JUGGERNAUT ------ Less damage received
+2) SCAVENGER ------- People you kill drop more ammo & you drop none
+2) COMMANDO -------- Higher melee range
+2) JACKPOT --------- Better chance of high-level rewards from care packages
+2) MEDIC ----------- Lower wait time to start healing
+2) SCANNER --------- Recieve more alerts, see enemy explosives (with Bukkit Contrib)
+
+3) HACKER ---------- Not affected by an EMP
+3) KILL FEEDER ----- Kills from anything add to your killstreak (plus 1 kill to unlock each)
+3) GHOST ----------- Claymores, sentries and choppers can't detect you
+3) HARDLINE -------- One less kill for killsteaks
+3) STOPPING POWER -- More explosive & arrow damage dealt, and grenades have a larger blast radius
+
+1) EAVESDROP ------- Ability to read enemy chat instead of your own team's
+
+DO EMP!

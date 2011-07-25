@@ -55,13 +55,14 @@ import com.Top_Cat.CODMW.listeners.CODWeatherListener;
 import com.Top_Cat.CODMW.objects.Rotation;
 import com.Top_Cat.CODMW.Killstreaks.Killstreaks;
 import com.Top_Cat.CODMW.Killstreaks.killstreak;
+import com.Top_Cat.CODMW.objects.MineCodListener;
 import com.Top_Cat.CODMW.objects.door;
 import com.Top_Cat.CODMW.objects.grenade;
 import com.Top_Cat.CODMW.objects.map;
 import com.Top_Cat.CODMW.objects.player;
 import com.Top_Cat.CODMW.objects.redstone;
 import com.Top_Cat.CODMW.sql.Achievement;
-import com.Top_Cat.CODMW.sql.MCrypt;
+import com.Top_Cat.CODMW.util.MCrypt;
 import com.Top_Cat.CODMW.sql.conn;
 import com.Top_Cat.CODMW.vote.GameModes;
 import com.Top_Cat.CODMW.vote.GameTypeVote;
@@ -88,7 +89,7 @@ public class main extends JavaPlugin {
     public CODInventoryListener inventoryListener;
     public CODWeatherListener weatherListener;
     public CODInputListener inputListener;
-    public ArrayList<killstreak> ks = new ArrayList<killstreak>();
+    public ArrayList<MineCodListener> listeners = new ArrayList<MineCodListener>();
     public ArrayList<grenade> g = new ArrayList<grenade>();
     public ArrayList<Player> totele = new ArrayList<Player>();
     public final String d = "\u00C2\u00A7";
@@ -245,7 +246,10 @@ public class main extends JavaPlugin {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player p = ((Player) sender);
+            player u = p(p);
             if (command.getName().equals("r")) {
+                u.rtime = System.currentTimeMillis() + u.getVar("reloadtime", 3000);
+                int fullcip = u.getVar("maxclip", 15);
                 int arrows = 0;
                 int ammo = 0;
                 for (ItemStack i : p.getInventory().getContents()) {
@@ -258,19 +262,16 @@ public class main extends JavaPlugin {
                         }
                     }
                 }
-                int togive = ammo < 15 - arrows ? ammo : 15 - arrows;
+                int togive = ammo < fullcip - arrows ? ammo : fullcip - arrows;
                 
                 if (togive > 0) {
                     if (arrows == 0) {
-                        p.getInventory().setItem(8,
-                                new ItemStack(Material.ARROW, togive));
+                        p.getInventory().setItem(8, new ItemStack(Material.ARROW, togive));
                     } else {
-                        p.getInventory().addItem(
-                                new ItemStack(Material.ARROW, togive));
+                        p.getInventory().addItem(new ItemStack(Material.ARROW, togive));
                     }
                 }
-                p.getInventory().removeItem(
-                        new ItemStack(Material.FEATHER, togive));
+                p.getInventory().removeItem(new ItemStack(Material.FEATHER, togive));
                 return true;
             } else if (command.getName().equalsIgnoreCase("s")) {
                 if (args.length == 0) {
@@ -290,7 +291,7 @@ public class main extends JavaPlugin {
                 } else if (args[0].equalsIgnoreCase("noswitch")) {
                     p.sendMessage("Your team was not switched!");
                     if (players.containsKey(p)) {
-                        p(p).s.awardAchievement(Achievement.TEAMNOSWITCH);
+                        u.s.awardAchievement(Achievement.TEAMNOSWITCH);
                     }
                     return true;
                 }
@@ -300,12 +301,14 @@ public class main extends JavaPlugin {
                         if (args[0].equalsIgnoreCase("map")) {
                             if (maps.containsKey(args[1])) {
                                 v = new MapVote(this, maps.get(args[1]), p((Player) sender));
+                                return true;
                             } else {
                                 ((Player) sender).sendMessage("Could not find map!");
                             }
                         } else if (args[0].equalsIgnoreCase("mode")) {
                             if (GameModes.getGMFromId(args[1].toUpperCase()) != null) {
                                 v = new GameTypeVote(this, args[1].toUpperCase(), p((Player) sender));
+                                return true;
                             } else {
                                 ((Player) sender).sendMessage("Could not find game type!");
                             }
@@ -320,12 +323,14 @@ public class main extends JavaPlugin {
                 }
             } else if (command.getName().equalsIgnoreCase("y") && v != null) {
                 v.VoteUp((Player) sender);
+                return true;
             } else if (command.getName().equalsIgnoreCase("n") && v != null) {
                 v.VoteDown((Player) sender);
+                return true;
             } else if (command.getName().equalsIgnoreCase("auth")) {
                 if (args.length >= 1)  {
                     try {
-                        String ptmp = ((Player) sender).getDisplayName() + MCrypt.key + args[0];
+                        String ptmp = p.getDisplayName() + MCrypt.key + args[0];
                         MessageDigest m= MessageDigest.getInstance("MD5");
                         m.update(ptmp.getBytes(),0,ptmp.length());
                         ptmp = new BigInteger(1,m.digest()).toString(16);
@@ -333,7 +338,7 @@ public class main extends JavaPlugin {
                             ptmp = "0" + ptmp;
                         }
                         
-                        String data = URLEncoder.encode("mcuser", "UTF-8") + "=" + URLEncoder.encode(((Player) sender).getDisplayName(), "UTF-8");
+                        String data = URLEncoder.encode("mcuser", "UTF-8") + "=" + URLEncoder.encode(p.getDisplayName(), "UTF-8");
                         data += "&" + URLEncoder.encode("mcauth", "UTF-8") + "=" + URLEncoder.encode(args[0], "UTF-8");
                         data += "&" + URLEncoder.encode("conf", "UTF-8") + "=" + URLEncoder.encode(ptmp, "UTF-8");
 
@@ -347,18 +352,30 @@ public class main extends JavaPlugin {
                         BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                         String line;
                         while ((line = rd.readLine()) != null) {
-                            ((Player) sender).sendMessage(line);
+                            p.sendMessage(line);
                         }
                         wr.close();
                         rd.close();
                     } catch (Exception e) {
                     }
+                    return true;
                 } else {
-                    ((Player) sender).sendMessage("You need to supply your authorisation code from the Gigcast website");
+                    p.sendMessage("You need to supply your authorisation code from the Gigcast website");
                 }
+            } else if (command.getName().equalsIgnoreCase("t")) {
+                String message = "";
+                for (String i : args) {
+                    message += i + " ";
+                }
+                if (u != null) {
+                    team t = u.getTeam();
+                    game.sendMessage(t, "<" + u.nick + "> " + d + t.getColour() + "[TEAM] " + message.trim());
+                }
+                return true;
             }
             if ((command.getName().equalsIgnoreCase("y") || command.getName().equalsIgnoreCase("n")) && v == null) {
                 ((Player) sender).sendMessage("No vote in progress!");
+                return true;
             }
         }
         return false;
@@ -379,9 +396,12 @@ public class main extends JavaPlugin {
                 return;
             }
             player _p = p(p);
-            for (killstreak i : ks) {
-                if (i.getOwner() == p) {
-                    i.teamSwitch();
+            for (MineCodListener i : listeners) {
+                if (i instanceof killstreak) {
+                    killstreak j = (killstreak) i;
+                    if (j.getOwner() == p) {
+                        j.teamSwitch();
+                    }
                 }
             }
             game.sendMessage(team.BOTH, d + _p.getTeam().getColour() + _p.nick + " switched to " + _p.getTeam().toString() + " team!");

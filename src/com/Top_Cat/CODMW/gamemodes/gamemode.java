@@ -31,7 +31,7 @@ import org.bukkitcontrib.BukkitContrib;
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
 import com.Top_Cat.CODMW.Killstreaks.Killstreaks;
-import com.Top_Cat.CODMW.Killstreaks.killstreak;
+import com.Top_Cat.CODMW.objects.MineCodListener;
 import com.Top_Cat.CODMW.objects.Reason;
 import com.Top_Cat.CODMW.objects.grenade;
 import com.Top_Cat.CODMW.objects.player;
@@ -208,19 +208,24 @@ public class gamemode {
         } catch (NoClassDefFoundError e) {
             //This happens on server stop
         }
-        for (killstreak i : (ArrayList<killstreak>) plugin.ks.clone()) {
+        for (MineCodListener i : (ArrayList<MineCodListener>) plugin.listeners.clone()) {
             i.destroy();
         }
-        plugin.ks.clear();
+        plugin.listeners.clear();
         plugin.activeGame = false;
         t.cancel();
     }
     
-    public void afterDeath(Player p) {}
+    public void afterDeath(player p) {
+        if (p.todrop > 0) {
+            plugin.currentWorld.dropItem(p.dropl, new ItemStack(Material.FEATHER, p.getVar("todrop", p.todrop)));
+            p.todrop = 0;
+        }
+    }
     
     @SuppressWarnings("unchecked")
     public void tick() {
-        for (killstreak i : (ArrayList<killstreak>) plugin.ks.clone()) {
+        for (MineCodListener i : (ArrayList<MineCodListener>) plugin.listeners.clone()) {
             i.tick();
         }
         for (player p : plugin.players.values()) {
@@ -241,7 +246,7 @@ public class gamemode {
     
     @SuppressWarnings("unchecked")
     public void tickfast() {
-        for (killstreak i : (ArrayList<killstreak>) plugin.ks.clone()) {
+        for (MineCodListener i : (ArrayList<MineCodListener>) plugin.listeners.clone()) {
             i.tickfast();
         }
         for (grenade i : (ArrayList<grenade>) plugin.g.clone()) {
@@ -249,11 +254,7 @@ public class gamemode {
         }
         for (player p : plugin.players.values()) {
             if (!p.dropped && p.time_todrop < System.currentTimeMillis()) {
-                afterDeath(p.p);
-                if (p.todrop > 0) {
-                    plugin.currentWorld.dropItem(p.dropl, new ItemStack(Material.FEATHER, p.todrop));
-                    p.todrop = 0;
-                }
+                afterDeath(p);
                 p.dropped = true;
             }
             if (p.dead && p.tospawn < System.currentTimeMillis()) {
@@ -339,7 +340,7 @@ public class gamemode {
     
     public void jointele(Player p) {};
     
-    public boolean canHit(LivingEntity a, LivingEntity d) { return false; };
+    public boolean canHit(LivingEntity a, LivingEntity d, boolean killstreak) { return false; };
     
     public String getClaymoreText(Player p) { return "^^ CLAYMORE ^^"; };
     

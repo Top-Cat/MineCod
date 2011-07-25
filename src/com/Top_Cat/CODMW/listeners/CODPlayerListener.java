@@ -32,8 +32,8 @@ import org.bukkit.inventory.PlayerInventory;
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
 import com.Top_Cat.CODMW.Killstreaks.Killstreaks;
-import com.Top_Cat.CODMW.Killstreaks.killstreak;
-import com.Top_Cat.CODMW.Killstreaks.useable;
+import com.Top_Cat.CODMW.Killstreaks.useable.useable;
+import com.Top_Cat.CODMW.objects.MineCodListener;
 import com.Top_Cat.CODMW.objects.grenade;
 import com.Top_Cat.CODMW.objects.player;
 import com.Top_Cat.CODMW.sql.Stat;
@@ -77,6 +77,7 @@ public class CODPlayerListener extends PlayerListener {
     
     @Override
     public void onPlayerJoin(PlayerJoinEvent event) {
+        event.getPlayer().sendMessage("no-z-fly no-z-cheat");
         plugin.game.playerjoin(event);
     }
     
@@ -90,7 +91,6 @@ public class CODPlayerListener extends PlayerListener {
             int d = (int) Math.floor(Math.abs(plugin.diam - plugin.gold) / 2);
             if (d > 0) {
                 nextbalance = System.currentTimeMillis() + 10000;
-                
             }
         }
         for (player i : plugin.players.values()) {
@@ -136,7 +136,7 @@ public class CODPlayerListener extends PlayerListener {
     public void onPlayerMove(PlayerMoveEvent event) {
         plugin.game.playermove(event);
         Location t = event.getTo();
-        for (killstreak i : plugin.ks) {
+        for (MineCodListener i : plugin.listeners) {
             i.onMove(event, t.getBlock() != lastB);
         }
         if (t.getBlock() != lastB) {
@@ -250,7 +250,7 @@ public class CODPlayerListener extends PlayerListener {
         }
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "deprecation" })
     @Override
     public void onPlayerInteract(PlayerInteractEvent event) {
         event.setUseInteractedBlock(Result.DENY);
@@ -279,7 +279,7 @@ public class CODPlayerListener extends PlayerListener {
                 event.setUseItemInHand(Result.DENY);
             }
         }
-        for (killstreak i : (ArrayList<killstreak>) plugin.ks.clone()) {
+        for (MineCodListener i : (ArrayList<MineCodListener>) plugin.listeners.clone()) {
             i.onInteract(event);
         }
     }

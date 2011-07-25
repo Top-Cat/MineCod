@@ -1,4 +1,4 @@
-package com.Top_Cat.CODMW.Killstreaks;
+package com.Top_Cat.CODMW.Killstreaks.useable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ public class WolfPack extends useable {
         getOwnerplayer().s.incStat(Stat.DOGS_USED);
         plugin.game.sendMessage(team.BOTH, plugin.d + getOwnerplayer().getTeam().getColour() + getOwnerplayer().nick + plugin.d + "f called in a pack of dogs!");
         for (Player i : plugin.players.keySet()) {
-            if (plugin.game.canHit(getOwner(), i)) {
+            if (plugin.game.canHit(getOwner(), i, false)) {
                 double theta = (generator.nextFloat() * Math.PI * 2);
                 Location l = i.getLocation().clone(); 
                 for (int j = 1; j <= 15; j++) {

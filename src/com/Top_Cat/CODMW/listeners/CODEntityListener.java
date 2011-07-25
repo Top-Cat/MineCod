@@ -18,17 +18,15 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityListener;
-import org.bukkit.event.painting.PaintingBreakByEntityEvent;
 import org.bukkit.event.painting.PaintingBreakEvent;
-import org.bukkit.event.painting.PaintingBreakEvent.RemoveCause;
 import org.bukkit.event.painting.PaintingPlaceEvent;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.objects.CArrow;
+import com.Top_Cat.CODMW.objects.MineCodListener;
 import com.Top_Cat.CODMW.objects.Reason;
 import com.Top_Cat.CODMW.objects.grenade;
-import com.Top_Cat.CODMW.Killstreaks.WolfPack;
-import com.Top_Cat.CODMW.Killstreaks.killstreak;
+import com.Top_Cat.CODMW.Killstreaks.useable.WolfPack;
 
 public class CODEntityListener extends EntityListener {
     
@@ -50,13 +48,13 @@ public class CODEntityListener extends EntityListener {
     
     @Override
     public void onProjectileHit(ProjectileHitEvent event) {
-    	if (event.getEntity() instanceof Snowball) {
-	    	for (grenade i : plugin.g) {
-	    		if (i.s_entity == event.getEntity()) {
-	    			i.hit();
-	    		}
-	    	}
-    	}
+        if (event.getEntity() instanceof Snowball) {
+            for (grenade i : plugin.g) {
+                if (i.s_entity == event.getEntity()) {
+                    i.hit();
+                }
+            }
+        }
     }
     
     @SuppressWarnings("unchecked")
@@ -73,7 +71,7 @@ public class CODEntityListener extends EntityListener {
             event.setDamage(1);
             if (event instanceof EntityDamageByProjectileEvent && ((EntityDamageByProjectileEvent) event).getProjectile() instanceof Arrow) {
                 if (event.getEntity() instanceof Wolf) {
-                    for (killstreak i : (ArrayList<killstreak>) plugin.ks.clone()) {
+                    for (MineCodListener i : (ArrayList<MineCodListener>) plugin.listeners.clone()) {
                         if (i instanceof WolfPack && ((WolfPack) i).wolf.contains(event.getEntity())) {
                             ((WolfPack) i).remove((Wolf) event.getEntity());
                         }
@@ -89,7 +87,7 @@ public class CODEntityListener extends EntityListener {
                     }
                     Player attacker = (Player) (((EntityDamageByProjectileEvent) event).getDamager());
                     Player defender = (Player) (((EntityDamageByProjectileEvent) event).getEntity());
-                    if (plugin.game.canHit(attacker, defender)) {
+                    if (plugin.game.canHit(attacker, defender, false)) {
                         if (reason == Reason.BOW) {
                             double dif = (((EntityDamageByProjectileEvent) event).getProjectile().getLocation().getY() - event.getEntity().getLocation().getY()) - 1.5;
                             if (dif > 0.1 && dif < 0.5) {
@@ -113,9 +111,9 @@ public class CODEntityListener extends EntityListener {
                         return;
                     }
                     if (attacker.getItemInHand().getType() == Material.IRON_SWORD || attacker.getItemInHand().getType() == Material.RAW_FISH) {
-                        if (plugin.game.canHit(attacker, defender)) {
+                        if (plugin.game.canHit(attacker, defender, false)) {
                             double dist = Math.sqrt(Math.pow(a.getX() - d.getX(), 2) + Math.pow(a.getZ() - d.getZ(), 2));
-                            if (dist < 1.8) {
+                            if (dist < plugin.p(attacker).getVar("meleerange", 1.8)) {
                                 plugin.p(defender).incHealth(20, attacker, attacker.getItemInHand().getType() == Material.IRON_SWORD ? Reason.KNIFE : Reason.FISH, null);
                                 event.setCancelled(false);
                             }
@@ -126,10 +124,10 @@ public class CODEntityListener extends EntityListener {
                     }
                 } else if (((EntityDamageByEntityEvent) event).getDamager() instanceof Wolf && ((EntityDamageByEntityEvent) event).getEntity() instanceof Player) {
                     Player defender = (Player) (((EntityDamageByEntityEvent) event).getEntity());
-                    for (killstreak i : plugin.ks) {
+                    for (MineCodListener i : plugin.listeners) {
                         if (i instanceof WolfPack) {
                             if (((WolfPack) i).wolf.contains(((EntityDamageByEntityEvent) event).getDamager())) {
-                                if (plugin.game.canHit(i.getOwner(), defender)) {
+                                if (plugin.game.canHit(i.getOwner(), defender, false)) {
                                     plugin.p(defender).incHealth(20, i.getOwner(), Reason.DOGS, i);
                                 }
                                 ((WolfPack) i).remove((Wolf) ((EntityDamageByEntityEvent) event).getDamager());
@@ -137,7 +135,7 @@ public class CODEntityListener extends EntityListener {
                         }
                     }
                 } else if (((EntityDamageByEntityEvent) event).getEntity() instanceof Wolf) {
-                    for (killstreak i : (ArrayList<killstreak>) plugin.ks.clone()) {
+                    for (MineCodListener i : (ArrayList<MineCodListener>) plugin.listeners.clone()) {
                         if (i instanceof WolfPack && ((WolfPack) i).wolf.contains(event.getEntity())) {
                             ((WolfPack) i).remove((Wolf) event.getEntity());
                         }

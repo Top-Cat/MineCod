@@ -35,16 +35,16 @@ public class stats {
         ResultSet r2 = plugin.sql.query("SELECT aid FROM cod_achievement WHERE PID = '" + p.dbid + "'");
         try {
             while (r.next()) {
-            	Stat s = Stat.valueOf(r.getInt("type"));
-            	if (s != null) {
-            		stats.put(s, r.getInt("count"));
-            	}
+                Stat s = Stat.valueOf(r.getInt("type"));
+                if (s != null) {
+                    stats.put(s, r.getInt("count"));
+                }
             }
             while (r2.next()) {
-            	Achievement a = Achievement.valueOf(r2.getInt("aid"));
-            	if (a != null) {
-            		achs.add(a);
-            	}
+                Achievement a = Achievement.valueOf(r2.getInt("aid"));
+                if (a != null) {
+                    achs.add(a);
+                }
             }
             toach.removeAll(achs);
         } catch (SQLException e) {

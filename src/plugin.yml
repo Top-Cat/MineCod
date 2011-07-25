@@ -25,3 +25,6 @@ commands:
     auth:
         description: Link minecraft and forum accounts
         usage: /<command> [authcode]
+    t:
+        description: Team chat
+        usage: /<command> message here

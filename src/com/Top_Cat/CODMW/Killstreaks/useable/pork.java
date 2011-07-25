@@ -1,4 +1,4 @@
-package com.Top_Cat.CODMW.Killstreaks;
+package com.Top_Cat.CODMW.Killstreaks.useable;
 
 import org.bukkit.entity.Player;
 

@@ -1,4 +1,4 @@
-package com.Top_Cat.CODMW.Killstreaks;
+package com.Top_Cat.CODMW.Killstreaks.placeable;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -104,7 +104,7 @@ public class claymore extends placeable {
     public void kill() {
         int kill = 0;
         for (Player p : plugin.players.keySet()) {
-            if ((plugin.game.canHit(getOwner(), p) || p == getOwner()) && (p.getLocation().getBlock() == b || p.getLocation().getBlock() == d1 || p.getLocation().getBlock() == d2)) {
+            if ((plugin.game.canHit(getOwner(), p, false) || p == getOwner()) && (p.getLocation().getBlock() == b || p.getLocation().getBlock() == d1 || p.getLocation().getBlock() == d2)) {
                 plugin.p(p).incHealth(20, getOwner(), Reason.CLAYMORE, this);
                 kill++;
             }
@@ -122,7 +122,7 @@ public class claymore extends placeable {
     }
 
     public void detect(Player p) {
-        if (plugin.game.canHit(getOwner(), p) && (p.getLocation().getBlock() == b || p.getLocation().getBlock() == d1 || p.getLocation().getBlock() == d2)) {
+        if (plugin.game.canHit(getOwner(), p, true) && (p.getLocation().getBlock() == b || p.getLocation().getBlock() == d1 || p.getLocation().getBlock() == d2)) {
             if (!exploded) {
                 plugin.currentWorld.playEffect(p.getLocation(), Effect.CLICK2, 0);
             }

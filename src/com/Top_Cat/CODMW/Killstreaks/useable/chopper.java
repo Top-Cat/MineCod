@@ -1,4 +1,4 @@
-package com.Top_Cat.CODMW.Killstreaks;
+package com.Top_Cat.CODMW.Killstreaks.useable;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -90,7 +90,7 @@ public class chopper extends useable {
         } else {
             for (player i : plugin.players.values()) {
                 Location l1 = i.p.getLocation();
-                if (plugin.game.canHit(getOwner(), i.p)) {
+                if (plugin.game.canHit(getOwner(), i.p, true)) {
                     int yaw = (int) (Math.toDegrees(Math.atan2(l1.getX() - (l.getX() + 0.5), (l.getZ() + 0.5) - l1.getZ())) + 180);
                     if (yaw >= 315) { yaw -= 359; }
                     int r = (int) Math.ceil((yaw + 45) / 90);
@@ -112,7 +112,7 @@ public class chopper extends useable {
         int az = 0;
         int a = 0;
         for (Player i : plugin.players.keySet()) {
-            if (plugin.game.canHit(getOwner(), i) && plugin.p(i).dead == false) {
+            if (plugin.game.canHit(getOwner(), i, true) && plugin.p(i).dead == false) {
                 ax = (int) (((ax * a) + i.getLocation().getX()) / (a + 1));
                 az = (int) (((az * a) + i.getLocation().getZ()) / (a + 1));
                 a++;

@@ -64,14 +64,15 @@ public class CTF extends team_gm {
     }
     
     @Override
-    public void afterDeath(Player p) {
-        if (f1.drop != null) {
+    public void afterDeath(player p) {
+        super.afterDeath(p);
+        if (f1.drop != null && f1.p == p) {
             f1.p = null;
             f1.drop_i = plugin.currentWorld.dropItem(f1.drop, new ItemStack(Material.GOLD_BLOCK, 1));
             f1.ret = System.currentTimeMillis() + 20000;
             f1.drop = null;
             f1.toret = true;
-        } else if (f2.drop != null) {
+        } else if (f2.drop != null && f2.p == p) {
             f2.p = null;
             f2.drop_i = plugin.currentWorld.dropItem(f2.drop, new ItemStack(Material.DIAMOND_BLOCK, 1));
             f2.ret = System.currentTimeMillis() + 20000;

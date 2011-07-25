@@ -17,11 +17,11 @@ public enum GameModes {
     private final Class<? extends gamemode> k;
     
     private GameModes(Class<? extends gamemode> k) {
-    	this.k = k;
+        this.k = k;
     }
     
     public gamemode createGame(main instance) {
-    	try {
+        try {
             Constructor<? extends gamemode> c = k.getDeclaredConstructor(new Class[] {main.class});
             return c.newInstance(instance);
         } catch (Exception e) {

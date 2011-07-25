@@ -18,7 +18,9 @@ import org.bukkitcontrib.BukkitContrib;
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
 import com.Top_Cat.CODMW.Killstreaks.Killstreaks;
-import com.Top_Cat.CODMW.Killstreaks.killstreak;
+import com.Top_Cat.CODMW.perks.Perks;
+import com.Top_Cat.CODMW.perks.Tiers;
+import com.Top_Cat.CODMW.perks.perk;
 import com.Top_Cat.CODMW.sql.Achievement;
 import com.Top_Cat.CODMW.sql.Stat;
 import com.Top_Cat.CODMW.sql.stats;
@@ -27,6 +29,7 @@ public class player {
     
     public int kill, streak, death, assists, points;
     public HashMap<Killstreaks, Integer> last = new HashMap<Killstreaks, Integer>();
+    public HashMap<Tiers, perk> perks = new HashMap<Tiers, perk>(); 
     private final main plugin;
     public Player p;
     public String nick;
@@ -41,6 +44,7 @@ public class player {
     public int regens = 0;
     public Location dropl;
     public Player assist;
+    public Player lastkiller;
     public long spawn = System.currentTimeMillis();
     public long tospawn = 0;
     public long time_todrop = 0;
@@ -94,6 +98,10 @@ public class player {
             dead = true;
         }
         
+        perks.put(Tiers.TIER1, Perks.BANDOLIER.create(plugin, p));
+        perks.put(Tiers.TIER2, Perks.MEDIC.create(plugin, p));
+        perks.put(Tiers.TIER3, Perks.KILLFEEDER.create(plugin, p));
+        
         p.teleport(plugin.prespawn);
     }
     
@@ -139,7 +147,7 @@ public class player {
     public void addStreak() {
         streak++;
         for (Killstreaks ks : yks) {
-            if (ks.getKills() == streak) {
+            if (ks.getKills() == streak + getVar("streakoffset", 0)) {
                 giveItem(slot++ + 3, new ItemStack(ks.getMat(), ks.getAmm()));
                 s.incStat(ks.getStat());
                 
@@ -154,6 +162,7 @@ public class player {
         s.maxStat(Stat.MAX_STREAK, streak);
     }
     
+    @SuppressWarnings("deprecation")
     public void giveItem(int pslot, ItemStack s) {
         if (s.getAmount() > 0) {
             PlayerInventory i = p.getInventory();
@@ -175,7 +184,7 @@ public class player {
     }
     
     public void onKill(player killed, Reason reason, Object l) {
-        for (killstreak i : plugin.ks) {
+        for (MineCodListener i : plugin.listeners) {
             i.onKill(this, killed, reason, l);
         }
         s.incStat(Stat.KILLS);
@@ -195,7 +204,7 @@ public class player {
         } else if (killed.p.getDisplayName().equalsIgnoreCase("Notch")) {
             s.awardAchievement(Achievement.KILL_NOTCH);
         }
-        if (reason.getStreak()) {
+        if (reason.getStreak() || getVar("allstreak", 0) == 1) {
             addStreak();
         }
         
@@ -254,8 +263,19 @@ public class player {
         }
     }
     
+    public double getVar(String name, double def) {
+        for (MineCodListener i : plugin.listeners) {
+            def = i.getVar(this, name, def);
+        }
+        return def;
+    }
+    
+    public int getVar(String name, int def) {
+        return (int) getVar(name, (double) def);
+    }
+    
     public void incHealth(int _h, Player attacker, Reason r, Object ks) {
-        for (killstreak i : plugin.ks) {
+        for (MineCodListener i : plugin.listeners) {
             _h = i.onDamage(_h, attacker, p, r, ks);
         }
         if (_h < 0 && !regen) {
@@ -270,7 +290,7 @@ public class player {
         if (h > 20) { h = 20; }
         if (_h > 0) {
             regen = false;
-            htime = System.currentTimeMillis() + 10000;
+            htime = System.currentTimeMillis() + getVar("healwait", 10000);
             stime = System.currentTimeMillis() + 5000;
         }
         if (r == Reason.FALL) {
@@ -285,6 +305,7 @@ public class player {
             tospawn = System.currentTimeMillis() + (plugin.game.respawntime * 1000);
             time_todrop = System.currentTimeMillis() + 500;
             dropped = false;
+            lastkiller = attacker;
             player a = plugin.p(attacker);
             if (a != this) {
                 a.onKill(this, r, ks);
@@ -394,21 +415,34 @@ public class player {
                           break;
         }
         if (weapons) {
-            if (plugin.game.melee != 1) {
-                p.getInventory().setItem(0, new ItemStack(Material.BOW, 1));
-                p.getInventory().setItem(8, new ItemStack(Material.ARROW, 15));
-                p.getInventory().setItem(7, new ItemStack(Material.FEATHER, 75));
+            spawnitems spawninv = new spawnitems();
+            spawninv.setItem(Material.BOW, 1, 0);
+            spawninv.setItem(Material.ARROW, 15, 8);
+            spawninv.setItem(Material.FEATHER,75, 7);
+            if (fish) {
+                spawninv.setItem(Material.RAW_FISH, 1, 1);
+            } else {
+                spawninv.setItem(Material.IRON_SWORD, 1, 1);
             }
-            if (plugin.game.melee != 2) {
-                if (fish) {
-                    p.getInventory().setItem(1, new ItemStack(Material.RAW_FISH, 1));
-                } else {
-                    p.getInventory().setItem(1, new ItemStack(Material.IRON_SWORD, 1));
-                }
+            spawninv.setItem(Material.SNOW_BALL, 2, 2);
+        
+            for (MineCodListener i : plugin.listeners) {
+                i.onRespawn(this, spawninv);
             }
-            if (plugin.game.melee == 0) {
-                p.getInventory().setItem(2, new ItemStack(Material.SNOW_BALL, 2));
+            
+            if (plugin.game.melee == 1) {
+                spawninv.removeItem(Material.BOW);
+                spawninv.removeItem(Material.ARROW);
+                spawninv.removeItem(Material.FEATHER);
+            } else if (plugin.game.melee == 2) {
+                spawninv.removeItem(Material.RAW_FISH);
+                spawninv.removeItem(Material.IRON_SWORD);
             }
+            if (plugin.game.melee != 0) {
+                spawninv.removeItem(Material.SNOW_BALL);
+            }
+            
+            spawninv.give(this);
         }
     }
     

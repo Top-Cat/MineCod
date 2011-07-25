@@ -11,7 +11,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.Killstreaks.Killstreaks;
-import com.Top_Cat.CODMW.Killstreaks.placeable;
+import com.Top_Cat.CODMW.Killstreaks.placeable.placeable;
 
 public class CODBlockListener extends BlockListener {
     

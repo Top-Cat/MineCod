@@ -7,6 +7,14 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import com.Top_Cat.CODMW.main;
+import com.Top_Cat.CODMW.Killstreaks.placeable.claymore;
+import com.Top_Cat.CODMW.Killstreaks.placeable.sentry;
+import com.Top_Cat.CODMW.Killstreaks.useable.WolfPack;
+import com.Top_Cat.CODMW.Killstreaks.useable.apple;
+import com.Top_Cat.CODMW.Killstreaks.useable.arrows;
+import com.Top_Cat.CODMW.Killstreaks.useable.carepackage;
+import com.Top_Cat.CODMW.Killstreaks.useable.chopper;
+import com.Top_Cat.CODMW.Killstreaks.useable.pork;
 import com.Top_Cat.CODMW.sql.Stat;
 
 public enum Killstreaks {
@@ -62,7 +70,7 @@ public enum Killstreaks {
     
     @Override
     public String toString() {
-    	return name;
+        return name;
     }
     
     public Class<? extends killstreak> getkClass() {
@@ -72,9 +80,7 @@ public enum Killstreaks {
     public killstreak callIn(main instance, Player owner, Object[] args) {
         try {
             Constructor<? extends killstreak> c = k.getDeclaredConstructor(new Class[] {main.class, Player.class, Object[].class});
-            killstreak n = c.newInstance(instance, owner, args);
-            instance.ks.add(n);
-            return n;
+            return c.newInstance(instance, owner, args);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -90,15 +96,15 @@ public enum Killstreaks {
     }
     
     public static Killstreaks getRandom() {
-    	double p = Math.random();
-    	for (Killstreaks i : table.values()) {
-    		if (p < i.getProb()) {
-    			return i;
-    		} else {
-    			p -= i.getProb();
-    		}
-    	}
-    	return CLAYMORES;
+        double p = Math.random();
+        for (Killstreaks i : table.values()) {
+            if (p < i.getProb()) {
+                return i;
+            } else {
+                p -= i.getProb();
+            }
+        }
+        return CLAYMORES;
     }
     
     public static HashMap<Integer, Killstreaks> table = new HashMap<Integer, Killstreaks>(); 

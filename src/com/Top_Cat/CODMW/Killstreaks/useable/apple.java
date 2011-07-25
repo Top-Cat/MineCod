@@ -1,4 +1,4 @@
-package com.Top_Cat.CODMW.Killstreaks;
+package com.Top_Cat.CODMW.Killstreaks.useable;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -12,6 +12,7 @@ import com.Top_Cat.CODMW.sql.Stat;
 
 public class apple extends useable {
 
+    @SuppressWarnings("deprecation")
     public apple(main instance, Player owner, Object[] args) {
         super(instance, owner, args);
         getOwnerplayer().s.incStat(Stat.APPLES_USED);

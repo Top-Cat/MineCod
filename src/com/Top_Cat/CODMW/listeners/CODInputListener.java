@@ -29,7 +29,6 @@ public class CODInputListener extends InputListener {
         if (u != null) {
             if (event.getKey() == Keyboard.KEY_R) {
                 plugin.getServer().dispatchCommand(event.getPlayer(), "r");
-                u.rtime = System.currentTimeMillis() + 3000;
             }
             int p = konami_p.containsKey(event.getPlayer()) ? konami_p.get(event.getPlayer()) : 0;
             if (event.getKey() == konami.get(p)) {

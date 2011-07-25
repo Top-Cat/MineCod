@@ -78,31 +78,31 @@ public class map {
             ZipFile.delete();
         }
         Configuration mapconfig = new Configuration(new File("./" + mapname + "/minecod_data.yml"));
-		mapconfig.load();
-		
-		name = mapname;
-		time = mapconfig.getInt("time", 0);
-		title = mapconfig.getString("title", mapname);
-		storm = mapconfig.getBoolean("storm", false);
-		spawns = mapconfig.getNode("spawns");
+        mapconfig.load();
+        
+        name = mapname;
+        time = mapconfig.getInt("time", 0);
+        title = mapconfig.getString("title", mapname);
+        storm = mapconfig.getBoolean("storm", false);
+        spawns = mapconfig.getNode("spawns");
     }
     
     public ArrayList<Location> getSpawns(int type) {
         ArrayList<Location> out = new ArrayList<Location>();
         try {
-	        String t = "";
-	        switch (type) {
-	            case 0: t = "goldspawns"; break;
-	            case 1: t = "diamondspawns"; break;
-	            case 2: t = "gamespawns"; break;
-	            case 3: t = "goldflag"; break;
-	            case 4: t = "diamondflag"; break;
-	        }
-	        List<Object> s = spawns.getList(t);
-	        for (Object j : s) {
-	        	Map<String, Object> i = (Map<String, Object>) j;
-	        	out.add(new Location(plugin.getServer().getWorld(name), (Double) i.get("x"), (Double) i.get("y"), (Double) i.get("z"), (float) ((Integer) i.get("r")), 0));
-	        }
+            String t = "";
+            switch (type) {
+                case 0: t = "goldspawns"; break;
+                case 1: t = "diamondspawns"; break;
+                case 2: t = "gamespawns"; break;
+                case 3: t = "goldflag"; break;
+                case 4: t = "diamondflag"; break;
+            }
+            List<Object> s = spawns.getList(t);
+            for (Object j : s) {
+                Map<String, Object> i = (Map<String, Object>) j;
+                out.add(new Location(plugin.getServer().getWorld(name), (Double) i.get("x"), (Double) i.get("y"), (Double) i.get("z"), (float) ((Integer) i.get("r")), 0));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
