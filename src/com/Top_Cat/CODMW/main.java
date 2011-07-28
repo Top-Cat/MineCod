@@ -73,7 +73,7 @@ import java.security.MessageDigest;
 
 public class main extends JavaPlugin {
 
-    int minecod_version = 18;
+    int minecod_version = 19;
     
     public World currentWorld;
     public Location teamselect;
@@ -563,14 +563,14 @@ public class main extends JavaPlugin {
     public void onEnable() {
         try {
             log = getServer().getLogger();
-            update();
-            
-            uids.put("6f7e303c-69da-4902-9b59-aa3ceb4984c0", 0);
-            uids.put("c3ad79b8-d0bc-4ed3-8660-d87fc493cba3", 1);
-            uids.put("b6584f23-c40d-4185-9cb4-5eafda70b5d7", 2);
-            uids.put("b6ac978f-fe11-42a0-ab95-595cd4a55a14", 3);
-            
-            setup();
+            if (!update()) {
+	            uids.put("6f7e303c-69da-4902-9b59-aa3ceb4984c0", 0);
+	            uids.put("c3ad79b8-d0bc-4ed3-8660-d87fc493cba3", 1);
+	            uids.put("b6584f23-c40d-4185-9cb4-5eafda70b5d7", 2);
+	            uids.put("b6ac978f-fe11-42a0-ab95-595cd4a55a14", 3);
+	            
+	            setup();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             log.log(Level.SEVERE, "Error loading minecod: " + e.getMessage());
@@ -578,7 +578,7 @@ public class main extends JavaPlugin {
         }
     }
     
-    public void update() {
+    public boolean update() {
         try {
             URL url = new URL("http://www.thegigcast.net/minecod/version.txt");
             BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -591,12 +591,13 @@ public class main extends JavaPlugin {
                     File plugin = new File(directory.getPath(), "MineCod.jar");
                     download(log, new URL("http://www.thegigcast.net/minecod/MineCod.jar"), plugin);
                     getServer().dispatchCommand(new ConsoleCommandSender(getServer()), "reload");
-                    break;
+                    return true;
                 }
             }
             in.close();
         }
         catch (Exception e) { e.printStackTrace(); }
+        return false;
     }
     
     public static void download(Logger log, URL url, File file) throws IOException {
