@@ -80,20 +80,15 @@ public class CTF extends team_gm {
     @Override
     public void afterDeath(player p) {
         super.afterDeath(p);
-        System.out.println("HERE");
         if (f1.drop != null && plugin.p(f1.p) == p) {
-            System.out.println("1");
             dropFlag(f1, Material.GOLD_BLOCK);
         } else if (f2.drop != null && plugin.p(f2.p) == p) {
-            System.out.println("2");
             dropFlag(f2, Material.DIAMOND_BLOCK);
         }
     }
     
     public void dropFlag(flag fa, Material a) {
         fa.p = null;
-        System.out.println("3");
-        System.out.println(fa.drop.getX() + ", " + fa.drop.getZ());
         fa.drop_i = plugin.currentWorld.dropItem(fa.drop, new ItemStack(a, 1));
         fa.ret = System.currentTimeMillis() + 20000;
         fa.drop = null;
