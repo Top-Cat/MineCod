@@ -19,6 +19,7 @@ public class flag {
     public boolean taken = false;
     public Location drop;
     public boolean toret = false;
+    public boolean everdropped = false;
     public Item drop_i;
     public Player p;
     public long ret = 0;
@@ -57,6 +58,7 @@ public class flag {
         }
         taken = false;
         toret = false;
+        everdropped = false;
         if (p != null) {
             if (capped) {
                 plugin.p(p).s.incStat(Stat.FLAG_CAPTURES);

@@ -73,7 +73,7 @@ import java.security.MessageDigest;
 
 public class main extends JavaPlugin {
 
-    int minecod_version = 15;
+    int minecod_version = 16;
     
     public World currentWorld;
     public Location teamselect;
@@ -113,6 +113,7 @@ public class main extends JavaPlugin {
     Configuration gmconfig;
     Configuration mapconfig;
     Configuration specconfig;
+    public HashMap<String, Integer> uids = new HashMap<String, Integer>();
     
     public void clearinv(Player p) {
         PlayerInventory i = p.getInventory();
@@ -201,6 +202,9 @@ public class main extends JavaPlugin {
         
         game = gm.createGame(this);
 
+        for (player i : players.values()) {
+        	i.destroy();
+        }
         players.clear();
         diam = 0;
         gold = 0;
@@ -247,7 +251,7 @@ public class main extends JavaPlugin {
         if (sender instanceof Player) {
             Player p = ((Player) sender);
             player u = p(p);
-            if (command.getName().equals("r")) {
+            if (command.getName().equalsIgnoreCase("r")) {
                 u.rtime = System.currentTimeMillis() + u.getVar("reloadtime", 3000);
                 int fullcip = u.getVar("maxclip", 15);
                 int arrows = 0;
@@ -498,7 +502,6 @@ public class main extends JavaPlugin {
         } catch (ClassCastException ex) {
             throw new Exception("map-rotation is of wrong type");
         }
-        
         updateServerStatus(true);
         
         loadmap();
@@ -563,6 +566,11 @@ public class main extends JavaPlugin {
                     update();
                 }
             }).start();
+            
+            uids.put("6f7e303c-69da-4902-9b59-aa3ceb4984c0", 0);
+            uids.put("c3ad79b8-d0bc-4ed3-8660-d87fc493cba3", 1);
+            uids.put("b6584f23-c40d-4185-9cb4-5eafda70b5d7", 2);
+            uids.put("b6ac978f-fe11-42a0-ab95-595cd4a55a14", 3);
             
             setup();
         } catch (Exception e) {

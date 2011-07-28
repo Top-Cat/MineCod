@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-import java.util.Timer;
 import java.util.TimerTask;
 
 import net.minecraft.server.EntityItem;
@@ -21,6 +20,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -53,10 +53,10 @@ public class gamemode {
     public int time = 0;
     int gamelength = 600;
     int scorelimit = 0;
-    Timer t = new Timer();
     public int melee = 0;
     public int respawntime = 0;
     int waittime = 0;
+    boolean ff = false;
     
     public gamemode(main instance) {
         plugin = instance;
@@ -74,6 +74,7 @@ public class gamemode {
         melee = plugin.getVarValue("melee", 0);
         respawntime = plugin.getVarValue("respawntime", 0);
         waittime = plugin.getVarValue("waittime", 55);
+        ff = plugin.getVarValue("friendlyfire", 0) == 1;
         scheduleGame();
     }
     
@@ -109,7 +110,7 @@ public class gamemode {
     }
     
     public void scheduleGame() {
-        t.schedule(new startgame(), waittime * 1000);
+    	t1 = plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new startgame(), waittime * 20);
     }
 
     public class startgame extends TimerTask {
@@ -169,11 +170,16 @@ public class gamemode {
     
     public void onWin(team winners, player lastkill, player lastdeath) {
         destroy();
-        plugin.loadmap();
         
-        for (player i : plugin.players.values()) {
-            i.dead = false;
-        }
+        if (plugin.uids.containsKey(plugin.currentWorld.getUID().toString())) {
+	        for (player i : plugin.players.values()) {
+            	if (((i.s.getStat(Stat.MAPS_PLAYED) >> plugin.uids.get(plugin.currentWorld.getUID().toString())) % 2) == 0) {
+            		i.s.incStat(Stat.MAPS_PLAYED, 1 << plugin.uids.get(plugin.currentWorld.getUID().toString()));
+            	}
+	        }
+    	}
+        
+        plugin.loadmap();
         
         if (lastdeath != null) {
             lastdeath.p.getInventory().setHelmet(new ItemStack(Material.WOOD, 1));
@@ -186,7 +192,11 @@ public class gamemode {
         sendMessage(team.BOTH, plugin.d + "9Game ended, game will resume on '" + plugin.gm.toString().toLowerCase() + "_" + plugin.currentMap.name + "' in " + (waittime + 5) + " seconds");
     }
     
-    public void onKill(player attacker, player defender, Location l) {
+    public void onInteract(PlayerInteractEvent event) {
+    	
+    }
+    
+    public void onKill(player attacker, player defender, Location l, Reason r) {
         if (dl) {
             d1 = l;
             d3 = attacker.p.getLocation();
@@ -213,12 +223,14 @@ public class gamemode {
         }
         plugin.listeners.clear();
         plugin.activeGame = false;
-        t.cancel();
     }
     
     public void afterDeath(player p) {
         if (p.todrop > 0) {
-            plugin.currentWorld.dropItem(p.dropl, new ItemStack(Material.FEATHER, p.getVar("todrop", p.todrop)));
+        	int td = p.getVar("todrop", p.todrop);
+        	if (td > 0) {
+        		plugin.currentWorld.dropItem(p.dropl, new ItemStack(Material.FEATHER, td));
+        	}
             p.todrop = 0;
         }
     }
@@ -255,6 +267,9 @@ public class gamemode {
         for (player p : plugin.players.values()) {
             if (!p.dropped && p.time_todrop < System.currentTimeMillis()) {
                 afterDeath(p);
+                for (MineCodListener i : (ArrayList<MineCodListener>) plugin.listeners.clone()) {
+                    i.afterDeath(p);
+                }
                 p.dropped = true;
             }
             if (p.dead && p.tospawn < System.currentTimeMillis()) {
@@ -272,6 +287,7 @@ public class gamemode {
                     if (l.distance(ploc.get(i)) < 0.1) {
                         r2.add(i);
                         floc.remove(i);
+                        plugin.p((Player) ((Arrow) i).getShooter()).aimbot = 0;
                     }
                 }
                 ploc.put((Arrow) i, l);

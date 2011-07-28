@@ -21,15 +21,16 @@ public class perk extends MineCodListener {
     public void checkIsPerk() {
         ArrayList<Tiers> r = new ArrayList<Tiers>();
         for (Tiers i : getOwnerplayer().perks.keySet()) {
-            if (i.instanceOf(getOwnerplayer().perks.get(i))) {
+            if (!i.instanceOf(getOwnerplayer().perks.get(i))) {
                 r.add(i);
             }
         }
         for (Tiers i : r) {
             getOwnerplayer().perks.remove(i);
+            destroy();
         }
         if (!getOwnerplayer().perks.containsValue(this)) {
-            plugin.listeners.remove(this);
+            destroy();
         }
     }
 
@@ -60,7 +61,7 @@ public class perk extends MineCodListener {
 
     @Override
     public void tick() {
-        
+    	checkIsPerk();
     }
 
     @Override

@@ -272,7 +272,7 @@ public class CODPlayerListener extends PlayerListener {
                     event.getPlayer().updateInventory();
                 }
             } else if (event.getPlayer().getItemInHand().getType() == Material.SNOW_BALL) {
-                new grenade(plugin, event.getPlayer());
+                new grenade(plugin, event.getPlayer()).getOwnerplayer().s.incStat(Stat.GRENADES_THROWN);
                 event.getPlayer().getInventory().removeItem(new ItemStack(Material.SNOW_BALL, 1));
                 event.setUseItemInHand(Result.DENY);
             } else if (event.getPlayer().getItemInHand().getType() == Material.RAW_FISH) {
@@ -282,6 +282,7 @@ public class CODPlayerListener extends PlayerListener {
         for (MineCodListener i : (ArrayList<MineCodListener>) plugin.listeners.clone()) {
             i.onInteract(event);
         }
+        plugin.game.onInteract(event);
     }
     
     @Override

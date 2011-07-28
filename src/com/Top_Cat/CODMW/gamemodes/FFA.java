@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
+import com.Top_Cat.CODMW.objects.Reason;
 import com.Top_Cat.CODMW.objects.player;
 import com.Top_Cat.CODMW.sql.Stat;
 
@@ -63,8 +64,8 @@ public class FFA extends gamemode {
     }
     
     @Override
-    public void onKill(player attacker, player defender, Location l) {
-        super.onKill(attacker, defender, l);
+    public void onKill(player attacker, player defender, Location l, Reason r) {
+        super.onKill(attacker, defender, l, r);
         attacker.addPoints(5);
         defender.addPoints(-2);
         

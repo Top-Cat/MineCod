@@ -14,8 +14,9 @@ public class martyrdom extends tier1 {
 
     @Override
     public void afterDeath(player p) {
-        super.afterDeath(p);
-        new grenade(plugin, p.p, p.dropl);
+        if (getOwnerplayer() == p) {;
+        	new grenade(plugin, p.p, p.dropl);
+        }
     }
     
 }

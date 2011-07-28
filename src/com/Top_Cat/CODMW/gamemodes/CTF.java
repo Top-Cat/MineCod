@@ -6,13 +6,19 @@ import java.util.HashMap;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
+import com.Top_Cat.CODMW.objects.Reason;
 import com.Top_Cat.CODMW.objects.player;
+import com.Top_Cat.CODMW.sql.Achievement;
+import com.Top_Cat.CODMW.sql.Stat;
+
 import com.Top_Cat.CODMW.gamemodes.ECTF.flag;
 
 public class CTF extends team_gm {
@@ -51,34 +57,47 @@ public class CTF extends team_gm {
     }
     
     @Override
-    public void onKill(player attacker, player defender, Location l) {
-        super.onKill(attacker, defender, l);
+    public void onKill(player attacker, player defender, Location l, Reason r) {
+        super.onKill(attacker, defender, l, r);
         attacker.addPoints(3);
         defender.addPoints(-1);
         
         if (defender == plugin.p(f1.p)) {
+        	f1.everdropped = true;
             f1.drop = l;
         } else if (defender == plugin.p(f2.p)) {
+        	f2.everdropped = true;
             f2.drop = l;
+        } else {
+        	return;
+        }
+        attacker.s.incStat(Stat.FLAG_CARRIER_KILLED);
+        if (r == Reason.GRENADE) {
+        	attacker.s.awardAchievement(Achievement.FLAG_GRENADE);
         }
     }
     
     @Override
     public void afterDeath(player p) {
         super.afterDeath(p);
-        if (f1.drop != null && f1.p == p) {
-            f1.p = null;
-            f1.drop_i = plugin.currentWorld.dropItem(f1.drop, new ItemStack(Material.GOLD_BLOCK, 1));
-            f1.ret = System.currentTimeMillis() + 20000;
-            f1.drop = null;
-            f1.toret = true;
-        } else if (f2.drop != null && f2.p == p) {
-            f2.p = null;
-            f2.drop_i = plugin.currentWorld.dropItem(f2.drop, new ItemStack(Material.DIAMOND_BLOCK, 1));
-            f2.ret = System.currentTimeMillis() + 20000;
-            f2.drop = null;
-            f2.toret = true;
+        System.out.println("HERE");
+        if (f1.drop != null && plugin.p(f1.p) == p) {
+        	System.out.println("1");
+        	dropFlag(f1, Material.GOLD_BLOCK);
+        } else if (f2.drop != null && plugin.p(f2.p) == p) {
+        	System.out.println("2");
+            dropFlag(f2, Material.DIAMOND_BLOCK);
         }
+    }
+    
+    public void dropFlag(flag fa, Material a) {
+    	fa.p = null;
+    	System.out.println("3");
+    	System.out.println(fa.drop.getX() + ", " + fa.drop.getZ());
+        fa.drop_i = plugin.currentWorld.dropItem(fa.drop, new ItemStack(a, 1));
+        fa.ret = System.currentTimeMillis() + 20000;
+        fa.drop = null;
+        fa.toret = true;
     }
     
     @Override
@@ -157,7 +176,23 @@ public class CTF extends team_gm {
         }
     }
     
+    @Override
+    public void onInteract(PlayerInteractEvent event) {
+    	if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            if (event.getPlayer().getItemInHand().getType() == Material.BOW) {
+            	if (f1.p == event.getPlayer()) {
+            		f1.everdropped = true;
+            	} else if (f2.p == event.getPlayer()) {
+            		f2.everdropped = true;
+            	}
+            }
+    	}
+    }
+    
     public void onCap(flag a, flag b, Player p) {
+    	if (!a.everdropped) {
+    		plugin.p(p).s.awardAchievement(Achievement.NO_HITTER);
+    	}
         a.returnFlag(plugin.p(p).getTeam() == team.DIAMOND ? Material.DIAMOND_HELMET : Material.GOLD_HELMET, true);
         if (b.t == team.GOLD) {
             gold++;

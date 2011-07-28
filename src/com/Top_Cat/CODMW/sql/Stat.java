@@ -66,6 +66,9 @@ public enum Stat {
     FALL_DAMAGE(59),
     CAREPACKAGES_ACHIEVED(60),
     CAREPACKAGES_USED(61),
+    DEAD_KILLS(62),
+    FLAG_CARRIER_KILLED(63),
+    MAPS_PLAYED(64),
     ;
     
     private final int id;

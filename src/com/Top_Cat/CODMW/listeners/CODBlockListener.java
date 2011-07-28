@@ -51,16 +51,14 @@ public class CODBlockListener extends BlockListener {
             } else {
                 event.setCancelled(true);
             }
-        } else /*if (!event.getPlayer().isOp())*/ {
+        } else {
             event.setBuild(false);
         }
     }
 
     @Override
     public void onBlockBreak(BlockBreakEvent event) {
-        //if (!event.getPlayer().isOp()) {
-            event.setCancelled(true);
-        //}
+        event.setCancelled(true);
     }
     
-}
+} 

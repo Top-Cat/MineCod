@@ -53,7 +53,9 @@ public class sentry extends placeable {
             if (event.getClickedBlock() == bt && plugin.game.canHit(event.getPlayer(), getOwner(), false)) {
                 destroy();
                 plugin.p(event.getPlayer()).addPoints(3);
-                plugin.p(event.getPlayer()).s.incStat(Stat.SENTRIES_DESTROYED);
+                if (plugin.p(event.getPlayer()).getTeam() != getOwnerplayer().getTeam()) {
+                	plugin.p(event.getPlayer()).s.incStat(Stat.SENTRIES_DESTROYED);
+                }
             }
         }
     }

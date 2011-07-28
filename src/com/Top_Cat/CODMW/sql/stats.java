@@ -19,7 +19,7 @@ public class stats {
     
     player p;
     HashMap<Stat, Integer> stats = new HashMap<Stat, Integer>();
-    List<Achievement> achs = new ArrayList<Achievement>();
+    public List<Achievement> achs = new ArrayList<Achievement>();
     List<Achievement> toach = new java.util.ArrayList<Achievement>(Arrays.asList(Achievement.values()));
     List<Stat> updated = new ArrayList<Stat>();
     List<Stat> newv = new ArrayList<Stat>();

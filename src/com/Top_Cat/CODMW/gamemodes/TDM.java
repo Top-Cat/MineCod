@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 
 import com.Top_Cat.CODMW.main;
 import com.Top_Cat.CODMW.team;
+import com.Top_Cat.CODMW.objects.Reason;
 import com.Top_Cat.CODMW.objects.player;
 
 public class TDM extends team_gm {
@@ -47,12 +48,12 @@ public class TDM extends team_gm {
     }
     
     @Override
-    public void onKill(player attacker, player defender, Location l) {
-        super.onKill(attacker, defender, l);
+    public void onKill(player attacker, player defender, Location l, Reason r) {
+        super.onKill(attacker, defender, l, r);
         attacker.addPoints(5);
         defender.addPoints(-2);
         
-        int add = attacker == defender ? -1 : 1;
+        int add = attacker.getTeam() == defender.getTeam() ? -1 : 1;
         
         if (attacker.getTeam() == team.GOLD) {
             gold += add;

@@ -50,11 +50,9 @@ public class player {
     public long time_todrop = 0;
     public boolean dropped = true;
     player lastk;
-    int lastk_count = 0;
-    int lastk_top_count = 0;
-    long laststreak = 0;
-    int hshot_streak = 0;
-    int melee_streak = 0;
+    int lastk_count = 0, lastk_top_count = 0, hshot_streak = 0, melee_streak = 0;
+	public int aimbot = 0;
+    long laststreak = 0, lastkill = 0;
     public boolean premium, fish = false;
     public List<Killstreaks> yks = new ArrayList<Killstreaks>();
     public boolean dead = false, regen = false;
@@ -63,12 +61,14 @@ public class player {
         plugin = instance;
         p = _p;
         t = _t;
+        plugin.players.put(_p, this);
         
         ResultSet r = plugin.sql.query("SELECT * FROM cod_players WHERE username = '" + _p.getDisplayName() + "'");
         try {
             r.next();
             nick = r.getString("nick");
             dbid = r.getInt("Id");
+            s = new stats(plugin, this);
             premium = r.getBoolean("premium");
             if (premium) {
                 fish = r.getBoolean("fish");
@@ -79,11 +79,16 @@ public class player {
                     yks.add(s);
                 }
             }
+            for (String i : r.getString("perks").split(",")) {
+            	if (i.length() > 0) {
+	                Perks s = Perks.valueOf(Integer.parseInt(i));
+	                perks.put(s.getTier(), s.create(plugin, this));
+            	}
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        s = new stats(plugin, this);
         s.incStat(Stat.LOGIN);
         
         switch(t) {
@@ -92,15 +97,10 @@ public class player {
         }
         setinv(false);
         plugin.tot++;
-        plugin.players.put(_p, this);
         
         if (plugin.activeGame == true) {
             dead = true;
         }
-        
-        perks.put(Tiers.TIER1, Perks.BANDOLIER.create(plugin, p));
-        perks.put(Tiers.TIER2, Perks.MEDIC.create(plugin, p));
-        perks.put(Tiers.TIER3, Perks.KILLFEEDER.create(plugin, p));
         
         p.teleport(plugin.prespawn);
     }
@@ -144,10 +144,14 @@ public class player {
     
     int slot = 0;
     
+    public int getStreak() {
+    	return streak + getVar("streakoffset", 0);
+    }
+    
     public void addStreak() {
         streak++;
         for (Killstreaks ks : yks) {
-            if (ks.getKills() == streak + getVar("streakoffset", 0)) {
+            if (ks.getKills() == getStreak()) {
                 giveItem(slot++ + 3, new ItemStack(ks.getMat(), ks.getAmm()));
                 s.incStat(ks.getStat());
                 
@@ -187,6 +191,16 @@ public class player {
         for (MineCodListener i : plugin.listeners) {
             i.onKill(this, killed, reason, l);
         }
+        if (dead) {
+        	s.incStat(Stat.DEAD_KILLS);
+        }
+        if ((System.currentTimeMillis() - lastkill) < 5000) {
+            s.awardAchievement(Achievement.RAPID_FIRE);
+        }
+        lastkill = System.currentTimeMillis();
+        if (killed.p.getLocation().add(0, -1, 0).getBlock().getType() == Material.AIR) {
+        	s.awardAchievement(Achievement.DEFYING_GRAVITY);
+        }
         s.incStat(Stat.KILLS);
         kill++;
         s.maxStat(Stat.MAX_KILLS, kill);
@@ -220,7 +234,7 @@ public class player {
         if (ammo == 0 && reason == Reason.KNIFE) {
             s.awardAchievement(Achievement.LAST_RESORT);
         }
-        if (killed.streak == 10) {
+        if (killed.getStreak() == 10) {
             s.awardAchievement(Achievement.CLOSE_CHOPPER);
         }
         if (p.getFireTicks() > 0) {
@@ -274,7 +288,7 @@ public class player {
         return (int) getVar(name, (double) def);
     }
     
-    public void incHealth(int _h, Player attacker, Reason r, Object ks) {
+    public boolean incHealth(int _h, Player attacker, Reason r, Object ks) {
         for (MineCodListener i : plugin.listeners) {
             _h = i.onDamage(_h, attacker, p, r, ks);
         }
@@ -285,6 +299,12 @@ public class player {
         }
         if ((plugin.game.melee == 1 && (r == Reason.BOW || r == Reason.HEADSHOT || r == Reason.GRENADE)) || (plugin.game.melee == 2 && (r == Reason.KNIFE || r == Reason.FISH))) {
             _h = _h > 0 ? 0 : _h;
+        }
+        if (_h > 0 && (r == Reason.BOW || r == Reason.HEADSHOT)) {
+        	plugin.p(attacker).aimbot++;
+        	if (plugin.p(attacker).aimbot >= 15) {
+        		plugin.p(attacker).s.awardAchievement(Achievement.AIMBOT);
+        	}
         }
         h -= _h;
         if (h > 20) { h = 20; }
@@ -302,12 +322,13 @@ public class player {
             lastk_top_count = 0;
             hshot_streak = 0;
             melee_streak = 0;
+            aimbot = 0;
             tospawn = System.currentTimeMillis() + (plugin.game.respawntime * 1000);
             time_todrop = System.currentTimeMillis() + 500;
             dropped = false;
             lastkiller = attacker;
             player a = plugin.p(attacker);
-            if (a != this) {
+            if (a.getTeam() != getTeam() || a.getTeam() == team.BOTH) {
                 a.onKill(this, r, ks);
             } else {
                 kill--;
@@ -374,7 +395,7 @@ public class player {
             
             Location l = p.getLocation();
             p.teleport(plugin.prespawn);
-            plugin.game.onKill(plugin.p(attacker), this, l);
+            plugin.game.onKill(plugin.p(attacker), this, l, r);
             dead = true;
             slot = 0;
         }
@@ -382,6 +403,7 @@ public class player {
             assist = attacker;
         }
         p.setHealth(h);
+        return dead;
     }
     
     public void setStreaks() {

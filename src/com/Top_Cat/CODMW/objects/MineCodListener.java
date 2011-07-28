@@ -15,7 +15,7 @@ public abstract class MineCodListener extends ownable {
         setOwner(owner, plugin.p(owner));
         plugin.listeners.add(this);
     }
-    
+	
     public void destroy() {
         plugin.listeners.remove(this);
     }
@@ -37,5 +37,5 @@ public abstract class MineCodListener extends ownable {
     public abstract void tickfast();
     
     public abstract void tick();
-    
+	
 }

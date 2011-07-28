@@ -12,6 +12,7 @@ import com.Top_Cat.CODMW.team;
 import com.Top_Cat.CODMW.objects.CArrow;
 import com.Top_Cat.CODMW.objects.Reason;
 import com.Top_Cat.CODMW.objects.player;
+import com.Top_Cat.CODMW.sql.Achievement;
 import com.Top_Cat.CODMW.sql.Stat;
 
 public class chopper extends useable {
@@ -22,10 +23,6 @@ public class chopper extends useable {
     int tick = 0;
     boolean started = false;
     int health = 5;
-    
-    public void arrowhit() {
-        health--;
-    }
 
     public chopper(main instance, Player _o, Object[] args) {
         super(instance, _o, args);
@@ -58,7 +55,11 @@ public class chopper extends useable {
                 if (plugin.game.ploc.containsKey(i)) {
                     if (l.distance(plugin.game.ploc.get(i)) < 0.1) {
                         if (l.distance(l) < 1.5) {
-                            arrowhit();
+                            health--;
+                            if (health <= 0) {
+                            	plugin.p((Player) ((Arrow) i).getShooter()).s.awardAchievement(Achievement.AERIAL_AIM);
+                            	destroy();
+                            }
                         }
                     }
                 }

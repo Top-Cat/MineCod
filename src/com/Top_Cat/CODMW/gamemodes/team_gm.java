@@ -67,6 +67,7 @@ public class team_gm extends gamemode {
         if (killstreak && d instanceof Player && plugin.p((Player) d).getVar("ghost", 0) == 1) {
             return false;
         }
+        if (ff && a != d) { return true; }
         team t1 = team.BOTH;
         team t2 = team.BOTH;
         if (a instanceof Player) {

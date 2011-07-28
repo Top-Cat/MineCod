@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.Top_Cat.CODMW.main;
+import com.Top_Cat.CODMW.sql.Achievement;
 import com.Top_Cat.CODMW.util.StatUtil;
 
 public class grenade extends ownable {
@@ -30,7 +31,7 @@ public class grenade extends ownable {
     }
     
     public grenade(main instance, Player owner) {
-        this(instance, owner, owner.getLocation());
+        this(instance, owner, owner.getEyeLocation());
     }
     
     public int getLifetime() {
@@ -47,21 +48,25 @@ public class grenade extends ownable {
             s_entity.remove();
             plugin.g.remove(this);
             plugin.currentWorld.createExplosion(s_entity.getLocation(), 0);
+            int kills = 0;
             for (Entity i : s_entity.getNearbyEntities(7, 7, 7)) {
                 if (i instanceof Player && (plugin.game.canHit(getOwner(), (Player) i, false) || i == getOwner())) {
                     player p = plugin.p((Player) i);
                     if (p != null) {
                         int cdf = 0;
                         if (p.getVar("grenadedmg", 0) == 1) {
-                            cdf = (int) (StatUtil.erfc((i.getLocation().distance(s_entity.getLocation()) / 2) - 1) * 11);
+                            cdf = (int) (StatUtil.erfc((i.getLocation().distance(s_entity.getLocation()) / 2.5) - 2) * 11);
                         } else {
                             cdf = (int) (StatUtil.erfc((i.getLocation().distance(s_entity.getLocation()) / 2) - 1.5) * 11);
                         }
                         
                         //int exp = (int) (Math.pow(1.4, -i.getLocation().distance(s_entity.getLocation())) * 22);
-                        p.incHealth(cdf, getOwner(), Reason.GRENADE, null);
+                        if (p.incHealth(cdf, getOwner(), Reason.GRENADE, null) && p != getOwnerplayer()) { kills++; }
                     }
                 }
+            }
+            if (kills >= 2) {
+            	getOwnerplayer().s.awardAchievement(Achievement.COLLATERAL_FRAG);
             }
         }
     }

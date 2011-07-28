@@ -96,6 +96,7 @@ public class CODEntityListener extends EntityListener {
                             
                         }
                         plugin.p(defender).incHealth(10, attacker, reason, ks);
+                        ((EntityDamageByProjectileEvent) event).getProjectile().remove();
                         event.setCancelled(false);
                     }
                 }
