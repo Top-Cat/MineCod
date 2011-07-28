@@ -57,8 +57,8 @@ public class chopper extends useable {
                         if (l.distance(l) < 1.5) {
                             health--;
                             if (health <= 0) {
-                            	plugin.p((Player) ((Arrow) i).getShooter()).s.awardAchievement(Achievement.AERIAL_AIM);
-                            	destroy();
+                                plugin.p((Player) ((Arrow) i).getShooter()).s.awardAchievement(Achievement.AERIAL_AIM);
+                                destroy();
                             }
                         }
                     }

@@ -61,7 +61,7 @@ public class perk extends MineCodListener {
 
     @Override
     public void tick() {
-    	checkIsPerk();
+        checkIsPerk();
     }
 
     @Override

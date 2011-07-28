@@ -110,7 +110,7 @@ public class gamemode {
     }
     
     public void scheduleGame() {
-    	t1 = plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new startgame(), waittime * 20);
+        t1 = plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new startgame(), waittime * 20);
     }
 
     public class startgame extends TimerTask {
@@ -172,12 +172,12 @@ public class gamemode {
         destroy();
         
         if (plugin.uids.containsKey(plugin.currentWorld.getUID().toString())) {
-	        for (player i : plugin.players.values()) {
-            	if (((i.s.getStat(Stat.MAPS_PLAYED) >> plugin.uids.get(plugin.currentWorld.getUID().toString())) % 2) == 0) {
-            		i.s.incStat(Stat.MAPS_PLAYED, 1 << plugin.uids.get(plugin.currentWorld.getUID().toString()));
-            	}
-	        }
-    	}
+            for (player i : plugin.players.values()) {
+                if (((i.s.getStat(Stat.MAPS_PLAYED) >> plugin.uids.get(plugin.currentWorld.getUID().toString())) % 2) == 0) {
+                    i.s.incStat(Stat.MAPS_PLAYED, 1 << plugin.uids.get(plugin.currentWorld.getUID().toString()));
+                }
+            }
+        }
         
         plugin.loadmap();
         
@@ -193,7 +193,7 @@ public class gamemode {
     }
     
     public void onInteract(PlayerInteractEvent event) {
-    	
+        
     }
     
     public void onKill(player attacker, player defender, Location l, Reason r) {
@@ -227,10 +227,10 @@ public class gamemode {
     
     public void afterDeath(player p) {
         if (p.todrop > 0) {
-        	int td = p.getVar("todrop", p.todrop);
-        	if (td > 0) {
-        		plugin.currentWorld.dropItem(p.dropl, new ItemStack(Material.FEATHER, td));
-        	}
+            int td = p.getVar("todrop", p.todrop);
+            if (td > 0) {
+                plugin.currentWorld.dropItem(p.dropl, new ItemStack(Material.FEATHER, td));
+            }
             p.todrop = 0;
         }
     }

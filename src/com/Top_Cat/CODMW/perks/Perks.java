@@ -55,14 +55,14 @@ public enum Perks {
     }
     
     public perk create(main instance, player owner) {
-    	if (owner.s.achs.containsAll(requires)) {
-	        try {
-	            Constructor<? extends perk> c = k.getDeclaredConstructor(new Class[] {main.class, Player.class});
-	            return c.newInstance(instance, owner.p);
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-    	}
+        if (owner.s.achs.containsAll(requires)) {
+            try {
+                Constructor<? extends perk> c = k.getDeclaredConstructor(new Class[] {main.class, Player.class});
+                return c.newInstance(instance, owner.p);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         return null;
     }
     
@@ -77,11 +77,11 @@ public enum Perks {
         return table.get(id);
     }
 
-	public int getId() {
-		return id;
-	}
-	
-	public Tiers getTier() {
-		return t;
-	}
+    public int getId() {
+        return id;
+    }
+    
+    public Tiers getTier() {
+        return t;
+    }
 }

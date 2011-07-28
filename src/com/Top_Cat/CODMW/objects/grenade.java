@@ -66,7 +66,7 @@ public class grenade extends ownable {
                 }
             }
             if (kills >= 2) {
-            	getOwnerplayer().s.awardAchievement(Achievement.COLLATERAL_FRAG);
+                getOwnerplayer().s.awardAchievement(Achievement.COLLATERAL_FRAG);
             }
         }
     }

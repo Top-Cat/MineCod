@@ -51,7 +51,7 @@ public class player {
     public boolean dropped = true;
     player lastk;
     int lastk_count = 0, lastk_top_count = 0, hshot_streak = 0, melee_streak = 0;
-	public int aimbot = 0;
+    public int aimbot = 0;
     long laststreak = 0, lastkill = 0;
     public boolean premium, fish = false;
     public List<Killstreaks> yks = new ArrayList<Killstreaks>();
@@ -80,10 +80,10 @@ public class player {
                 }
             }
             for (String i : r.getString("perks").split(",")) {
-            	if (i.length() > 0) {
-	                Perks s = Perks.valueOf(Integer.parseInt(i));
-	                perks.put(s.getTier(), s.create(plugin, this));
-            	}
+                if (i.length() > 0) {
+                    Perks s = Perks.valueOf(Integer.parseInt(i));
+                    perks.put(s.getTier(), s.create(plugin, this));
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -145,7 +145,7 @@ public class player {
     int slot = 0;
     
     public int getStreak() {
-    	return streak + getVar("streakoffset", 0);
+        return streak + getVar("streakoffset", 0);
     }
     
     public void addStreak() {
@@ -192,14 +192,14 @@ public class player {
             i.onKill(this, killed, reason, l);
         }
         if (dead) {
-        	s.incStat(Stat.DEAD_KILLS);
+            s.incStat(Stat.DEAD_KILLS);
         }
         if ((System.currentTimeMillis() - lastkill) < 5000) {
             s.awardAchievement(Achievement.RAPID_FIRE);
         }
         lastkill = System.currentTimeMillis();
         if (killed.p.getLocation().add(0, -1, 0).getBlock().getType() == Material.AIR) {
-        	s.awardAchievement(Achievement.DEFYING_GRAVITY);
+            s.awardAchievement(Achievement.DEFYING_GRAVITY);
         }
         s.incStat(Stat.KILLS);
         kill++;
@@ -301,10 +301,10 @@ public class player {
             _h = _h > 0 ? 0 : _h;
         }
         if (_h > 0 && (r == Reason.BOW || r == Reason.HEADSHOT)) {
-        	plugin.p(attacker).aimbot++;
-        	if (plugin.p(attacker).aimbot >= 15) {
-        		plugin.p(attacker).s.awardAchievement(Achievement.AIMBOT);
-        	}
+            plugin.p(attacker).aimbot++;
+            if (plugin.p(attacker).aimbot >= 15) {
+                plugin.p(attacker).s.awardAchievement(Achievement.AIMBOT);
+            }
         }
         h -= _h;
         if (h > 20) { h = 20; }

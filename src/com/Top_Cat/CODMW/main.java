@@ -203,7 +203,7 @@ public class main extends JavaPlugin {
         game = gm.createGame(this);
 
         for (player i : players.values()) {
-        	i.destroy();
+            i.destroy();
         }
         players.clear();
         diam = 0;
