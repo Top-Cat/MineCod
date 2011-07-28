@@ -1,8 +1,8 @@
 name: MineCod
 main: com.Top_Cat.CODMW.main
-version: 0.2
+version: 0.2.1
 author: Top_Cat
-softdepend: [BukkitContrib]
+depend: [BukkitContrib]
 commands:
     r:
         description: Reload bow

@@ -73,7 +73,7 @@ import java.security.MessageDigest;
 
 public class main extends JavaPlugin {
 
-    int minecod_version = 16;
+    int minecod_version = 18;
     
     public World currentWorld;
     public Location teamselect;
@@ -99,7 +99,7 @@ public class main extends JavaPlugin {
     public boolean activeGame = false;
     public redstone r;
     Timer t = new Timer();
-    public conn sql = new conn();
+    public conn sql;
     public map currentMap;
     Random gen = new Random();
     public GameModes gm = GameModes.FFA;
@@ -453,6 +453,8 @@ public class main extends JavaPlugin {
     }
     
     private void setup() throws Exception {
+    	sql = new conn();
+    	
         final PluginManager pm = getServer().getPluginManager();
         if (pm.getPlugin("BukkitContrib") == null) {
             try {
@@ -467,7 +469,7 @@ public class main extends JavaPlugin {
         playerListener = new CODPlayerListener(this);
         blockListener = new CODBlockListener(this);
         entityListener = new CODEntityListener(this);
-        inventoryListener = new CODInventoryListener(this);
+        try { inventoryListener = new CODInventoryListener(this); } catch (Exception e) {}
         weatherListener = new CODWeatherListener(this);
         inputListener = new CODInputListener(this);
         
@@ -561,11 +563,7 @@ public class main extends JavaPlugin {
     public void onEnable() {
         try {
             log = getServer().getLogger();
-            (new Thread() {
-                public void run() {
-                    update();
-                }
-            }).start();
+            update();
             
             uids.put("6f7e303c-69da-4902-9b59-aa3ceb4984c0", 0);
             uids.put("c3ad79b8-d0bc-4ed3-8660-d87fc493cba3", 1);

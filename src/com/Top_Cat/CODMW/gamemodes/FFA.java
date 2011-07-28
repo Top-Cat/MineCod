@@ -108,7 +108,7 @@ public class FFA extends gamemode {
     }
     
     @Override
-    public boolean canHit(LivingEntity a, LivingEntity d, boolean killstreak) {
+    public boolean canHit(LivingEntity a, LivingEntity d, boolean killstreak, boolean ignoreff) {
         if (killstreak && d instanceof Player && plugin.p((Player) d).getVar("ghost", 0) == 1) {
             return false;
         }

@@ -63,11 +63,11 @@ public class team_gm extends gamemode {
     }
     
     @Override
-    public boolean canHit(LivingEntity a, LivingEntity d, boolean killstreak) {
-        if (killstreak && d instanceof Player && plugin.p((Player) d).getVar("ghost", 0) == 1) {
+    public boolean canHit(LivingEntity a, LivingEntity d, boolean killstreak, boolean ignoreff) {
+        if (killstreak && d instanceof Player && plugin.p((Player) d) != null && plugin.p((Player) d).getVar("ghost", 0) == 1) {
             return false;
         }
-        if (ff && a != d) { return true; }
+        if (ff && !ignoreff && a != d) { return true; }
         team t1 = team.BOTH;
         team t2 = team.BOTH;
         if (a instanceof Player) {

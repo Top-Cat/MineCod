@@ -330,6 +330,17 @@ public class player {
             player a = plugin.p(attacker);
             if (a.getTeam() != getTeam() || a.getTeam() == team.BOTH) {
                 a.onKill(this, r, ks);
+                switch (r) {
+                case KNIFE: plugin.p(attacker).s.incStat(Stat.KNIFE_KILLS); break;
+                case BOW: plugin.p(attacker).s.incStat(Stat.BOW_KILLS); break;
+                case CLAYMORE: plugin.p(attacker).s.incStat(Stat.CLAYMORE_KILLS); break;
+                case DOGS: plugin.p(attacker).s.incStat(Stat.DOG_KILLS); break;
+                case SENTRY: plugin.p(attacker).s.incStat(Stat.SENTRY_KILLS); break;
+                case CHOPPER: plugin.p(attacker).s.incStat(Stat.CHOPPER_KILLS); break;
+                case HEADSHOT: plugin.p(attacker).s.incStat(Stat.HEADSHOTS); plugin.p(attacker).s.incStat(Stat.BOW_KILLS); break;
+                case FISH: plugin.p(attacker).s.incStat(Stat.FISH_KILLS); break;
+                case GRENADE: plugin.p(attacker).s.incStat(Stat.GRENADE_KILLS); break;
+            }
             } else {
                 kill--;
             }
@@ -362,16 +373,16 @@ public class player {
             String as = "";
             switch (r) {
                 case FALL: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(p).nick + " fell to his death. LOL!" + assist_txt); plugin.p(p).s.incStat(Stat.FALL_DEATHS); break;
-                case KNIFE: desc = " knifed"; plugin.p(p).s.incStat(Stat.KNIFE_DEATHS); plugin.p(attacker).s.incStat(Stat.KNIFE_KILLS); break;
-                case BOW: desc = " shot"; plugin.p(p).s.incStat(Stat.BOW_DEATHS); plugin.p(attacker).s.incStat(Stat.BOW_KILLS); break;
-                case CLAYMORE: desc = " claymored"; plugin.p(p).s.incStat(Stat.CLAYMORE_DEATHS); plugin.p(attacker).s.incStat(Stat.CLAYMORE_KILLS); break;
-                case DOGS: as = "'s"; desc = " dogs mauled"; plugin.p(p).s.incStat(Stat.DOG_DEATHS); plugin.p(attacker).s.incStat(Stat.DOG_KILLS); break;
-                case SENTRY: as = "'s"; desc = " sentry shot"; plugin.p(p).s.incStat(Stat.SENTRY_DEATHS); plugin.p(attacker).s.incStat(Stat.SENTRY_KILLS); break;
-                case CHOPPER: as = "'s"; desc = " chopper battered"; plugin.p(p).s.incStat(Stat.CHOPPER_DEATHS); plugin.p(attacker).s.incStat(Stat.CHOPPER_KILLS); break;
-                case HEADSHOT: desc = " headshot"; plugin.p(p).s.incStat(Stat.BOW_DEATHS); plugin.p(attacker).s.incStat(Stat.HEADSHOTS); plugin.p(attacker).s.incStat(Stat.BOW_KILLS); break;
+                case KNIFE: desc = " knifed"; plugin.p(p).s.incStat(Stat.KNIFE_DEATHS); break;
+                case BOW: desc = " shot"; plugin.p(p).s.incStat(Stat.BOW_DEATHS); break;
+                case CLAYMORE: desc = " claymored"; plugin.p(p).s.incStat(Stat.CLAYMORE_DEATHS); break;
+                case DOGS: as = "'s"; desc = " dogs mauled"; plugin.p(p).s.incStat(Stat.DOG_DEATHS); break;
+                case SENTRY: as = "'s"; desc = " sentry shot"; plugin.p(p).s.incStat(Stat.SENTRY_DEATHS); break;
+                case CHOPPER: as = "'s"; desc = " chopper battered"; plugin.p(p).s.incStat(Stat.CHOPPER_DEATHS); break;
+                case HEADSHOT: desc = " headshot"; plugin.p(p).s.incStat(Stat.BOW_DEATHS); break;
                 case FISH_SMITE: plugin.game.sendMessage(team.BOTH, plugin.d + "c" + plugin.p(p).nick + " was smited for using a premium fish!" + assist_txt); break;
-                case FISH: desc = " got a FISH KILL on"; plugin.p(p).s.incStat(Stat.FISH_DEATHS); plugin.p(attacker).s.incStat(Stat.FISH_KILLS); break;
-                case GRENADE: desc = " grenaded"; plugin.p(p).s.incStat(Stat.GRENADE_DEATHS); plugin.p(attacker).s.incStat(Stat.GRENADE_KILLS); break;
+                case FISH: desc = " got a FISH KILL on"; plugin.p(p).s.incStat(Stat.FISH_DEATHS); break;
+                case GRENADE: desc = " grenaded"; plugin.p(p).s.incStat(Stat.GRENADE_DEATHS); break;
             }
             if (r != Reason.FALL && r != Reason.FISH_SMITE) {
                 plugin.game.sendMessage(team.BOTH, plugin.d + plugin.p(attacker).getTeam().getColour() + plugin.p(attacker).nick + as + plugin.d + "c" + desc + " " + plugin.d + t.getColour() + nick + assist_txt);

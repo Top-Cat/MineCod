@@ -240,6 +240,26 @@ public class gamemode {
         for (MineCodListener i : (ArrayList<MineCodListener>) plugin.listeners.clone()) {
             i.tick();
         }
+        if (plugin.playerListener.nextbalance < System.currentTimeMillis()) {
+            int d = (int) Math.floor(Math.abs(plugin.diam - plugin.gold) / 2);
+            team b = team.DIAMOND;
+            if (plugin.gold > plugin.diam) {
+                b = team.GOLD;
+            }
+            
+            if (d > 0) {
+                plugin.game.sendMessage(team.BOTH, "Balancing teams...");
+                ArrayList<player> bigteam = new ArrayList<player>();
+                for (player i : plugin.players.values()) {
+                    if (i.getTeam() == b) {
+                        bigteam.add(i);
+                    }
+                }
+                for (int i = 0; i < d; i++) {
+                    plugin.switchplayer(bigteam.remove(generator.nextInt(bigteam.size())).p);
+                }
+            }
+        }
         for (player p : plugin.players.values()) {
             int life = (int) (System.currentTimeMillis() - p.spawn);
             if (life > 300000) {
@@ -356,7 +376,11 @@ public class gamemode {
     
     public void jointele(Player p) {};
     
-    public boolean canHit(LivingEntity a, LivingEntity d, boolean killstreak) { return false; };
+    public boolean canHit(LivingEntity a, LivingEntity d, boolean killstreak) {
+    	return canHit(a, d, killstreak, killstreak);
+    }
+    
+    public boolean canHit(LivingEntity a, LivingEntity d, boolean killstreak, boolean ignoreff) { return false; };
     
     public String getClaymoreText(Player p) { return "^^ CLAYMORE ^^"; };
     

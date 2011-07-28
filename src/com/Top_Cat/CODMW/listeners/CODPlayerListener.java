@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.TimerTask;
 
 import net.minecraft.server.EntityItem;
 
@@ -100,35 +99,7 @@ public class CODPlayerListener extends PlayerListener {
         }
     }
     
-    long nextbalance = 0;
-    
-    public class balanceteams extends TimerTask {
-
-        @Override
-        public void run() {
-            if (nextbalance < System.currentTimeMillis()) {
-                int d = (int) Math.floor(Math.abs(plugin.diam - plugin.gold) / 2);
-                team b = team.DIAMOND;
-                if (plugin.gold > plugin.diam) {
-                    b = team.GOLD;
-                }
-                
-                if (d > 0) {
-                    plugin.game.sendMessage(team.BOTH, "Balancing teams...");
-                    ArrayList<player> bigteam = new ArrayList<player>();
-                    for (player i : plugin.players.values()) {
-                        if (i.getTeam() == b) {
-                            bigteam.add(i);
-                        }
-                    }
-                    for (int i = 0; i < d; i++) {
-                        plugin.switchplayer(bigteam.remove(generator.nextInt(bigteam.size())).p);
-                    }
-                }
-            }
-        }
-        
-    }
+    public long nextbalance = 0;
     
     Block lastB;
 
