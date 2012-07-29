@@ -1,4 +1,6 @@
  - TODO List - 
+Fix maps
+Bow mechanics
 Custom sounds
 More achievements
 More game types
@@ -18,7 +20,7 @@ Perks:
 2) COMMANDO -------- Higher melee range
 2) JACKPOT --------- Better chance of high-level rewards from care packages
 2) MEDIC ----------- Lower wait time to start healing
-2) SCANNER --------- Recieve more alerts, see enemy explosives (with Bukkit Contrib)
+2) SCANNER --------- Recieve more alerts, see enemy explosives (with Spout Plugin)
 
 3) HACKER ---------- Not affected by an EMP
 3) KILL FEEDER ----- Kills from anything add to your killstreak (plus 1 kill to unlock each)
