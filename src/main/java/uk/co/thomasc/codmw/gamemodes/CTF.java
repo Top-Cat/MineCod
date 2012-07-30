@@ -20,12 +20,12 @@ import uk.co.thomasc.codmw.objects.CPlayer;
 import uk.co.thomasc.codmw.sql.Achievement;
 import uk.co.thomasc.codmw.sql.Stat;
 
-import uk.co.thomasc.codmw.gamemodes.ectf.flag;
+import uk.co.thomasc.codmw.gamemodes.ectf.Flag;
 
 public class CTF extends TeamGM {
 
 	int diam, gold;
-	flag f1, f2;
+	Flag f1, f2;
 	boolean swap = false;
 	HashMap<CPlayer, Integer> scores = new HashMap<CPlayer, Integer>();
 	
@@ -39,8 +39,8 @@ public class CTF extends TeamGM {
 		spawns.add(0, plugin.currentMap.getSpawns(0));
 		spawns.add(1, plugin.currentMap.getSpawns(1));
 		spawns.add(2, plugin.currentMap.getSpawns(2));
-		f1 = new flag(plugin, plugin.currentMap.getSpawns(3).get(0), Material.DIAMOND_BLOCK, Material.GOLD_BLOCK, Material.FENCE, Team.DIAMOND, Team.GOLD);
-		f2 = new flag(plugin, plugin.currentMap.getSpawns(4).get(0), Material.GOLD_BLOCK, Material.DIAMOND_BLOCK, Material.FENCE, Team.GOLD, Team.DIAMOND);
+		f1 = new Flag(plugin, plugin.currentMap.getSpawns(3).get(0), Material.DIAMOND_BLOCK, Material.GOLD_BLOCK, Material.FENCE, Team.DIAMOND, Team.GOLD);
+		f2 = new Flag(plugin, plugin.currentMap.getSpawns(4).get(0), Material.GOLD_BLOCK, Material.DIAMOND_BLOCK, Material.FENCE, Team.GOLD, Team.DIAMOND);
 	}
 	
 	@Override
@@ -88,7 +88,7 @@ public class CTF extends TeamGM {
 		}
 	}
 	
-	public void dropFlag(flag fa, Material a) {
+	public void dropFlag(Flag fa, Material a) {
 		fa.p = null;
 		fa.drop_i = plugin.currentWorld.dropItem(fa.drop, new ItemStack(a, 1));
 		fa.ret = System.currentTimeMillis() + 20000;
@@ -114,8 +114,8 @@ public class CTF extends TeamGM {
 			Location temp2 = f2.l;
 			f1.destroy();
 			f2.destroy();
-			f1 = new flag(plugin, temp2, Material.DIAMOND_BLOCK, Material.GOLD_BLOCK, Material.FENCE, Team.DIAMOND, Team.GOLD);
-			f2 = new flag(plugin, temp, Material.GOLD_BLOCK, Material.DIAMOND_BLOCK, Material.FENCE, Team.GOLD, Team.DIAMOND);
+			f1 = new Flag(plugin, temp2, Material.DIAMOND_BLOCK, Material.GOLD_BLOCK, Material.FENCE, Team.DIAMOND, Team.GOLD);
+			f2 = new Flag(plugin, temp, Material.GOLD_BLOCK, Material.DIAMOND_BLOCK, Material.FENCE, Team.GOLD, Team.DIAMOND);
 			swap = true;
 			for (Player i : plugin.players.keySet()) {
 				plugin.p(i).setStreaks();
@@ -185,7 +185,7 @@ public class CTF extends TeamGM {
 		}
 	}
 	
-	public void onCap(flag a, flag b, Player p) {
+	public void onCap(Flag a, Flag b, Player p) {
 		if (!a.everdropped) {
 			plugin.p(p).s.awardAchievement(Achievement.NO_HITTER);
 		}

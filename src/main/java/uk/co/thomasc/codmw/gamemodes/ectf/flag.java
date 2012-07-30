@@ -11,7 +11,7 @@ import uk.co.thomasc.codmw.Main;
 import uk.co.thomasc.codmw.Team;
 import uk.co.thomasc.codmw.sql.Stat;
 
-public class flag {
+public class Flag {
 	
 	private Main plugin;
 	public Location l;
@@ -26,7 +26,7 @@ public class flag {
 	public Team t; // Team who owns
 	public Team t2; // Team trying to capture
 	
-	public flag(Main instance, Location _l, Material _b, Material _c, Material _d, Team _t, Team _t2) {
+	public Flag(Main instance, Location _l, Material _b, Material _c, Material _d, Team _t, Team _t2) {
 		t = _t;
 		t2 = _t2;
 		plugin = instance;
